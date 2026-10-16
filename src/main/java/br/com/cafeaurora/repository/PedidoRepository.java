@@ -1,7 +1,7 @@
 package br.com.cafeaurora.repository;
 
 import br.com.cafeaurora.model.Pedido;
-import br.com.cafeaurora.model.StatusPedido;
+import br.com.cafeaurora.enums.StatusPedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

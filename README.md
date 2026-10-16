@@ -1,112 +1,76 @@
 # Café Aurora ☕
 
-Site de cafeteria desenvolvido para portfólio, integrando um frontend próprio (HTML, CSS e JavaScript) com **Spring Boot, Thymeleaf e H2**.
+Projeto de portfólio em Java 21, Spring Boot 4.1.1, Thymeleaf, H2 e frontend HTML/CSS/JS.
 
-## Tecnologias
-- Java 21 e Spring Boot 4.1.1
-- Spring MVC + Thymeleaf: renderização das páginas
-- Spring Data JPA + H2: base preparada para entidades e persistência
-- HTML, CSS, JavaScript e jQuery: interface existente preservada
-- Maven Wrapper: execução sem instalação global do Maven
+## Execução (Windows / PowerShell)
 
-## Executar localmente
-**Pré-requisito:** JDK 21 instalado.
-
-No terminal, na raiz do repositório:
-
-**Windows (PowerShell):**
 ```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-**Linux/macOS:**
-```bash
-./mvnw spring-boot:run
-```
-
-Acesse **http://localhost:8080/**.
-
-O Maven Wrapper baixa o Maven e as dependências na primeira execução (é preciso acesso à internet). Para executar os testes:
-
-```bash
-./mvnw test
-```
-
-### Console do H2 (somente em desenvolvimento)
-Rode com o perfil `dev`:
-
-**Windows (PowerShell):**
-```powershell
+git pull origin main
+$env:CAFE_ADMIN_PASSWORD = "EscolhaUmaSenhaForte"
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
 
-**Linux/macOS:**
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+Acesse `http://localhost:8080`. Os 9 produtos de demonstração são inseridos no perfil `dev` apenas se o banco estiver vazio.
+
+Para testar: `./mvnw test` (no Windows: `.\mvnw.cmd test`).
+
+### API de catálogo (pública)
+- `GET /api/categorias`
+- `GET /api/produtos` (opcional `?categoriaId=1`)
+- `GET /api/produtos/{id}`
+
+### CRUD administrativo (autenticação HTTP Basic, ROLE_ADMIN)
+- `GET /api/admin/categorias` e `GET /api/admin/categorias/{id}`
+- `POST /api/admin/categorias`
+- `PUT /api/admin/categorias/{id}`
+- `DELETE /api/admin/categorias/{id}` (desativação)
+- `GET /api/admin/produtos` e `GET /api/admin/produtos/{id}`
+- `POST /api/admin/produtos`
+- `PUT /api/admin/produtos/{id}`
+- `DELETE /api/admin/produtos/{id}` (desativação)
+
+Exemplo de criação de categoria (PowerShell):
+
+```powershell
+$cred = Get-Credential -UserName admin
+$body = @{nome="Sobremesas"; descricao="Doces"; ativa=$true} | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:8080/api/admin/categorias" -Method Post -Credential $cred -Authentication Basic -ContentType "application/json" -Body $body
 ```
 
-Acesse **http://localhost:8080/h2-console**.
-
-- JDBC URL: `jdbc:h2:file:./data/cafeaurora`
-- User Name: `sa`
-- Password: vazio
-
-O banco fica na pasta `data/` e não é versionado. O perfil `dev` habilita o console H2 apenas para desenvolvimento local; não o habilite em uma publicação pública.
-
-## Organização
-
-```text
-src/
-  main/
-    java/br/com/cafeaurora/
-      CafeAuroraApplication.java
-      controller/PaginaController.java
-    resources/
-      templates/                  # Páginas HTML processadas pelo Thymeleaf
-      static/
-        css/style.css
-        js/scripts.js
-        img/                      # Imagens originais do site
-      application.properties
-      application-dev.properties
-  test/                           # Teste de inicialização
+Exemplo de criação de produto (troque `categoriaId` pelo ID real):
+```json
+{
+  "nome": "Bolo de Cenoura",
+  "descricao": "Com cobertura de chocolate",
+  "preco": 15.50,
+  "imagemUrl": null,
+  "categoriaId": 1,
+  "ativo": true,
+  "disponivel": true
+}
 ```
 
-## Páginas
+Use `POST /api/admin/produtos` com o corpo JSON acima e credenciais Basic.
 
-- `/` — inicial
-- `/cardapio.html` — cardápio geral
-- `/cardapio-cafe.html` — cafés
-- `/cardapio-comidas.html` — comidas
-- `/cardapio-drinks.html` — bebidas
-- `/sacola-pedido.html` — sacola
+**Respostas:** 201 ao criar; 200 para consulta/edição; 204 ao desativar; 400 para dados inválidos; 401 para falta de autenticação; 403 para permissão negada; 404 para ID inexistente; 409 para conflito de categoria duplicada ou tentativa de ativar produto em categoria inativa.
 
-Os endereços sem `.html` também são aceitos. Os links relativos, CSS, JavaScript e imagens foram mantidos.
+### Organização, SOLID e padrões
 
-## Catálogo persistido — primeira etapa do backend
+- **Controller–Service–Repository:** controllers processam HTTP, services concentram regras e repositórios persistem dados (separação de responsabilidades / SRP).
+- **Dependency Injection:** construtores recebem dependências gerenciadas pelo Spring; evita instanciar colaboradores diretamente (DIP, com possibilidade de evoluir services para interfaces).
+- **Repository Pattern:** Spring Data JPA isola acesso a dados.
+- **DTO Pattern:** `ProdutoRequest/Response` e `CategoriaRequest/Response` isolam a API do modelo JPA; Bean Validation impede entradas inválidas.
+- **Global Exception Handler:** tratamento uniforme dos erros sem duplicar esse código em controllers.
+- **Transações:** métodos de serviço usam `@Transactional` para alterações atômicas.
+- **Soft delete:** DELETE desativa entidades para preservar referência/histórico, sem apagar linhas.
 
-Foram adicionadas entidades JPA para `Categoria`, `Produto`, `Pedido` e `ItemPedido`, com repositórios correspondentes. As entidades de pedido **ainda não possuem serviços nem endpoints**; suas regras de criação, alteração de status e validação serão implementadas em uma etapa seguinte.
+Não é correto afirmar que todos os princípios SOLID estão integralmente atendidos: OCP e ISP ainda não são particularmente relevantes a este escopo; serviços concretos injetados podem futuramente evoluir para portas/interfaces quando houver necessidade real.
 
-**API pública (consulta):**
+### Segurança e limites
+- API `/api/admin/**` requer HTTP Basic. Usuário padrão é `admin` (configurável por `CAFE_ADMIN_USERNAME`) e senha deve ser fornecida por `CAFE_ADMIN_PASSWORD`. **O servidor não inicializa sem a senha definida.**
+- Senhas não são salvas em arquivos versionados. HTTP Basic exige HTTPS fora do ambiente local.
+- Proteção CSRF é ignorada **somente** para `/api/admin/**`, que usa autenticação Basic sem cookies de sessão. Para um painel web com login/sessões, rever CSRF e a estratégia de autenticação.
+- Console H2 está bloqueado pela configuração de segurança, inclusive no perfil dev, até definirmos uma política local segura para liberá-lo.
+- O frontend continua com cardápio e sacola estáticos; endpoints de pedidos, painel administrativo HTML e pagamentos não estão implementados.
+- Para implantar em produção, migrar H2 para um banco adequado, gerenciar segredos, criar migrações em vez de `ddl-auto=update` e implementar autenticação apropriada para usuários administradores.
 
-- `GET /api/categorias` — categorias ativas
-- `GET /api/produtos` — produtos ativos de categorias ativas
-- `GET /api/produtos?categoriaId=1` — produtos ativos da categoria
-- `GET /api/produtos/1` — detalhes de um produto (404 quando não encontrado)
-
-No perfil `dev`, são cadastradas três categorias e nove produtos de exemplo **somente se o banco estiver completamente vazio**. Rode com o perfil `dev` para ver os exemplos. Os preços usam `BigDecimal`. A disponibilidade está registrada no modelo, mas ainda não impede a listagem pública.
-
-**Limites atuais:** não há operações administrativas de cadastro/edição, autenticação, API de pedidos, checkout, integração de pagamentos ou cardápio dinâmico em Thymeleaf. As páginas HTML continuam estáticas. A carga de desenvolvimento fornece descrições demonstrativas e não altera os arquivos originais do site. O código ainda precisa passar por uma execução local de Maven/testes.
-
-## Estado atual e próximos passos
-
-**Esta entrega é uma integração estrutural.** Os produtos exibidos nas páginas e os valores na sacola ainda são exemplos estáticos do frontend original. Botões de adicionar, remover e finalizar pedido, links `#` e cadastro de newsletter ainda não possuem backend. Não há pagamento real.
-
-Evolução sugerida:
-1. Modelar produtos, categorias e seus preços no H2 com JPA.
-2. Renderizar cardápios dinamicamente usando Thymeleaf.
-3. Implementar sacola funcional e cadastro/consulta de pedidos.
-4. Criar painel administrativo e validações.
-5. Escrever testes, otimizar imagens e preparar banco/segurança para implantação.
-
-**Observação:** O H2 e `ddl-auto=update` são escolhas de desenvolvimento. Antes da publicação do projeto como aplicação com dados reais, configurar persistência de produção, controle de acesso e migrações de banco.

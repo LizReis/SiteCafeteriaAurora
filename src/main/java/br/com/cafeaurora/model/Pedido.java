@@ -1,6 +1,7 @@
 package br.com.cafeaurora.model;
 
 import jakarta.persistence.*;
+import br.com.cafeaurora.enums.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
