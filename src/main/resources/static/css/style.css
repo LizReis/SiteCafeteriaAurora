@@ -166,9 +166,14 @@ nav ul li a:hover {
     padding: 100px 0px 0px 0px;
 }
 
+#slogan{
+    display: flex;
+    padding: 100px 0px 0px 100px;
+}
+
 .title-main {
     font-family: var(--fontePlayFair);
-    font-size: 120px;
+    font-size: 125px;
     line-height: 0.8;
 }
 
@@ -178,7 +183,7 @@ nav ul li a:hover {
 
 .subtitle {
     font-size: 24px;
-    margin-top: 20px;
+    margin-top: 180px;
     margin-left: -100px;
     font-weight: 400;
     text-align: right;
