@@ -83,6 +83,21 @@ src/
 
 Os endereços sem `.html` também são aceitos. Os links relativos, CSS, JavaScript e imagens foram mantidos.
 
+## Catálogo persistido — primeira etapa do backend
+
+Foram adicionadas entidades JPA para `Categoria`, `Produto`, `Pedido` e `ItemPedido`, com repositórios correspondentes. As entidades de pedido **ainda não possuem serviços nem endpoints**; suas regras de criação, alteração de status e validação serão implementadas em uma etapa seguinte.
+
+**API pública (consulta):**
+
+- `GET /api/categorias` — categorias ativas
+- `GET /api/produtos` — produtos ativos de categorias ativas
+- `GET /api/produtos?categoriaId=1` — produtos ativos da categoria
+- `GET /api/produtos/1` — detalhes de um produto (404 quando não encontrado)
+
+No perfil `dev`, são cadastradas três categorias e nove produtos de exemplo **somente se o banco estiver completamente vazio**. Rode com o perfil `dev` para ver os exemplos. Os preços usam `BigDecimal`. A disponibilidade está registrada no modelo, mas ainda não impede a listagem pública.
+
+**Limites atuais:** não há operações administrativas de cadastro/edição, autenticação, API de pedidos, checkout, integração de pagamentos ou cardápio dinâmico em Thymeleaf. As páginas HTML continuam estáticas. A carga de desenvolvimento fornece descrições demonstrativas e não altera os arquivos originais do site. O código ainda precisa passar por uma execução local de Maven/testes.
+
 ## Estado atual e próximos passos
 
 **Esta entrega é uma integração estrutural.** Os produtos exibidos nas páginas e os valores na sacola ainda são exemplos estáticos do frontend original. Botões de adicionar, remover e finalizar pedido, links `#` e cadastro de newsletter ainda não possuem backend. Não há pagamento real.
