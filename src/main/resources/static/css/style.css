@@ -297,6 +297,40 @@ nav ul li a:hover {
     font-weight: 400;
 }
 
+/*---------SETA DA PAGINA PRINCIPAL-------*/
+.scroll-down-wrapper {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.scroll-down-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-2-border {
+  width: 100px;
+  height: 80px;
+  border: 1px solid rgba(200, 155, 82, 0.4); /* Tom dourado sutil alinhado à identidade do site */
+  border-radius: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c89b52; /* Cor da seta */
+  transition: all 0.3s ease-in-out;
+}
+
+.button-2-border:hover {
+  border-color: #c89b52;
+  background-color: rgba(200, 155, 82, 0.1);
+  transform: scale(1.05);
+}
+
 /* Botões e Setas */
 .btn-pill {
     background-color: var(--fonteDestaque);
