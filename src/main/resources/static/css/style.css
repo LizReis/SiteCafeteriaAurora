@@ -1,5 +1,7 @@
+@import url('https://jsdelivr.net');
+
 :root {
-    --fonteDestaque: #b59d68;
+    --fonteDestaque: #af8e48;
     --fonteBranca: #ffffff;
     --fontePlayFair: "Playfair Display", serif;
     --fontMotserrat: "Montserrat", sans-serif;
@@ -22,12 +24,24 @@ body {
 /* Header */
 header {
     display: flex;
+    position: fixed; 
+    top: 0;         
+    left: 0;        
+    width: 100%;    
+    z-index: 10;    
     justify-content: space-between;
     align-items: center;
     padding: 20px 50px;
-    background-color: #000000;
-    border-bottom: thin solid var(--fonteDestaque);
-
+    
+    /* 1. Fundo preto bem clarinho e semi-transparente */
+    background-color: rgba(0, 0, 0, 0.25); 
+    
+    /* 2. O SEGREDO DO VIDRO: Desfoca o que está PASSANDO ATRÁS do header */
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); /* Garante o funcionamento no Safari/iPhone */
+    
+    /* 3. Uma borda dourada bem sutil e suave na parte inferior */
+    border-bottom: 1px solid rgba(175, 142, 72, 0.2); 
 }
 
 .logo {
@@ -35,7 +49,9 @@ header {
     color: var(--fonteDestaque);
     font-size: 24px;
     font-weight: bold;
+    margin-left: 50px;
 }
+
 
 nav ul {
     display: flex;
@@ -74,25 +90,84 @@ nav ul li a:hover {
     color: var(--fonteBranca);
 }
 
-.btn-cardapio {
-    background-color: #b59d68;
-    color: #000000;
-    padding: 8px 25px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 14px;
+/* Container dos botões do lado direito */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre a loja e a sacolinha */
 }
 
-/* Layout Hero */
-.hero-container {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+/* Estilo Base para o Botão Store */
+.btn-icon-nav {
+    display: flex;
     align-items: center;
-    padding: 0 5%;
-    height: 85vh;
-    position: relative;
+    gap: 8px; /* Espaço entre o ícone de mercado e o texto Store */
+    background-color: rgba(255, 255, 255, 0.08); /* Fundo semi-transparente suave */
+    color: var(--fonteBranca);
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 30px; /* Bordas bem arredondadas */
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
+
+.btn-icon-nav i {
+    font-size: 16px; /* Tamanho do ícone de mercado */
+    color: var(--fonteDestaque); /* Mantém o ícone no tom dourado do seu site */
+}
+
+/* Estilo para a Sacolinha de Compras */
+.btn-bag-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--fonteBranca);
+    text-decoration: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Formato perfeitamente circular */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.btn-bag-nav i {
+    font-size: 17px;
+}
+
+/* Pequeno balão indicador de itens na sacolinha */
+.bag-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--fonteDestaque); /* Fundo dourado */
+    color: #000000;
+    font-size: 10px;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Efeito Hover para ambos os botões */
+.btn-icon-nav:hover, .btn-bag-nav:hover {
+    background-color: var(--fonteDestaque);
+    color: #000000;
+    border-color: var(--fonteDestaque);
+}
+
+/* Muda a cor do ícone interno do botão Store para preto quando passa o mouse */
+.btn-icon-nav:hover i {
+    color: #000000;
+}
+
+
 
 .side-column {
     display: flex;
@@ -101,56 +176,41 @@ nav ul li a:hover {
     height: 80%;
 }
 
-.img-wrapper {
-    overflow: hidden;
-    border-radius: 60px;
-    /* Ajuste para o estilo "pill" da imagem */
-    position: relative;
-    z-index: 0;
+.video-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5); /* Cortina escura */
 }
 
-.img-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.3);
+#meuVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  z-index: -1;
+  object-fit: cover;
+  object-position: center 30%;
 }
 
-.small-thumb {
-    width: 220px;
-    height: 320px;
-}
-
-/* Central Card */
-.center-column {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    top: 3%;
-}
-
-.main-image-card {
-    width: 450px;
-    height: 650px;
-    border-radius: 100px;
-    overflow: hidden;
-    position: relative;
-}
-
-.main-image-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.4);
-    position: relative;
+.conteudo {
+  position: relative;
+  z-index: 1;
+  color: white;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* Textos sobrepostos */
 .overlay-text {
     display: flex;
+    flex-direction: column;
     position: absolute;
-    top: 55%;
-    left: 50%;
+    top: 50%;
+    left: 25%;
     transform: translate(-50%, -50%);
     text-align: center;
     pointer-events: none;
@@ -158,21 +218,62 @@ nav ul li a:hover {
     font-weight: 600;
 }
 
-#column-title-left {
-    padding: 0px 0px 150px 0px;
+.titulo-principal{
+    display: flex;
 }
 
-#column-title-right {
-    padding: 100px 0px 0px 0px;
+.logo-principal{
+    display: flex;
+    position: absolute;
+    left: 45%;
+    bottom: 32%;
 }
+.logo-principal #logo-aurora{
+    width: 85%;
+    height: 80%;
+    transform: rotate(-10deg);
+}
+
+#logo-aurora{
+    width: 150%;
+    height: 120%;
+    opacity: 0; /* Começa invisível */
+    /* A mágica da elegância está no cubic-bezier, que dá uma desacelerada suave no final */
+    animation: fadeUpElegante 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    transform: rotate(-10deg) !important; 
+}
+
+#column-title-left {
+    display: flex;
+    position: absolute;
+    padding: 0px 0px 120px 120px;
+    font-family: var(--fontMotserrat);
+}
+#column-title-left span{
+    font-weight: 300;
+    font-family: var(--fontMotserrat);
+    font-size: 120px;
+}
+
+
+#column-title-right {
+    padding: 80px 100px 0px 100px;
+}
+#column-title-right span{
+    font-family: var(--fontePlayFair);
+    font-size: 180px;
+}
+
+
 
 #slogan{
     display: flex;
-    padding: 100px 0px 0px 100px;
+    justify-content: center;
+    padding: 0;
+    width: 100%;
 }
 
 .title-main {
-    font-family: var(--fontePlayFair);
     font-size: 125px;
     line-height: 0.8;
 }
@@ -182,11 +283,12 @@ nav ul li a:hover {
 }
 
 .subtitle {
+    font-family: var(--fontMotserrat);
     font-size: 24px;
-    margin-top: 180px;
-    margin-left: -100px;
     font-weight: 400;
-    text-align: right;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
 }
 
 .description {
@@ -239,17 +341,27 @@ nav ul li a:hover {
 /* Ajustes específicos de posição para bater com o design */
 .top-left {
     align-self: flex-start;
+    margin-left: 120px;
 }
 
 .bottom-left {
     align-self: flex-end;
-    width: 160px;
-    height: 200px;
-    top: 14%;
+    width: 180px;
+    height: 220px;
+    top: 2%;
+}
+
+.bottom-right {
+    align-self: flex-end;
+    margin-right: 200px;
+    width: 180px;
+    height: 220px;
+    top: 2%;
 }
 
 .top-right {
     align-self: flex-end;
+    margin-right: 120px;
 }
 
 /* Seção Sobre Nós */
@@ -745,21 +857,39 @@ nav ul li a:hover {
     /* Reorganização do texto sobreposto */
     .overlay-text {
         position: relative;
-        top: 0; left: 0;
+        top: 0;
+        left: 0;
         transform: none;
+
         flex-direction: column;
-        margin-top: -60px; /* Sobrepõe levemente a imagem */
+        align-items: center;
+
+        width: 100%;
+        max-width: 100%;
+        margin-top: -60px;
+
         z-index: 2;
-        text-align: left; /* Textos alinhados à esquerda no mobile */
+        text-align: center;
     }
     
-    #column-title-left, #column-title-right {
+    #column-title-left,
+    #column-title-right {
         padding: 0;
-        margin: 10px 0;
-        text-align: left;
+        margin: 0;
+        text-align: center;
+    }
+
+    #slogan {
+        margin-top: 25px;
+        padding: 0;
+    }
+
+    .subtitle {
+        margin: 0;
+        font-size: 18px;
+        text-align: center;
     }
     .title-main { font-size: 60px; line-height: 1; }
-    .subtitle { margin: 10px 0 0 0; text-align: left; font-size: 18px; }
     .description { text-align: left; font-size: 16px; margin-top: 10px; }
     .indent { margin-left: 0; }
 
@@ -1250,6 +1380,7 @@ nav ul li a:hover {
     /* A mágica da elegância está no cubic-bezier, que dá uma desacelerada suave no final */
     animation: fadeUpElegante 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
+
 
 /* Atraso chique para a palavra "Aurora" aparecer uma fração de segundo depois de "Café" */
 #column-title-right .title-main {
