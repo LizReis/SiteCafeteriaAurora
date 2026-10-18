@@ -13,6 +13,11 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+
 body {
     background-color: #000000;
     color: var(--fonteBranca);
@@ -49,7 +54,6 @@ header {
     color: var(--fonteDestaque);
     font-size: 24px;
     font-weight: bold;
-    margin-left: 50px;
 }
 
 
@@ -298,37 +302,117 @@ nav ul li a:hover {
 }
 
 /*---------SETA DA PAGINA PRINCIPAL-------*/
+.hero-container {
+    position: relative;
+}
+
 .scroll-down-wrapper {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
 }
 
 .scroll-down-link {
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #c89b52;
 }
 
+/* Contorno da seta */
 .button-2-border {
-  width: 100px;
-  height: 80px;
-  border: 1px solid rgba(200, 155, 82, 0.4); /* Tom dourado sutil alinhado à identidade do site */
-  border-radius: 30%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c89b52; /* Cor da seta */
-  transition: all 0.3s ease-in-out;
+    width: 110px;
+    height: 75px;
+
+    border: 1px solid rgba(200, 155, 82, 0.55);
+    border-radius: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.10);
+    color: #c89b52;
+    overflow: hidden;
+
+    transition:
+        border-color 0.4s ease,
+        background-color 0.4s ease,
+        transform 0.4s ease,
+        box-shadow 0.4s ease;
+
+    animation: pulsarBorda 3s ease-in-out infinite;
 }
 
-.button-2-border:hover {
-  border-color: #c89b52;
-  background-color: rgba(200, 155, 82, 0.1);
-  transform: scale(1.05);
+/* Movimento contínuo da seta */
+.button-2-border svg {
+    width: 18px;
+    height: 18px;
+    animation: setaDescendo 2s ease-in-out infinite;
+}
+
+/* Animação vertical da seta */
+@keyframes setaDescendo {
+    0% {
+        transform: translateY(-15px);
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(18px);
+        opacity: 0;
+    }
+}
+
+/* Animação suave do contorno */
+@keyframes pulsarBorda {
+    0%, 100% {
+        border-color: rgba(200, 155, 82, 0.35);
+    }
+
+    50% {
+        border-color: rgba(200, 155, 82, 0.85);
+    }
+}
+
+/* Efeito quando o mouse passa sobre o botão */
+.scroll-down-link:hover .button-2-border {
+    border-color: #c89b52;
+    background: rgba(200, 155, 82, 0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(200, 155, 82, 0.15);
+}
+
+.scroll-down-link:hover .scroll-label {
+    color: #ffffff;
+}
+
+/* Navegação por teclado */
+.scroll-down-link:focus-visible {
+    outline: 2px solid #c89b52;
+    outline-offset: 6px;
+    border-radius: 8px;
+}
+
+/* Respeita preferências de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+    .button-2-border,
+    .button-2-border svg {
+        animation: none;
+    }
 }
 
 /* Botões e Setas */
