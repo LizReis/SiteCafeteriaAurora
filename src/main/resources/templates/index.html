@@ -14,6 +14,7 @@
     <!--<link rel="stylesheet" href="https://jsdelivr.net">-->
 
     <link rel="stylesheet" href="/src/main/resources/static/css/style.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/index.css">
 </head>
 
 <body>
@@ -148,10 +149,11 @@
         <h2 class="reviews-title">Avaliações</h2>
 
         <div class="carousel-wrapper">
-            <button class="carousel-btn prev-btn">&lt;</button>
+            <button type="button" class="carousel-btn prev-btn" aria-label="Avaliação anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
 
+            <!-- Comentários demonstrativos: substituir por avaliações reais antes da publicação. -->
             <div class="carousel-track">
-                <div class="polaroid-card side-card far">
+                <div class="polaroid-card side-card far" data-review-index="0">
                     <img src="img/10031.jpg" class="main-photo" alt="Milkshake">
                     <div class="card-footer">
                         <img src="https://ui-avatars.com/api/?name=Vitoria+G&background=222&color=b59d68" class="avatar"
@@ -161,9 +163,13 @@
                             <p>Exploradora</p>
                         </div>
                     </div>
+                    <div class="review-details">
+                        <div class="review-stars" role="img" aria-label="5 de 5 estrelas">★★★★★</div>
+                        <p class="review-comment">O milkshake estava delicioso e o atendimento foi muito atencioso.</p>
+                    </div>
                 </div>
 
-                <div class="polaroid-card side-card near">
+                <div class="polaroid-card side-card near" data-review-index="1">
                     <img src="/src/main/resources/static/img/cardapioComida.jpg" class="main-photo" alt="Brownie">
                     <div class="card-footer">
                         <img src="https://ui-avatars.com/api/?name=Maria+S&background=222&color=b59d68" class="avatar"
@@ -173,10 +179,13 @@
                             <p>Cliente Ideal</p>
                         </div>
                     </div>
+                    <div class="review-details">
+                        <div class="review-stars" role="img" aria-label="4 de 5 estrelas">★★★★☆</div>
+                        <p class="review-comment">O brownie estava macio e combinou perfeitamente com o café.</p>
+                    </div>
                 </div>
 
-                <div class="polaroid-card center-card">
-                    <div class="stacked-bg"></div>
+                <div class="polaroid-card center-card" data-review-index="2">
                     <img src="/src/main/resources/static/img/1320.jpg" class="main-photo" alt="Croissant">
                     <div class="card-footer">
                         <img src="https://ui-avatars.com/api/?name=Meria+S&background=222&color=b59d68" class="avatar"
@@ -186,9 +195,13 @@
                             <p>Dona local</p>
                         </div>
                     </div>
+                    <div class="review-details">
+                        <div class="review-stars" role="img" aria-label="5 de 5 estrelas">★★★★★</div>
+                        <p class="review-comment">O croissant chegou fresquinho e o ambiente é muito acolhedor.</p>
+                    </div>
                 </div>
 
-                <div class="polaroid-card side-card near">
+                <div class="polaroid-card side-card near" data-review-index="3">
                     <img src="/src/main/resources/static/img/21690.jpg" class="main-photo" alt="Bolo">
                     <div class="card-footer">
                         <img src="https://ui-avatars.com/api/?name=Marta+S&background=222&color=b59d68" class="avatar"
@@ -198,9 +211,13 @@
                             <p>Cliente Ideal</p>
                         </div>
                     </div>
+                    <div class="review-details">
+                        <div class="review-stars" role="img" aria-label="5 de 5 estrelas">★★★★★</div>
+                        <p class="review-comment">Adorei o bolo! Uma ótima opção para uma pausa à tarde.</p>
+                    </div>
                 </div>
 
-                <div class="polaroid-card side-card far">
+                <div class="polaroid-card side-card far" data-review-index="4">
                     <img src="/src/main/resources/static/img/cupPrincipal.jpg" class="main-photo" alt="Café">
                     <div class="card-footer">
                         <img src="https://ui-avatars.com/api/?name=Natalia+G&background=222&color=b59d68" class="avatar"
@@ -210,15 +227,22 @@
                             <p>Especialista</p>
                         </div>
                     </div>
+                    <div class="review-details">
+                        <div class="review-stars" role="img" aria-label="4 de 5 estrelas">★★★★☆</div>
+                        <p class="review-comment">O café tem sabor marcante e a apresentação é impecável.</p>
+                    </div>
                 </div>
             </div>
 
-            <button class="carousel-btn next-btn">&gt;</button>
+            <button type="button" class="carousel-btn next-btn" aria-label="Próxima avaliação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
         </div>
 
-        <div class="carousel-dots">
-            <span class="dot active"></span>
-            <span class="dot"></span>
+        <div class="carousel-dots" aria-label="Selecionar avaliação">
+            <button type="button" class="dot" data-review-index="0" aria-label="Ver avaliação de Vitoria G."></button>
+            <button type="button" class="dot" data-review-index="1" aria-label="Ver avaliação de Maria S."></button>
+            <button type="button" class="dot active" data-review-index="2" aria-label="Ver avaliação de Meria S." aria-current="true"></button>
+            <button type="button" class="dot" data-review-index="3" aria-label="Ver avaliação de Marta S."></button>
+            <button type="button" class="dot" data-review-index="4" aria-label="Ver avaliação de Natalia G."></button>
         </div>
     </section>
 
