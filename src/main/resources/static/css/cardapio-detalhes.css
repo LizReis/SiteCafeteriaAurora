@@ -1,0 +1,87 @@
+/* Estilos compartilhados pelas páginas de cafés, bebidas e comidas. */
+
+.menu-detail-container {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 0 5%;
+    text-align: center;
+}
+
+.menu-detail-title {
+    font-family: var(--fontePlayFair);
+    color: var(--fonteBranca);
+    font-size: 48px;
+    margin-bottom: 40px;
+}
+
+.menu-banner-img {
+    width: 100%;
+    height: 350px;
+    border-radius: 30px;
+    overflow: hidden;
+    margin-bottom: 50px;
+    box-shadow: 0 0 30px rgba(181, 157, 104, 0.2);
+}
+
+.menu-banner-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.menu-list-container {
+    background-color: #0a0a0a; /* Preto profundo em vez de marrom */
+    border: 1px solid rgba(181, 157, 104, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 0 40px rgba(181, 157, 104, 0.1); /* Glow dourado sutil */
+}
+
+.menu-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 20px;
+}
+
+.menu-item-row:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    text-align: left;
+    flex-grow: 1;
+}
+
+.item-info h3 {
+    font-family: var(--fontePlayFair);
+    color: var(--fonteDestaque);
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.item-info p {
+    font-size: 14px;
+    color: var(--fonteBranca);
+    opacity: 0.7;
+}
+
+.btn-add {
+    background-color: var(--fonteDestaque);
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: var(--fontMotserrat);
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.btn-add:hover {
+    background-color: var(--fonteBranca);
+    box-shadow: 0 0 15px var(--fonteDestaque);
+}
