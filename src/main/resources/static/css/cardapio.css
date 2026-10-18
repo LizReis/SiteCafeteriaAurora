@@ -1,0 +1,118 @@
+/* Página de seleção dos cardápios. */
+
+/* =========================================
+   SEÇÃO CARDÁPIOS (MENU SECTION)
+========================================= */
+.menu-section {
+    padding: 100px 5%;
+    background-color: #000000; /* Preto absoluto conforme solicitado */
+    text-align: center;
+}
+
+.menu-header {
+    margin-bottom: 60px;
+}
+
+.menu-title {
+    font-family: var(--fontePlayFair);
+    color: var(--fonteBranca);
+    font-size: 54px;
+    margin-bottom: 10px;
+}
+
+.menu-subtitle {
+    font-family: var(--fontMotserrat);
+    color: var(--fonteBranca);
+    opacity: 0.7;
+    font-size: 18px;
+}
+
+.menu-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.menu-card {
+    background-color: #0a0a0a; /* Preto levemente mais claro para contraste */
+    border: 1px solid rgba(181, 157, 104, 0.2);
+    border-radius: 20px;
+    width: 350px;
+    overflow: hidden;
+    transition: 0.4s ease;
+    /* Efeito de brilho (Glow) mais contido para não poluir o tema dark */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.menu-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--fonteDestaque);
+    box-shadow: 0 0 25px rgba(181, 157, 104, 0.25);
+}
+
+.menu-card-img {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    padding: 15px; /* Espaçamento interno para a imagem não tocar as bordas */
+}
+
+.menu-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    filter: brightness(0.8);
+    transition: 0.4s;
+}
+
+.menu-card:hover .menu-card-img img {
+    filter: brightness(1);
+}
+
+.menu-card-content {
+    padding: 0 30px 35px;
+}
+
+.menu-card-content h3 {
+    font-family: var(--fontePlayFair);
+    color: var(--fonteDestaque);
+    font-size: 26px;
+    margin-bottom: 15px;
+}
+
+.menu-card-content p {
+    font-family: var(--fontMotserrat);
+    color: var(--fonteBranca);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    opacity: 0.8;
+    min-height: 45px;
+}
+
+.btn-menu {
+    display: block;
+    background-color: var(--fonteDestaque);
+    color: #000000;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-menu:hover {
+    background-color: var(--fonteBranca);
+    transform: scale(1.02);
+}
+
+/* Ajuste Mobile */
+@media (max-width: 768px) {
+    .menu-title { font-size: 38px; }
+    .menu-card { width: 100%; max-width: 350px; }
+}
