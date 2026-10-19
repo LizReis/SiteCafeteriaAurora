@@ -1,173 +1,121 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: siteHead('Menu de Café - Café Aurora', 'cardapio-cafe.css')}"></head>
+<body class="menu-page-bg cafe-menu-page">
+<header th:replace="~{fragments/layout :: siteHeader}"></header>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardápio de Cafés - Café Aurora</title>
-    <link rel="stylesheet" href="/src/main/resources/static/css/style.css">
-    <link rel="stylesheet" href="/src/main/resources/static/css/cardapio-detalhes.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet">
-</head>
+<main class="cafe-menu" id="cardapio-cafes">
+  <div class="coffee-grains" aria-hidden="true"></div>
+  <div class="cafe-menu-inner">
+    <div class="coffee-menu-brand">
+      <img src="/img/logo-agrupada.svg" th:src="@{/img/logo-agrupada.svg}"
+           alt="Café Aurora" width="250" height="153">
+    </div>
 
-<body class="menu-page-bg">
+    <div class="cafe-menu-intro">
+      <div class="cafe-menu-intro-copy">
+        <div class="cafe-script-heading"><span>just coffe</span><span class="cafe-heading-line"></span></div>
+        <h1>Menu de Café</h1>
+        <p>Sabores cuidadosamente selecionados para transformar o seu dia em um bom momento.</p>
+      </div>
+      <a class="cafe-other-menu" href="/cardapio-drinks.html" th:href="@{/cardapio-drinks.html}">
+        <small>EXPLORAR TAMBÉM</small>
+        <span>Menu de Drinks <span aria-hidden="true">↗</span></span>
+      </a>
+    </div>
 
-    <header>
-        <div class="logo">Café Aurora</div>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Cardápios</a></li>
-                <li><a href="#">Avaliações</a></li>
-                <li><a href="#">Endereço</a></li>
-                <li><a href="#">Sobre</a></li>
-            </ul>
-        </nav>
-        <div class="auth-buttons">
-            <a href="#" class="btn-cardapio">Cardápio</a>
-        </div>
-    </header>
+    <section class="coffee-category" aria-labelledby="expressos-heading">
+      <div class="coffee-category-heading">
+        <h2 id="expressos-heading"><span class="coffee-cup-icon" aria-hidden="true">♨</span> Espressos</h2>
+        <span class="coffee-category-rule" aria-hidden="true"></span>
+      </div>
+      <div class="coffee-products-grid">
+        <article class="coffee-product" data-product-id="espresso-italiano">
+          <img src="/img/42953.jpg" alt="Espresso Italiano servido em xícara" loading="lazy">
+          <div class="coffee-product-info">
+            <div class="coffee-product-name"><h3>Espresso Italiano</h3><span class="price-leader"></span><strong>R$ 10,00</strong></div>
+            <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
+          </div>
+          <div class="coffee-quantity" aria-label="Quantidade de Espresso Italiano">
+            <button type="button" class="quantity-minus" aria-label="Diminuir Espresso Italiano">−</button>
+            <output aria-live="polite">0</output>
+            <button type="button" class="quantity-plus" aria-label="Aumentar Espresso Italiano">+</button>
+          </div>
+        </article>
+        <article class="coffee-product" data-product-id="latte-macchiato">
+          <img src="/img/1050.jpg" alt="Latte Macchiato servido em copo de vidro" loading="lazy">
+          <div class="coffee-product-info">
+            <div class="coffee-product-name"><h3>Latte Macchiato</h3><span class="price-leader"></span><strong>R$ 16,00</strong></div>
+            <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
+          </div>
+          <div class="coffee-quantity" aria-label="Quantidade de Latte Macchiato">
+            <button type="button" class="quantity-minus" aria-label="Diminuir Latte Macchiato">−</button>
+            <output aria-live="polite">0</output>
+            <button type="button" class="quantity-plus" aria-label="Aumentar Latte Macchiato">+</button>
+          </div>
+        </article>
+        <article class="coffee-product" data-product-id="cappuccino">
+          <img src="/img/42953.jpg" alt="Cappuccino com arte no leite" loading="lazy">
+          <div class="coffee-product-info">
+            <div class="coffee-product-name"><h3>Cappuccino</h3><span class="price-leader"></span><strong>R$ 14,00</strong></div>
+            <p>Cappuccino clássico com leite vaporizado e polvilhado com cacau.</p>
+          </div>
+          <div class="coffee-quantity" aria-label="Quantidade de Cappuccino">
+            <button type="button" class="quantity-minus" aria-label="Diminuir Cappuccino">−</button>
+            <output aria-live="polite">0</output>
+            <button type="button" class="quantity-plus" aria-label="Aumentar Cappuccino">+</button>
+          </div>
+        </article>
+        <article class="coffee-product" data-product-id="espresso-duplo">
+          <img src="/img/1050.jpg" alt="Café espresso servido em copo transparente" loading="lazy">
+          <div class="coffee-product-info">
+            <div class="coffee-product-name"><h3>Espresso Italiano</h3><span class="price-leader"></span><strong>R$ 10,00</strong></div>
+            <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
+          </div>
+          <div class="coffee-quantity" aria-label="Quantidade de Espresso Italiano">
+            <button type="button" class="quantity-minus" aria-label="Diminuir Espresso Italiano">−</button>
+            <output aria-live="polite">0</output>
+            <button type="button" class="quantity-plus" aria-label="Aumentar Espresso Italiano">+</button>
+          </div>
+        </article>
+      </div>
+    </section>
 
-    <main class="menu-detail-container">
-        <h1 class="menu-detail-title">Cardápio de Café</h1>
-
-        <div class="menu-banner-img">
-            <img src="/src/main/resources/static/img/cupPrincipal.jpg" alt="Café Especial">
-        </div>
-
-        <div class="menu-list-container">
-            <div class="menu-item-row">
-                <div class="item-info">
-                    <h3>Espresso Italiano ................................... R$ 10,00</h3>
-                    <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
-                </div>
-                <button class="btn-add">Adicionar ao Pedido</button>
-            </div>
-
-            <div class="menu-item-row">
-                <div class="item-info">
-                    <h3>Cappuccino ............................................ R$ 14,00</h3>
-                    <p>Cappuccino clássico com leite vaporizado e polvilhado com cacau.</p>
-                </div>
-                <button class="btn-add">Adicionar ao Pedido</button>
-            </div>
-
-            <div class="menu-item-row">
-                <div class="item-info">
-                    <h3>Latte Macchiato ..................................... R$ 16,00</h3>
-                    <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
-                </div>
-                <button class="btn-add">Adicionar ao Pedido</button>
-            </div>
-        </div>
-    </main>
-
-    <footer class="site-footer">
-        <div class="footer-content">
-
-            <div class="footer-col brand-col">
-                <div class="logo logo-footer">Café <br>Aurora</div>
-                <p class="brand-slogan">A arte do café em cada xícara.</p>
-                <div class="social-icons">
-                    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg></a>
-                    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                        </svg></a>
-                    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                            </path>
-                        </svg></a>
-                </div>
-            </div>
-
-            <div class="footer-col nav-col">
-                <h3>Navegação</h3>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Cardápio</a></li>
-                    <li><a href="#">Sobre Nós</a></li>
-                    <li><a href="#">Avaliações</a></li>
-                    <li><a href="#">Contato</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col contact-col">
-                <h3>Contato</h3>
-                <ul>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        Rua das Flores, 123 - Centro
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                            </path>
-                        </svg>
-                        (11) 98765-4321
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                            </path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg>
-                        contato@cafeaurora.com.br
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        Seg-Sex: 8h-20h | Sáb-Dom: 9h-22h
-                    </li>
-                </ul>
-            </div>
-
-            <div class="footer-col news-col">
-                <h3>Newsletter</h3>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="Seu e-mail" required>
-                    <button type="submit">Assinar</button>
-                </form>
-            </div>
-
-        </div>
-
-        <div class="footer-bottom">
-            <div class="bottom-text">
-                <p>&copy; 2026 Café Aurora. Todos os direitos reservados.</p>
-                <p>Desenvolvido com 💛</p>
-            </div>
-            <div class="sparkle-icon">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--fonteBranca)"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 0L13.5 8.5L22 10L13.5 11.5L12 20L10.5 11.5L2 10L10.5 8.5L12 0Z" opacity="0.4" />
-                </svg>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/src/main/resources/static/js/scripts.js"></script>
-
+    <section class="coffee-category" aria-labelledby="cappuccino-heading">
+      <div class="coffee-category-heading">
+        <h2 id="cappuccino-heading"><span class="coffee-cup-icon" aria-hidden="true">♨</span> Capucino</h2>
+        <span class="coffee-category-rule" aria-hidden="true"></span>
+      </div>
+      <div class="coffee-products-grid">
+        <article class="coffee-product" data-product-id="cappuccino-classico">
+          <img src="/img/42953.jpg" alt="Cappuccino artesanal" loading="lazy">
+          <div class="coffee-product-info">
+            <div class="coffee-product-name"><h3>Espresso Italiano</h3><span class="price-leader"></span><strong>R$ 10,00</strong></div>
+            <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
+          </div>
+          <div class="coffee-quantity" aria-label="Quantidade de café">
+            <button type="button" class="quantity-minus" aria-label="Diminuir quantidade">−</button>
+            <output aria-live="polite">0</output>
+            <button type="button" class="quantity-plus" aria-label="Aumentar quantidade">+</button>
+          </div>
+        </article>
+        <article class="coffee-product" data-product-id="latte-art">
+          <img src="/img/1050.jpg" alt="Latte com leite cremoso" loading="lazy">
+          <div class="coffee-product-info">
+            <div class="coffee-product-name"><h3>Latte Macchiato</h3><span class="price-leader"></span><strong>R$ 16,00</strong></div>
+            <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
+          </div>
+          <div class="coffee-quantity" aria-label="Quantidade de Latte Macchiato">
+            <button type="button" class="quantity-minus" aria-label="Diminuir quantidade">−</button>
+            <output aria-live="polite">0</output>
+            <button type="button" class="quantity-plus" aria-label="Aumentar quantidade">+</button>
+          </div>
+        </article>
+      </div>
+    </section>
+    <p class="coffee-menu-note">Imagens e produtos ilustrativos para demonstração do cardápio.</p>
+  </div>
+</main>
+<script src="/js/cardapio-cafe.js" th:src="@{/js/cardapio-cafe.js}" defer></script>
 </body>
-
 </html>
