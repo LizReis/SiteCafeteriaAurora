@@ -393,3 +393,141 @@
         font-size: 14px;
     }
 }
+
+/* =====================================================================
+   ANIMACOES CAFE AURORA
+   Timeline da abertura:
+   0.10s  logo surge no lugar (sem deslocamento)
+   1.00s  caligrafia "just coffe" é revelada da esquerda para a direita
+   2.55s  linha cresce, depois do término da escrita
+   2.70s  título desce suavemente; legenda aparece em seguida
+   2.90s  link para Drinks entra em etapas
+   Categorias: aparecem uma única vez ao entrar na área visível.
+   Todas as animações de entrada são ignoradas com movimento reduzido.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+    /* A logo ganha foco e opacidade sem vir de nenhuma direção. */
+    .cafe-menu-page .coffee-menu-brand img {
+        animation: aurora-logo-reveal 1.35s cubic-bezier(.18, .8, .25, 1) .10s both;
+    }
+
+    /* O texto manuscrito é desvelado progressivamente, como traços de tinta. */
+    .cafe-menu-page .cafe-script-heading > span:first-child {
+        display: inline-block;
+        clip-path: inset(-8px 100% -8px 0);
+        animation: aurora-ink-writing 1.45s cubic-bezier(.43, 0, .23, 1) 1.00s both;
+    }
+
+    /* A linha só começa depois da escrita (1.00 + 1.45 segundos). */
+    .cafe-menu-page .cafe-heading-line {
+        transform-origin: left center;
+        animation: aurora-line-grow .90s cubic-bezier(.22, 1, .36, 1) 2.55s both;
+    }
+
+    /* Título e frase entram de cima para baixo, mantendo o layout intacto. */
+    .cafe-menu-page .cafe-menu-intro h1 {
+        animation: aurora-descend .90s cubic-bezier(.22, 1, .36, 1) 2.72s both;
+    }
+    .cafe-menu-page .cafe-menu-intro-copy > p {
+        animation: aurora-descend .90s cubic-bezier(.22, 1, .36, 1) 2.95s both;
+    }
+
+    /* Convite lateral: legenda, texto/seta e sublinhado em sequência. */
+    .cafe-menu-page .cafe-other-menu small {
+        animation: aurora-descend .75s cubic-bezier(.22, 1, .36, 1) 2.92s both;
+    }
+    .cafe-menu-page .cafe-other-menu > span {
+        position: relative;
+        border-bottom: 0;
+        animation: aurora-descend .90s cubic-bezier(.22, 1, .36, 1) 3.12s both;
+    }
+    .cafe-menu-page .cafe-other-menu > span::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: currentColor;
+        transform-origin: left center;
+        animation: aurora-line-grow .80s cubic-bezier(.22, 1, .36, 1) 3.77s both;
+    }
+    .cafe-menu-page .cafe-other-menu > span > span {
+        display: inline-block;
+        animation: aurora-arrow-reveal .55s cubic-bezier(.22, 1, .36, 1) 3.45s both;
+    }
+
+    /* Categorias reveladas sob demanda, após o IntersectionObserver sinalizar.
+       Sem JavaScript, todas permanecem visíveis e utilizáveis. */
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category-heading,
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category .coffee-product {
+        opacity: 0;
+        transform: translateY(22px);
+        filter: blur(3px);
+        transition:
+            opacity .90s cubic-bezier(.22, 1, .36, 1),
+            transform .90s cubic-bezier(.22, 1, .36, 1),
+            filter .90s ease-out;
+    }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-category-heading,
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category .coffee-category-rule {
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 1.15s cubic-bezier(.22, 1, .36, 1);
+    }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-category-rule {
+        transform: scaleX(1);
+        transition-delay: .36s;
+    }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(1) { transition-delay: .20s; }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(2) { transition-delay: .32s; }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(3) { transition-delay: .44s; }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(4) { transition-delay: .56s; }
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(n+5) { transition-delay: .66s; }
+}
+
+@keyframes aurora-logo-reveal {
+    from { opacity: 0; filter: blur(13px); transform: scale(.94); }
+    to   { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+@keyframes aurora-ink-writing {
+    from { clip-path: inset(-8px 100% -8px 0); }
+    to   { clip-path: inset(-8px 0 -8px 0); }
+}
+@keyframes aurora-line-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+@keyframes aurora-descend {
+    from { opacity: 0; transform: translateY(-22px); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes aurora-arrow-reveal {
+    from { opacity: 0; transform: translate(-5px, 5px) scale(.90); }
+    to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+/* Legibilidade é prioritária para usuários com movimento reduzido. */
+@media (prefers-reduced-motion: reduce) {
+    .cafe-menu-page .coffee-menu-brand img,
+    .cafe-menu-page .cafe-script-heading > span:first-child,
+    .cafe-menu-page .cafe-heading-line,
+    .cafe-menu-page .cafe-menu-intro h1,
+    .cafe-menu-page .cafe-menu-intro-copy > p,
+    .cafe-menu-page .cafe-other-menu,
+    .cafe-menu-page .coffee-category-heading,
+    .cafe-menu-page .coffee-product {
+        animation: none !important;
+        transition: none !important;
+        opacity: 1;
+        filter: none;
+        clip-path: none;
+        transform: none;
+    }
+}
