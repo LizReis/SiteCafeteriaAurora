@@ -1,3 +1,11 @@
+:root {
+    --fonteDestaque: #af8e48;
+    --fonteBranca: #ffffff;
+    --fontePlayFair: "Playfair Display", serif;
+    --fontMotserrat: "Montserrat", sans-serif;
+    --fontePlaywrite: "Playwrite US Trad", cursive;
+}
+
 /* Página de seleção dos cardápios. */
 
 /* =========================================
