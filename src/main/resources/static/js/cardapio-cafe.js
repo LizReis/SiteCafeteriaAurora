@@ -18,46 +18,83 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ANIMACOES CAFE AURORA: as categorias entram quando aparecem no viewport.
-// O conteúdo não fica oculto se JS estiver indisponível ou se movimento reduzido estiver ativo.
+// ANIMACOES CAFE AURORA: inicialização resiliente e diagnóstico local.
+// Interação de quantidades acima é preservada integralmente.
 (() => {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
-
+  const ANIMATION_VERSION = '20261019-animacoes-2';
   const page = document.querySelector('.cafe-menu-page');
   if (!page) return;
 
-  // Este script é deferido; o corpo já existe, antes do DOMContentLoaded.
-  page.classList.add('coffee-reveal-enabled');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let observer;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function showAllCategories() {
+    document.querySelectorAll('.cafe-menu-page .coffee-category')
+      .forEach(category => category.classList.add('is-revealed'));
+    page.classList.remove('coffee-reveal-enabled');
+  }
+
+  function initCategoryAnimations() {
+    if (reducedMotion.matches || !('IntersectionObserver' in window)) {
+      showAllCategories();
+      return;
+    }
     const categories = Array.from(document.querySelectorAll('.cafe-menu-page .coffee-category'));
     if (!categories.length) return;
 
-    // Evita que a primeira categoria se antecipe ao título e à linha manuscrita.
+    page.classList.add('coffee-reveal-enabled');
+
     const firstCategory = categories[0];
-    const startedAt = performance.now();
-    const introFinishMs = 3250;
-
-    const observer = new IntersectionObserver((entries, currentObserver) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-
+    // Os títulos e a caligrafia terminam antes da entrada dos primeiros produtos.
+    const initialDelay = 3200;
+    const pageLoadTime = performance.timeOrigin;
+    observer = new IntersectionObserver((entries, instance) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        instance.unobserve(entry.target);
         const category = entry.target;
-        currentObserver.unobserve(category);
-
-        const delay = category === firstCategory
-          ? Math.max(0, introFinishMs - (performance.now() - startedAt))
-          : 0;
-
-        if (delay) {
-          window.setTimeout(() => category.classList.add('is-revealed'), delay);
+        const elapsed = Date.now() - pageLoadTime;
+        const wait = category === firstCategory ? Math.max(0, initialDelay - elapsed) : 0;
+        if (wait > 0) {
+          window.setTimeout(() => category.classList.add('is-revealed'), wait);
         } else {
           category.classList.add('is-revealed');
         }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
+      }
+    }, { threshold: 0.1, rootMargin: '0px 0px -25px 0px' });
 
     categories.forEach(category => observer.observe(category));
-  }, { once: true });
+  }
+
+  // Em scripts carregados depois do DOMContentLoaded, o callback também executa.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCategoryAnimations, { once: true });
+  } else {
+    initCategoryAnimations();
+  }
+
+  if (typeof reducedMotion.addEventListener === 'function') {
+    reducedMotion.addEventListener('change', event => {
+      if (event.matches) {
+        if (observer) observer.disconnect();
+        showAllCategories();
+      }
+    });
+  }
+
+  // Execute CafeAuroraAnimationDebug() no console do navegador.
+  // O relatório identifica o estilo carregado, preferência de movimento e animação aplicada.
+  window.CafeAuroraAnimationDebug = () => {
+    const logo = document.querySelector('.coffee-menu-brand img');
+    const css = [...document.styleSheets].map(s => s.href).filter(Boolean);
+    return {
+      versaoJS: ANIMATION_VERSION,
+      url: window.location.href,
+      prefereMovimentoReduzido: reducedMotion.matches,
+      nomeAnimacaoLogo: logo ? getComputedStyle(logo).animationName : 'logo ausente',
+      cssCardapioEncontrado: css.some(url => url.includes('cardapio-cafe.css')),
+      arquivosCSS: css.filter(url => url.includes('cardapio-cafe')),
+      categoriaInicializada: page.classList.contains('coffee-reveal-enabled')
+    };
+  };
 })();
