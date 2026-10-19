@@ -18,83 +18,106 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ANIMACOES CAFE AURORA: inicialização resiliente e diagnóstico local.
-// Interação de quantidades acima é preservada integralmente.
+// ANIMACOES CAFE AURORA — categorias em sequência e entrada ao rolar.
 (() => {
-  const ANIMATION_VERSION = '20261019-animacoes-2';
+  const ANIMATION_VERSION = '20261019-animacoes-3';
   const page = document.querySelector('.cafe-menu-page');
   if (!page) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let observer;
+  const timers = new Set();
+  const categories = Array.from(page.querySelectorAll('.coffee-category'));
+  const visibleCategories = new Set();
+  let firstRevealAt = 0;
+
+  function schedule(callback, delay) {
+    const id = window.setTimeout(() => {
+      timers.delete(id);
+      callback();
+    }, delay);
+    timers.add(id);
+  }
+
+  function reveal(category) {
+    if (category.classList.contains('is-revealed')) return;
+    category.classList.add('is-revealed');
+    if (category === categories[0]) firstRevealAt = performance.now();
+  }
+
+  function revealEligible() {
+    if (reducedMotion.matches) return;
+    categories.forEach((category, index) => {
+      if (!visibleCategories.has(category) || category.dataset.revealQueued === 'true') return;
+      category.dataset.revealQueued = 'true';
+
+      if (index === 0) {
+        const wait = Math.max(0, 3250 - performance.now());
+        schedule(() => {
+          reveal(category);
+          revealEligible();
+        }, wait);
+        return;
+      }
+
+      // A segunda categoria repete o mesmo efeito, mas somente depois dos
+      // títulos, linha e produtos de Espressos iniciarem a animação.
+      // Se ela entrar no viewport mais tarde, animará naquele momento.
+      const predecessor = categories[index - 1];
+      if (!predecessor.classList.contains('is-revealed')) {
+        category.dataset.revealQueued = 'false';
+        return;
+      }
+      const remaining = Math.max(0, 1750 - (performance.now() - firstRevealAt));
+      schedule(() => reveal(category), remaining);
+    });
+  }
 
   function showAllCategories() {
-    document.querySelectorAll('.cafe-menu-page .coffee-category')
-      .forEach(category => category.classList.add('is-revealed'));
+    if (observer) observer.disconnect();
+    timers.forEach(id => window.clearTimeout(id));
+    timers.clear();
+    categories.forEach(category => category.classList.add('is-revealed'));
     page.classList.remove('coffee-reveal-enabled');
   }
 
-  function initCategoryAnimations() {
+  function init() {
     if (reducedMotion.matches || !('IntersectionObserver' in window)) {
       showAllCategories();
       return;
     }
-    const categories = Array.from(document.querySelectorAll('.cafe-menu-page .coffee-category'));
     if (!categories.length) return;
-
     page.classList.add('coffee-reveal-enabled');
-
-    const firstCategory = categories[0];
-    // Os títulos e a caligrafia terminam antes da entrada dos primeiros produtos.
-    const initialDelay = 3200;
-    const pageLoadTime = performance.timeOrigin;
-    observer = new IntersectionObserver((entries, instance) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        instance.unobserve(entry.target);
-        const category = entry.target;
-        const elapsed = Date.now() - pageLoadTime;
-        const wait = category === firstCategory ? Math.max(0, initialDelay - elapsed) : 0;
-        if (wait > 0) {
-          window.setTimeout(() => category.classList.add('is-revealed'), wait);
-        } else {
-          category.classList.add('is-revealed');
-        }
-      }
-    }, { threshold: 0.1, rootMargin: '0px 0px -25px 0px' });
-
+    observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) visibleCategories.add(entry.target);
+      });
+      revealEligible();
+    }, { threshold: 0.05, rootMargin: '0px 0px -15px 0px' });
     categories.forEach(category => observer.observe(category));
   }
 
-  // Em scripts carregados depois do DOMContentLoaded, o callback também executa.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCategoryAnimations, { once: true });
-  } else {
-    initCategoryAnimations();
-  }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 
   if (typeof reducedMotion.addEventListener === 'function') {
     reducedMotion.addEventListener('change', event => {
-      if (event.matches) {
-        if (observer) observer.disconnect();
-        showAllCategories();
-      }
+      if (event.matches) showAllCategories();
     });
   }
 
-  // Execute CafeAuroraAnimationDebug() no console do navegador.
-  // O relatório identifica o estilo carregado, preferência de movimento e animação aplicada.
   window.CafeAuroraAnimationDebug = () => {
     const logo = document.querySelector('.coffee-menu-brand img');
-    const css = [...document.styleSheets].map(s => s.href).filter(Boolean);
     return {
       versaoJS: ANIMATION_VERSION,
-      url: window.location.href,
       prefereMovimentoReduzido: reducedMotion.matches,
       nomeAnimacaoLogo: logo ? getComputedStyle(logo).animationName : 'logo ausente',
-      cssCardapioEncontrado: css.some(url => url.includes('cardapio-cafe.css')),
-      arquivosCSS: css.filter(url => url.includes('cardapio-cafe')),
-      categoriaInicializada: page.classList.contains('coffee-reveal-enabled')
+      categorias: categories.map(c => ({
+        titulo: c.querySelector('h2')?.textContent.trim(),
+        visivel: visibleCategories.has(c),
+        animada: c.classList.contains('is-revealed')
+      }))
     };
   };
 })();
