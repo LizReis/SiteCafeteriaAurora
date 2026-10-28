@@ -374,140 +374,140 @@
     }
 }
 
-@media(prefers-reduced-motion:no-preference) {
-    .drink-brand img {
-        animation: drink-appear 1.35s cubic-bezier(.2, .8, .25, 1) .12s both
+/* =====================================================================
+   ANIMACOES CAFE AURORA
+   Timeline da abertura:
+   0.10s  logo surge no lugar (sem deslocamento)
+   1.00s  caligrafia "just drink" é revelada da esquerda para a direita
+   2.55s  linha cresce, depois do término da escrita
+   2.70s  título desce suavemente; legenda aparece em seguida
+   2.90s  link para Drinks entra em etapas
+   Categorias: aparecem uma única vez ao entrar na área visível.
+   Todas as animações de entrada são ignoradas com movimento reduzido.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+    /* A logo ganha foco e opacidade sem vir de nenhuma direção. */
+    .drink-page .drink-brand img {
+        animation: drink-logo-reveal 1.35s cubic-bezier(.18, .8, .25, 1) .10s both;
     }
 
-    .drink-script>span:first-child {
+    /* O texto manuscrito é desvelado progressivamente, como traços de tinta. */
+    .drink-page .drink-script > span:first-child {
         display: inline-block;
-        animation: drink-write 1.35s ease 1s both
+        clip-path: inset(-8px 100% -8px 0);
+        animation: drink-ink-writing 1.45s cubic-bezier(.43, 0, .23, 1) 1.00s both;
     }
 
-    .drink-script-rule {
-        animation: drink-grow .9s ease 2.48s both
+    /* A linha só começa depois da escrita (1.00 + 1.45 segundos). */
+    .drink-page .drink-script-rule {
+        transform-origin: left center;
+        animation: drink-line-grow .90s cubic-bezier(.22, 1, .36, 1) 2.55s both;
     }
 
-    .drink-intro h1 {
-        animation: drink-down .9s ease 2.7s both
+    /* Título e frase entram de cima para baixo, mantendo o layout intacto. */
+    .drink-page .drink-intro h1 {
+        animation: drink-descend .90s cubic-bezier(.22, 1, .36, 1) 2.72s both;
+    }
+    .drink-page .drink-intro-copy > p {
+        animation: drink-descend .90s cubic-bezier(.22, 1, .36, 1) 2.95s both;
     }
 
-    .drink-intro p {
-        animation: drink-down .9s ease 2.94s both
+    /* Convite lateral: legenda, texto/seta e sublinhado em sequência. */
+    .drink-page .drink-link small {
+        animation: drink-descend .75s cubic-bezier(.22, 1, .36, 1) 2.92s both;
+    }
+    .drink-page .drink-link > span {
+        position: relative;
+        border-bottom: 0;
+        animation: drink-descend .90s cubic-bezier(.22, 1, .36, 1) 3.12s both;
+    }
+    .drink-page .drink-link > span::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: currentColor;
+        transform-origin: left center;
+        animation: drink-line-grow .80s cubic-bezier(.22, 1, .36, 1) 3.77s both;
+    }
+    .drink-page .drink-link > span > span {
+        display: inline-block;
+        animation: drink-arrow-reveal .55s cubic-bezier(.22, 1, .36, 1) 3.45s both;
     }
 
-    .drink-link small {
-        animation: drink-down .8s ease 2.98s both
-    }
-
-    .drink-link>span {
-        animation: drink-down .8s ease 3.2s both
-    }
-
+    /* Categorias reveladas sob demanda, após o IntersectionObserver sinalizar.
+       Sem JavaScript, todas permanecem visíveis e utilizáveis. */
     .drink-page.drink-reveal-enabled .drink-category-heading,
-    .drink-page.drink-reveal-enabled .drink-product {
+    .drink-page.drink-reveal-enabled .drink-category .drink-product {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(22px);
         filter: blur(3px);
-        transition: opacity .85s ease, transform .85s ease, filter .85s ease
+        transition:
+            opacity .90s cubic-bezier(.22, 1, .36, 1),
+            transform .90s cubic-bezier(.22, 1, .36, 1),
+            filter .90s ease-out;
     }
-
     .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-category-heading,
     .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product {
         opacity: 1;
-        transform: none;
-        filter: none
+        transform: translateY(0);
+        filter: blur(0);
     }
-
-    .drink-page.drink-reveal-enabled .drink-rule {
+    .drink-page.drink-reveal-enabled .drink-category .drink-rule {
         transform: scaleX(0);
-        transition: transform 1s ease
+        transform-origin: left center;
+        transition: transform 1.15s cubic-bezier(.22, 1, .36, 1);
     }
-
     .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-rule {
         transform: scaleX(1);
-        transition-delay: .25s
+        transition-delay: .36s;
     }
-
-    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(1) {
-        transition-delay: .2s
-    }
-
-    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(2) {
-        transition-delay: .32s
-    }
-
-    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(3) {
-        transition-delay: .44s
-    }
-
-    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(4) {
-        transition-delay: .56s
-    }
+    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(1) { transition-delay: .20s; }
+    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(2) { transition-delay: .32s; }
+    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(3) { transition-delay: .44s; }
+    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(4) { transition-delay: .56s; }
+    .drink-page.drink-reveal-enabled .drink-category.is-revealed .drink-product:nth-child(n+5) { transition-delay: .66s; }
 }
 
-@keyframes drink-appear {
-    from {
-        opacity: 0;
-        filter: blur(12px);
-        transform: scale(.94)
-    }
-
-    to {
-        opacity: 1;
-        filter: none;
-        transform: scale(1)
-    }
+@keyframes drink-logo-reveal {
+    from { opacity: 0; filter: blur(13px); transform: scale(.94); }
+    to   { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+@keyframes drink-ink-writing {
+    from { clip-path: inset(-8px 100% -8px 0); }
+    to   { clip-path: inset(-8px 0 -8px 0); }
+}
+@keyframes drink-line-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+@keyframes drink-descend {
+    from { opacity: 0; transform: translateY(-22px); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes drink-arrow-reveal {
+    from { opacity: 0; transform: translate(-5px, 5px) scale(.90); }
+    to   { opacity: 1; transform: translate(0, 0) scale(1); }
 }
 
-@keyframes drink-write {
-    from {
-        clip-path: inset(-8px 100% -8px 0)
-    }
-
-    to {
-        clip-path: inset(-8px 0 -8px 0)
-    }
-}
-
-@keyframes drink-grow {
-    from {
-        transform: scaleX(0)
-    }
-
-    to {
-        transform: scaleX(1)
-    }
-}
-
-@keyframes drink-down {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-        filter: blur(4px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none;
-        filter: none
-    }
-}
-
-@media(prefers-reduced-motion:reduce) {
-
-    .drink-brand img,
-    .drink-script>span:first-child,
-    .drink-script-rule,
-    .drink-intro h1,
-    .drink-intro p,
-    .drink-link *,
-    .drink-category * {
+/* Legibilidade é prioritária para usuários com movimento reduzido. */
+@media (prefers-reduced-motion: reduce) {
+    .drink-page .drink-brand img,
+    .drink-page .drink-script > span:first-child,
+    .drink-page .drink-script-rule,
+    .drink-page .drink-intro h1,
+    .drink-page .drink-intro-copy > p,
+    .drink-page .drink-link,
+    .drink-page .drink-category-heading,
+    .drink-page .drink-product {
         animation: none !important;
         transition: none !important;
-        opacity: 1 !important;
-        filter: none !important;
-        transform: none !important;
-        clip-path: none !important
+        opacity: 1;
+        filter: none;
+        clip-path: none;
+        transform: none;
     }
 }
