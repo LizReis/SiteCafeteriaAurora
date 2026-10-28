@@ -217,7 +217,7 @@
 }
 
 .coffee-product-info p {
-    font: 400 10px/1.45 var(--fontMotserrat);
+    font: 400 12px/1.45 var(--fontMotserrat);
     color: rgba(255, 255, 255, .80);
     margin-top: 5px;
     max-width: 270px;

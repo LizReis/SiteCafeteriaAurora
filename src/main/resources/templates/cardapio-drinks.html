@@ -1,71 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: siteHead('Menu de Drinks - Café Aurora', 'cardapio-drinks.css')}"></head>
+
 <body class="menu-page-bg drink-page">
-<header th:replace="~{fragments/layout :: siteHeader}"></header>
-<main class="drink-menu" id="menu-drinks">
-  <div class="drink-liquid" aria-hidden="true"></div>
-  <div class="drink-content">
-    <div class="drink-brand"><img src="/img/logo-agrupada.svg" th:src="@{/img/logo-agrupada.svg}" alt="Café Aurora" width="410" height="250"></div>
-    <div class="drink-intro">
-      <div class="drink-intro-copy">
-        <div class="drink-script"><span>just drink</span><span class="drink-script-rule"></span></div>
-        <h1>Menu de Drink</h1>
-        <p>Bebidas refrescantes, alcoólicas e artesanais preparadas para transformar qualquer hora em um<br class="drink-desktop-break"> momento especial.</p>
+  <header th:replace="~{fragments/layout :: siteHeader}"></header>
+  <main class="drink-menu" id="menu-drinks">
+    <div class="drink-liquid" aria-hidden="true"></div>
+    <div class="drink-content">
+      <div class="drink-brand"><img src="/img/logo-agrupada.svg" th:src="@{/img/logo-agrupada.svg}" alt="Café Aurora"
+          width="410" height="250"></div>
+      <div class="drink-intro">
+        <div class="drink-intro-copy">
+          <div class="drink-script"><span>just drink</span><span class="drink-script-rule"></span></div>
+          <h1>Menu de Drink</h1>
+          <p>Bebidas refrescantes, alcoólicas e artesanais preparadas para transformar qualquer hora em um<br
+              class="drink-desktop-break"> momento especial.</p>
+        </div>
+        <a class="drink-link" href="/cardapio-comidas.html" th:href="@{/cardapio-comidas.html}">
+          <small>EXPLORAR TAMBÉM</small><span>Menu de Comida <span aria-hidden="true">↗</span></span>
+        </a>
       </div>
-      <a class="drink-link" href="/cardapio-comidas.html" th:href="@{/cardapio-comidas.html}">
-        <small>EXPLORAR TAMBÉM</small><span>Menu de Comida <span aria-hidden="true">↗</span></span>
-      </a>
+
+      <section class="drink-category" aria-labelledby="drink-alcoolicos">
+
+        <div class="drink-category-heading">
+          <h2 id="drink-alcoolicos">Alcoólicos</h2><span class="drink-rule"></span>
+        </div>
+        <div class="drink-grid">
+          <article class="drink-product" data-drink-index="0">
+            <img src="/img/20691.jpg" th:src="@{/img/20691.jpg}" alt="Bebida de chocolate com canela" loading="lazy">
+            <div class="drink-product-description">
+              <div class="drink-product-title">
+                <h3>Espresso Italiano</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 10,00</strong>
+              </div>
+              <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
+            </div>
+            <div class="drink-stepper" aria-label="Quantidade de Espresso Italiano">
+              <button type="button" class="drink-minus" aria-label="Diminuir Espresso Italiano">−</button><output
+                aria-live="polite">0</output><button type="button" class="drink-plus"
+                aria-label="Aumentar Espresso Italiano">+</button>
+            </div>
+          </article>
+          <article class="drink-product" data-drink-index="1">
+            <img src="/img/2148354703.jpg" th:src="@{/img/2148354703.jpg}" alt="Drink vermelho com frutas"
+              loading="lazy">
+            <div class="drink-product-description">
+              <div class="drink-product-title">
+                <h3>Latte Macchiato</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 16,00</strong>
+              </div>
+              <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
+            </div>
+            <div class="drink-stepper" aria-label="Quantidade de Latte Macchiato">
+              <button type="button" class="drink-minus" aria-label="Diminuir Latte Macchiato">−</button><output
+                aria-live="polite">0</output><button type="button" class="drink-plus"
+                aria-label="Aumentar Latte Macchiato">+</button>
+            </div>
+          </article>
+          <article class="drink-product" data-drink-index="2">
+            <img src="/img/2150649262.jpg" th:src="@{/img/2150649262.jpg}" alt="Suco de laranja fresco" loading="lazy">
+            <div class="drink-product-description">
+              <div class="drink-product-title">
+                <h3>Cappuccino</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 14,00</strong>
+              </div>
+              <p>Cappuccino clássico com leite vaporizado e polvilhado com cacau.</p>
+            </div>
+            <div class="drink-stepper" aria-label="Quantidade de Cappuccino">
+              <button type="button" class="drink-minus" aria-label="Diminuir Cappuccino">−</button><output
+                aria-live="polite">0</output><button type="button" class="drink-plus"
+                aria-label="Aumentar Cappuccino">+</button>
+            </div>
+          </article>
+          <article class="drink-product" data-drink-index="3">
+            <img src="/img/2151900810.jpg" th:src="@{/img/2151900810.jpg}" alt="Coquetel servido em taça"
+              loading="lazy">
+            <div class="drink-product-description">
+              <div class="drink-product-title">
+                <h3>Espresso Italiano</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 10,00</strong>
+              </div>
+              <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
+            </div>
+            <div class="drink-stepper" aria-label="Quantidade de Espresso Italiano">
+              <button type="button" class="drink-minus" aria-label="Diminuir Espresso Italiano">−</button><output
+                aria-live="polite">0</output><button type="button" class="drink-plus"
+                aria-label="Aumentar Espresso Italiano">+</button>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="drink-category" aria-labelledby="drink-sucos">
+        <div class="drink-category-heading">
+          <h2 id="drink-sucos">Sucos</h2><span class="drink-rule"></span>
+        </div>
+        <!-- Seção preparada para os sucos cadastrados posteriormente. -->
+      </section>
     </div>
-    <section class="drink-category" aria-labelledby="drink-alcoolicos">
-      <div class="drink-category-heading"><h2 id="drink-alcoolicos">Alcoólicos</h2><span class="drink-rule"></span></div>
-      <div class="drink-grid"><article class="drink-product" data-drink-index="0">
-  <img src="/img/20691.jpg" th:src="@{/img/20691.jpg}" alt="Bebida de chocolate com canela" loading="lazy">
-  <div class="drink-product-description">
-    <div class="drink-product-title"><h3>Espresso Italiano</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 10,00</strong></div>
-    <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
-  </div>
-  <div class="drink-stepper" aria-label="Quantidade de Espresso Italiano">
-    <button type="button" class="drink-minus" aria-label="Diminuir Espresso Italiano">−</button><output aria-live="polite">0</output><button type="button" class="drink-plus" aria-label="Aumentar Espresso Italiano">+</button>
-  </div>
-</article>
-<article class="drink-product" data-drink-index="1">
-  <img src="/img/2148354703.jpg" th:src="@{/img/2148354703.jpg}" alt="Drink vermelho com frutas" loading="lazy">
-  <div class="drink-product-description">
-    <div class="drink-product-title"><h3>Latte Macchiato</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 16,00</strong></div>
-    <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
-  </div>
-  <div class="drink-stepper" aria-label="Quantidade de Latte Macchiato">
-    <button type="button" class="drink-minus" aria-label="Diminuir Latte Macchiato">−</button><output aria-live="polite">0</output><button type="button" class="drink-plus" aria-label="Aumentar Latte Macchiato">+</button>
-  </div>
-</article>
-<article class="drink-product" data-drink-index="2">
-  <img src="/img/2150649262.jpg" th:src="@{/img/2150649262.jpg}" alt="Suco de laranja fresco" loading="lazy">
-  <div class="drink-product-description">
-    <div class="drink-product-title"><h3>Cappuccino</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 14,00</strong></div>
-    <p>Cappuccino clássico com leite vaporizado e polvilhado com cacau.</p>
-  </div>
-  <div class="drink-stepper" aria-label="Quantidade de Cappuccino">
-    <button type="button" class="drink-minus" aria-label="Diminuir Cappuccino">−</button><output aria-live="polite">0</output><button type="button" class="drink-plus" aria-label="Aumentar Cappuccino">+</button>
-  </div>
-</article>
-<article class="drink-product" data-drink-index="3">
-  <img src="/img/2151900810.jpg" th:src="@{/img/2151900810.jpg}" alt="Coquetel servido em taça" loading="lazy">
-  <div class="drink-product-description">
-    <div class="drink-product-title"><h3>Espresso Italiano</h3><span class="drink-dots" aria-hidden="true"></span><strong>R$ 10,00</strong></div>
-    <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
-  </div>
-  <div class="drink-stepper" aria-label="Quantidade de Espresso Italiano">
-    <button type="button" class="drink-minus" aria-label="Diminuir Espresso Italiano">−</button><output aria-live="polite">0</output><button type="button" class="drink-plus" aria-label="Aumentar Espresso Italiano">+</button>
-  </div>
-</article></div>
-    </section>
-    <section class="drink-category" aria-labelledby="drink-sucos">
-      <div class="drink-category-heading"><h2 id="drink-sucos">Sucos</h2><span class="drink-rule"></span></div>
-      <!-- Seção preparada para os sucos cadastrados posteriormente. -->
-    </section>
-  </div>
-</main>
-<script src="/js/cardapio-drinks.js" th:src="@{/js/cardapio-drinks.js(v='20261027-1')}" defer></script>
+  </main>
+  <script src="/js/cardapio-drinks.js" th:src="@{/js/cardapio-drinks.js(v='20261027-1')}" defer></script>
 </body>
+
 </html>
