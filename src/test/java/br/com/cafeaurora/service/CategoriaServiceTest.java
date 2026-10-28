@@ -24,6 +24,18 @@ class CategoriaServiceTest {
     }
 
     @Test
+    void atualizacaoPodeManterNomeDaMesmaCategoria() {
+        Categoria existente = new Categoria("Cafés", null, true);
+        org.springframework.test.util.ReflectionTestUtils.setField(existente, "id", 1L);
+        when(repositorio.findById(1L)).thenReturn(Optional.of(existente));
+        when(repositorio.findByNomeIgnoreCase("Cafés")).thenReturn(Optional.of(existente));
+        when(repositorio.save(existente)).thenReturn(existente);
+
+        assertDoesNotThrow(() ->
+                service.atualizar(1L, new CategoriaRequest("Cafés", null, true)));
+    }
+
+    @Test
     void desativacaoNaoExcluiFisicamenteCategoria() {
         Categoria categoria = new Categoria("Chás", null, true);
         when(repositorio.findById(1L)).thenReturn(Optional.of(categoria));

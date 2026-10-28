@@ -7,6 +7,7 @@ import br.com.cafeaurora.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CategoriaService {
@@ -53,7 +54,7 @@ public class CategoriaService {
 
     private void validarDuplicidade(String nome, Long idAtual) {
         repo.findByNomeIgnoreCase(nome).ifPresent(existente -> {
-            if (!existente.getId().equals(idAtual))
+            if (idAtual == null || !Objects.equals(existente.getId(), idAtual))
                 throw new RegraNegocioException("Já existe uma categoria com este nome");
         });
     }
