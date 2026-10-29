@@ -13,14 +13,13 @@
     padding: clamp(75px, 6vw, 88px) 0 110px
 }
 
-.food-liquid-left {
+/* Os SVGs são recortes independentes: cada um fica preso à sua borda. */
+.food-liquid-left,
+.food-liquid-right {
     position: absolute;
-
-    inset: 56px 0 auto;
+    top: 56px;
     width: 800px;
     height: 100%;
-    background-image: url('/img/macaron-esquerdo-new.svg');
-    background-position: center top;
     background-size: 100% auto;
     background-repeat: no-repeat;
     opacity: .85;
@@ -28,20 +27,19 @@
     pointer-events: none;
 }
 
-.food-liquid-right{
-    position: absolute;
-    inset: 56px 0 auto;
-    width: 800px;
-    height: 100%;
+.food-liquid-left {
+    left: 0;
+    right: auto;
+    background-image: url('/img/macaron-esquerdo-new.svg');
+    background-position: left top;
+}
+
+.food-liquid-right {
+    right: 0;
+    left: auto;
     background-image: url('/img/macaron-direito-new.svg');
     background-position: right top;
-    background-size: 100% auto;
-    background-repeat: no-repeat;
-    opacity: .85;
-    z-index: -1;
-    pointer-events: none;
 }
-
 
 .food-content {
     margin: 0px 10%;
@@ -310,9 +308,9 @@
         grid-template-columns: 1fr
     }
 
-    .food-liquid {
-        background-size: 100% auto, 100% auto;
-        height: 755px;
+    .food-liquid-left,
+    .food-liquid-right {
+        width: min(800px, 70vw);
         opacity: .65;
     }
 
@@ -530,16 +528,14 @@
     }
 }
 
-/* Macarons enquadrados nas bordas mesmo em telas estreitas. */
-@media (max-width: 800px) {
-    .food-liquid {
-        background-size: 760px auto, 760px auto;
-        background-position: left top, right top;
-        opacity: .48;
-    }
-}
+/* Os recortes acompanham as bordas também em telas pequenas. */
 @media (max-width: 560px) {
-    .food-liquid { inset-block-start: 175px; opacity: .25; }
+    .food-liquid-left,
+    .food-liquid-right {
+        top: 175px;
+        width: min(800px, 66vw);
+        opacity: .35;
+    }
     .food-product-title h3,
     .food-product-title strong { font-size: 10px; }
 }
