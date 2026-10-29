@@ -13,14 +13,29 @@
     padding: clamp(75px, 6vw, 88px) 0 110px
 }
 
-.food-liquid {
+.food-liquid-left {
+    position: absolute;
+
+    inset: 56px 0 auto;
+    width: 800px;
+    height: 100%;
+    background-image: url('/img/macaron-esquerdo-new.svg');
+    background-position: center top;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    opacity: .85;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.food-liquid-right{
     position: absolute;
     inset: 56px 0 auto;
-    width: 100%;
-    height: 755px;
-    background-image: url('/img/macaron-esquerdo.svg'), url('/img/macaron-direito.svg');
-    background-position: center top, center top;
-    background-size: 100% auto, 100% auto;
+    width: 800px;
+    height: 100%;
+    background-image: url('/img/macaron-direito-new.svg');
+    background-position: right top;
+    background-size: 100% auto;
     background-repeat: no-repeat;
     opacity: .85;
     z-index: -1;
