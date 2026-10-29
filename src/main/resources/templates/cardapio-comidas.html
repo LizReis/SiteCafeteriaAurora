@@ -1,150 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: siteHead('Menu de Comida - Café Aurora', 'cardapio-comidas.css')}"></head>
+<body class="menu-page-bg food-page">
+  <!-- Header global: permanece igual ao das demais páginas. -->
+  <header th:replace="~{fragments/layout :: siteHeader}"></header>
 
-<head th:replace="~{fragments/layout :: siteHead('Cardápio de Cafés - Café Aurora', 'cardapio-detalhes.css')}"></head>
-
-<body class="menu-page-bg">
-
-    <header th:replace="~{fragments/layout :: siteHeader}"></header>
-
-    <main class="menu-detail-container">
-        <h1 class="menu-detail-title">Doces e Salgados</h1>
-
-        <div class="menu-banner-img">
-            <img src="img/1320.jpg" alt="Doces e Salgados">
+  <main class="food-menu" id="menu-comidas">
+    <div class="food-liquid" aria-hidden="true"></div>
+    <div class="food-content">
+      <div class="food-brand">
+        <img src="/img/logo-agrupada.svg" th:src="@{/img/logo-agrupada.svg}" alt="Café Aurora"
+             width="410" height="250">
+      </div>
+      <div class="food-intro">
+        <div class="food-intro-copy">
+          <div class="food-script"><span>just food</span><span class="food-script-rule"></span></div>
+          <h1>Menu de Comida</h1>
+          <p>Para beliscar, saborear e compartilhar: explore nossos sanduíches, quiches e sobremesas<br
+                class="food-desktop-break"> especiais.</p>
         </div>
+        <a class="food-link" href="/cardapio-cafe.html" th:href="@{/cardapio-cafe.html}">
+          <small>EXPLORAR TAMBÉM</small>
+          <span>Menu de Café <span aria-hidden="true">↗</span></span>
+        </a>
+      </div>
 
-        <div class="menu-list-container">
-            <div class="menu-item-row">
-                <div class="item-info">
-                    <h3>Croissant de Amêndoas ............................... R$ 12,00</h3>
-                    <p>Massa folhada artesanal com recheio cremoso e lâminas de amêndoas torradas.</p>
-                </div>
-                <button class="btn-add">Adicionar ao Pedido</button>
+      <section class="food-category" aria-labelledby="food-salgados">
+        <div class="food-category-heading"><h2 id="food-salgados">Salgados</h2><span class="food-rule"></span></div>
+        <div class="food-grid">
+          <article class="food-product" data-product-id="quiche-artesanal">
+            <img src="/img/21690.jpg" th:src="@{/img/21690.jpg}" alt="Fatia de torta artesanal" loading="lazy">
+            <div class="food-product-description">
+              <div class="food-product-title">
+                <h3>Quiche Artesanal</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 18,00</strong>
+              </div>
+              <p>Massa dourada com recheio cremoso, preparada diariamente.</p>
             </div>
-
-            <div class="menu-item-row">
-                <div class="item-info">
-                    <h3>Brownie com Sorvete .................................. R$ 22,00</h3>
-                    <p>Brownie de chocolate amargo servido quente com gelato de baunilha Bourbon.</p>
-                </div>
-                <button class="btn-add">Adicionar ao Pedido</button>
+            <div class="food-stepper" aria-label="Quantidade de Quiche Artesanal">
+              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Quiche Artesanal">−</button>
+              <output aria-live="polite">0</output>
+              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Quiche Artesanal">+</button>
             </div>
-
-            <div class="menu-item-row">
-                <div class="item-info">
-                    <h3>Torta de Frutas Silvestres ............................ R$ 16,00</h3>
-                    <p>Massa amanteigada recheada com frutas frescas e geleia da casa.</p>
-                </div>
-                <button class="btn-add">Adicionar ao Pedido</button>
+          </article>
+          <article class="food-product" data-product-id="sanduiche-casa">
+            <img src="/img/4368.jpg" th:src="@{/img/4368.jpg}" alt="Sanduíche artesanal com queijo" loading="lazy">
+            <div class="food-product-description">
+              <div class="food-product-title">
+                <h3>Sanduíche da Casa</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 22,00</strong>
+              </div>
+              <p>Pão macio, queijo e ingredientes frescos selecionados.</p>
             </div>
+            <div class="food-stepper" aria-label="Quantidade de Sanduíche da Casa">
+              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Sanduíche da Casa">−</button>
+              <output aria-live="polite">0</output>
+              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Sanduíche da Casa">+</button>
+            </div>
+          </article>
+          <article class="food-product" data-product-id="torta-especial">
+            <img src="/img/21690.jpg" th:src="@{/img/21690.jpg}" alt="Fatia de torta" loading="lazy">
+            <div class="food-product-description">
+              <div class="food-product-title">
+                <h3>Torta Especial da Casa</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 16,00</strong>
+              </div>
+              <p>Uma fatia de torta para acompanhar a pausa do café.</p>
+            </div>
+            <div class="food-stepper" aria-label="Quantidade de Torta Especial da Casa">
+              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Torta Especial da Casa">−</button>
+              <output aria-live="polite">0</output>
+              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Torta Especial da Casa">+</button>
+            </div>
+          </article>
+          <article class="food-product" data-product-id="croissant-queijo">
+            <img src="/img/1320.jpg" th:src="@{/img/1320.jpg}" alt="Croissants artesanais folhados" loading="lazy">
+            <div class="food-product-description">
+              <div class="food-product-title">
+                <h3>Croissant de Queijo</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 15,00</strong>
+              </div>
+              <p>Massa folhada crocante e recheio delicado de queijo.</p>
+            </div>
+            <div class="food-stepper" aria-label="Quantidade de Croissant de Queijo">
+              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Croissant de Queijo">−</button>
+              <output aria-live="polite">0</output>
+              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Croissant de Queijo">+</button>
+            </div>
+          </article>
         </div>
-    </main>
+      </section>
 
-    <footer class="site-footer">
-        <div class="footer-content">
-
-            <div class="footer-col brand-col">
-                <div class="logo logo-footer">Café <br>Aurora</div>
-                <p class="brand-slogan">A arte do café em cada xícara.</p>
-                <div class="social-icons">
-                    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg></a>
-                    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                        </svg></a>
-                    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                            </path>
-                        </svg></a>
-                </div>
+      <section class="food-category" aria-labelledby="food-doces">
+        <div class="food-category-heading"><h2 id="food-doces">Doces</h2><span class="food-rule"></span></div>
+        <div class="food-grid">
+          <article class="food-product" data-product-id="brownie-sorvete">
+            <img src="/img/cardapioComida.jpg" th:src="@{/img/cardapioComida.jpg}" alt="Sobremesa de confeitaria" loading="lazy">
+            <div class="food-product-description">
+              <div class="food-product-title">
+                <h3>Brownie com Sorvete</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 22,00</strong>
+              </div>
+              <p>Brownie de chocolate servido com gelato de baunilha.</p>
             </div>
-
-            <div class="footer-col nav-col">
-                <h3>Navegação</h3>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Cardápio</a></li>
-                    <li><a href="#">Sobre Nós</a></li>
-                    <li><a href="#">Avaliações</a></li>
-                    <li><a href="#">Contato</a></li>
-                </ul>
+            <div class="food-stepper" aria-label="Quantidade de Brownie com Sorvete">
+              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Brownie com Sorvete">−</button>
+              <output aria-live="polite">0</output>
+              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Brownie com Sorvete">+</button>
             </div>
-
-            <div class="footer-col contact-col">
-                <h3>Contato</h3>
-                <ul>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        Rua das Flores, 123 - Centro
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                            </path>
-                        </svg>
-                        (11) 98765-4321
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                            </path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg>
-                        contato@cafeaurora.com.br
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        Seg-Sex: 8h-20h | Sáb-Dom: 9h-22h
-                    </li>
-                </ul>
+          </article>
+          <article class="food-product" data-product-id="torta-frutas">
+            <img src="/img/21690.jpg" th:src="@{/img/21690.jpg}" alt="Fatia de torta de confeitaria" loading="lazy">
+            <div class="food-product-description">
+              <div class="food-product-title">
+                <h3>Torta de Frutas Silvestres</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 16,00</strong>
+              </div>
+              <p>Massa amanteigada com frutas e geleia da casa.</p>
             </div>
-
-            <div class="footer-col news-col">
-                <h3>Newsletter</h3>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="Seu e-mail" required>
-                    <button type="submit">Assinar</button>
-                </form>
+            <div class="food-stepper" aria-label="Quantidade de Torta de Frutas Silvestres">
+              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Torta de Frutas Silvestres">−</button>
+              <output aria-live="polite">0</output>
+              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Torta de Frutas Silvestres">+</button>
             </div>
-
+          </article>
         </div>
-
-        <div class="footer-bottom">
-            <div class="bottom-text">
-                <p>&copy; 2026 Café Aurora. Todos os direitos reservados.</p>
-                <p>Desenvolvido com 💛</p>
-            </div>
-            <div class="sparkle-icon">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--fonteBranca)"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 0L13.5 8.5L22 10L13.5 11.5L12 20L10.5 11.5L2 10L10.5 8.5L12 0Z" opacity="0.4" />
-                </svg>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/js/scripts.js"></script>
-
+      </section>
+    </div>
+  </main>
+  <!-- Os valores e controles são demonstrativos até a integração com o backend de pedidos. -->
+  <script src="/js/cardapio-comidas.js" th:src="@{/js/cardapio-comidas.js(v='20261029-food-1')}" defer></script>
 </body>
-
 </html>
