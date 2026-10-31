@@ -14,6 +14,14 @@ Acesse `http://localhost:8080`. Os 9 produtos de demonstração são inseridos n
 
 Para testar: `./mvnw test` (no Windows: `.\mvnw.cmd test`).
 
+### Página de localização
+
+- `/localizacao` ou `/localizacao.html` — página com banner, endereço ilustrativo e mapa incorporado.
+- O menu **Localização** é definido uma única vez em `templates/fragments/layout.html`, compartilhado por todas as páginas.
+- Foto: `static/img/localizacao-img.png`. Estilo independente: `static/css/localizacao.css`.
+- **Demonstração:** o endereço do MASP é um ponto público de referência, não uma unidade do Café Aurora. Horários são fictícios e deverão ser substituídos.
+- O mapa utiliza um iframe de consulta do Google Maps (`?output=embed`, sem chave). Essa opção não é a Maps Embed API oficial; para produção, gere o código de incorporação pelo Google Maps ou utilize a Maps Embed API com chave, se necessário.
+
 ### API de catálogo (pública)
 - `GET /api/categorias`
 - `GET /api/produtos` (opcional `?categoriaId=1`)

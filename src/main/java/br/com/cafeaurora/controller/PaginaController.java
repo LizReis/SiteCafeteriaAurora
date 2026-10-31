@@ -31,6 +31,11 @@ public class PaginaController {
         return "cardapio-drinks";
     }
 
+    @GetMapping({"/localizacao", "/localizacao.html"})
+    public String localizacao() {
+        return "localizacao";
+    }
+
     @GetMapping({"/sacola-pedido", "/sacola-pedido.html"})
     public String sacolaPedido() {
         return "sacola-pedido";

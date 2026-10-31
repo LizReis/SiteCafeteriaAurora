@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: siteHead('Localização - Café Aurora', 'localizacao.css')}"></head>
+<body class="localizacao-page">
+    <!-- O mesmo cabeçalho compartilhado de todas as páginas. -->
+    <header th:replace="~{fragments/layout :: siteHeader}"></header>
+
+    <main class="localizacao-main">
+        <section class="localizacao-hero" aria-labelledby="localizacao-titulo">
+            <div class="localizacao-hero-content">
+                <h1 id="localizacao-titulo">LOCALIZAÇÃO</h1>
+                <div class="localizacao-hero-rule" aria-hidden="true"></div>
+                <p>Você é sempre bem-vindo na Café Aurora.</p>
+            </div>
+        </section>
+
+        <section class="localizacao-section" aria-label="Demonstração da localização no mapa">
+            <div class="localizacao-grid">
+                <div class="localizacao-info">
+                    <p class="localizacao-eyebrow">ENDEREÇO DEMONSTRATIVO</p>
+                    <h2>Exemplo de localização<br>MASP, São Paulo</h2>
+                    <address>
+                        Avenida Paulista, nº 1578, Bela Vista,<br>
+                        São Paulo – SP, CEP 01310-200
+                    </address>
+                    <div class="localizacao-rule" aria-hidden="true"></div>
+                    <div class="localizacao-hours">
+                        <span>Todos os dias</span>
+                        <strong>07h às 22h</strong>
+                    </div>
+                    <p class="localizacao-disclaimer">
+                        Endereço e horário ilustrativos para o portfólio. O mapa indica o MASP,
+                        não uma unidade real do Café Aurora.
+                    </p>
+                </div>
+
+                <div class="localizacao-map-area">
+                    <div class="localizacao-map-frame">
+                        <iframe
+                            title="Google Maps: localização de demonstração no MASP, Avenida Paulista 1578"
+                            src="https://www.google.com/maps?q=MASP%2C%20Avenida%20Paulista%201578%2C%20S%C3%A3o%20Paulo%20SP&amp;output=embed"
+                            width="410"
+                            height="270"
+                            loading="lazy"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <a class="localizacao-directions"
+                       href="https://www.google.com/maps/dir/?api=1&amp;destination=MASP%2C%20Avenida%20Paulista%201578%2C%20S%C3%A3o%20Paulo%20SP"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Ver rotas até o endereço de demonstração no Google Maps">
+                        Ver rotas
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
