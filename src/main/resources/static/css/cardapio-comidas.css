@@ -17,8 +17,8 @@
 .food-liquid-left,
 .food-liquid-right {
     position: absolute;
-    top: 56px;
-    width: 800px;
+    top: 70px;
+    width: 650px;
     height: 100%;
     background-size: 100% auto;
     background-repeat: no-repeat;
@@ -28,14 +28,14 @@
 }
 
 .food-liquid-left {
-    left: 0;
+    left: -350px;
     right: auto;
     background-image: url('/img/macaron-esquerdo-new.svg');
     background-position: left top;
 }
 
 .food-liquid-right {
-    right: 0;
+    right: -350px;
     left: auto;
     background-image: url('/img/macaron-direito-new.svg');
     background-position: right top;
@@ -197,7 +197,7 @@
 
 .food-product-title h3,
 .food-product-title strong {
-    font: 500 12px var(--fontePlayFair);
+    font: 500 20px var(--fontePlayFair);
     color: #fff;
     flex-shrink: 0
 }
