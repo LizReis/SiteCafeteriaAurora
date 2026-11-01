@@ -514,3 +514,18 @@
 .payment-notice[hidden] {
     display: none !important
 }
+/* Ícones de pagamento padronizados sem alterar os componentes globais. */
+.payment-option .payment-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    white-space: nowrap;
+}
+.payment-option .payment-icon {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+.payment-option .payment-icon-pix { object-fit: contain; }

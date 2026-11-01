@@ -402,3 +402,18 @@
         min-height: 150px
     }
 }
+/* Lixeira Bootstrap Icons; mantém o comportamento do botão de remoção. */
+.cart-item-controls .remove-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.cart-item-controls .remove-item svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+    color: currentColor;
+}
+.cart-item-controls .remove-item:hover { color: #e6c77b; }
+.cart-item-controls .remove-item:focus-visible { outline: 2px solid #e6c77b; outline-offset: 2px; }
