@@ -1,0 +1,74 @@
+/* Checkout demonstrativo: não coleta dados de cartão. */
+.order-shell{position:relative;isolation:isolate;overflow:hidden;min-height:calc(100vh - 76px);padding:112px 5% 82px;background:#000}
+.order-inner{max-width:1190px;margin:0 auto;position:relative;z-index:1}
+.order-background{position:absolute;z-index:-1;pointer-events:none;background-repeat:no-repeat;opacity:.44}
+.order-heading{margin-bottom:14px}
+.order-kicker{display:flex;align-items:center;width:min(470px,100%);gap:6px;color:var(--fonteDestaque);font:400 13px var(--fontMotserrat)}
+.order-kicker i{flex:1;height:1px;background:var(--fonteDestaque);opacity:.72}
+.order-heading h1{font:700 clamp(32px,3.7vw,48px)/1.15 var(--fontePlayFair);color:#fff}
+.order-heading>p{font:400 13px var(--fontMotserrat);color:#aaa;margin-top:5px}
+.order-columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(340px,.95fr);gap:52px;align-items:start}
+.summary-panel,.cart-items-panel,.checkout-card{background:#090807;border-radius:12px}
+.summary-panel{padding:25px 26px 28px;align-self:start}
+.summary-header{display:flex;align-items:center;gap:12px;padding:2px 0 16px;border-bottom:1px solid #292624}
+.summary-header h2,.summary-total{font-family:var(--fontePlayFair);color:white}
+.summary-header h2{font-size:25px}
+.summary-header p{font:400 13px var(--fontMotserrat);color:#aaa;margin-top:3px}
+.summary-icon svg{width:28px;height:28px;color:white}
+.summary-costs{padding:19px 1px 15px;border-bottom:1px solid #2a2827;display:grid;gap:16px}
+.summary-costs>div,.summary-total{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.summary-costs{font-size:16px;color:#aaa}
+.summary-costs strong{font-weight:400}
+.summary-total{font-weight:700;font-size:24px;padding:22px 1px}
+.summary-total strong{white-space:nowrap}
+.order-cta{border:0;width:100%;background:#b49656;color:#000;font:700 18px var(--fontMotserrat);border-radius:11px;min-height:44px;display:flex;align-items:center;justify-content:center;gap:20px;text-decoration:none;cursor:pointer;transition:background .2s}
+.order-cta svg{width:25px;height:25px}
+.order-cta:hover{background:#d5b770}
+.order-cta[aria-disabled=true],.order-cta:disabled{opacity:.48;cursor:not-allowed}
+.order-cta:focus-visible,.back-to-menu:focus-visible{outline:2px solid white;outline-offset:3px}
+.demo-disclaimer{font-size:10px;color:#777;text-align:center;margin-top:14px}
+@media(max-width:900px){.order-columns{gap:22px;grid-template-columns:minmax(0,1fr) 340px}.order-shell{padding-inline:4%}}
+@media(max-width:760px){.order-columns{grid-template-columns:1fr}.order-shell{padding-top:195px}.summary-panel{width:100%}}
+@media(max-width:480px){.order-shell{padding-top:220px}.summary-panel{padding:20px 18px}.order-heading h1{font-size:32px}}
+
+.checkout-beans{right:0;bottom:0;width:min(55vw,710px);height:300px;background:url('/img/graos-finalizar.svg') right bottom/contain no-repeat;opacity:.43}
+.checkout-columns{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr);gap:80px}
+.checkout-form{display:grid;gap:28px}
+.checkout-card{padding:18px 16px 25px}
+.checkout-card-heading{display:flex;gap:9px;align-items:flex-start;margin-bottom:20px}
+.checkout-card-heading>svg{width:30px;height:30px;flex-shrink:0}
+.checkout-card-heading h2{font:700 25px/1.15 var(--fontePlayFair)}
+.checkout-card-heading p{color:#999;font-size:11px;margin-top:4px}
+.form-grid{display:grid;gap:18px 28px}
+.form-grid.two{grid-template-columns:1fr 1fr}
+.form-grid label{display:flex;flex-direction:column;gap:5px;color:#aaa;font-size:11px;min-width:0}
+.form-grid input,.order-notes-card textarea,.delivery-heading select{width:100%;min-width:0;background:#1a1816;border:2px solid #26221f;border-radius:12px;min-height:29px;color:#fff;padding:6px 10px;font:400 12px var(--fontMotserrat);outline:none}
+.form-grid input:focus,.order-notes-card textarea:focus,.delivery-heading select:focus{border-color:var(--fonteDestaque)}
+.form-grid input:disabled{opacity:.48;cursor:not-allowed}
+.span-all{grid-column:1/-1}
+.payment-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:0}
+.payment-option{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-direction:row-reverse;padding:7px 10px;background:#191715;border:2px solid #23201d;border-radius:12px;font-size:14px;color:#aaa;cursor:pointer}
+.payment-option:has(input:checked){border-color:#b49656;color:white}
+.payment-option input{accent-color:var(--fonteDestaque)}
+.card-fields{margin-top:16px}
+.payment-notice{color:#a48d60;font-size:11px;margin-top:13px}
+.delivery-heading{display:flex;align-items:center;flex-wrap:wrap}
+.delivery-heading>div{flex:1}
+.delivery-heading select{width:200px}
+.delivery-grid{grid-template-columns:.9fr 1fr 1fr;gap:18px 23px}
+.delivery-grid .span-2{grid-column:span 2}
+.order-notes-card{display:flex;gap:16px;align-items:center}
+.order-notes-card .checkout-card-heading{flex:1;margin:0}
+.order-notes-card textarea{flex:1;resize:vertical;min-height:50px}
+.checkout-summary{padding:28px}
+.checkout-items{max-height:420px;overflow:auto}
+.checkout-item{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #282522}
+.checkout-item img{width:66px;height:66px;object-fit:cover;border-radius:10px}
+.checkout-item h3{font:600 16px var(--fontePlayFair)}
+.checkout-item p{color:var(--fonteDestaque);font-size:12px;margin-top:4px}
+.checkout-security,.checkout-back{display:block;margin:16px auto 0;text-align:center;color:#999;font-size:11px}
+.checkout-back{color:var(--fonteDestaque)}
+#checkout-feedback{color:#e8ca86;background:#1b1710;padding:12px;border-radius:8px;font-size:12px;line-height:1.5;margin-top:14px}
+@media(max-width:1000px){.checkout-columns{gap:32px}.payment-methods{gap:8px}.delivery-heading select{width:160px}}
+@media(max-width:760px){.checkout-columns{grid-template-columns:1fr}.checkout-summary{order:-1}.checkout-beans{opacity:.2;width:80vw}}
+@media(max-width:480px){.form-grid.two{grid-template-columns:1fr}.payment-methods{grid-template-columns:1fr}.delivery-grid{grid-template-columns:1fr 1fr}.delivery-grid .span-2{grid-column:1/-1}.order-notes-card{display:block}.order-notes-card textarea{margin-top:12px}}

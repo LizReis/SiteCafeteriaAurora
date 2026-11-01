@@ -36,6 +36,11 @@ public class PaginaController {
         return "localizacao";
     }
 
+    @GetMapping({"/finalizar-pedido", "/finalizar-pedido.html"})
+    public String finalizarPedido() {
+        return "finalizar-pedido";
+    }
+
     @GetMapping({"/sacola-pedido", "/sacola-pedido.html"})
     public String sacolaPedido() {
         return "sacola-pedido";

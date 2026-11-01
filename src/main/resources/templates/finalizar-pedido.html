@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: siteHead('Finalizar pedido - Café Aurora', 'finalizar-pedido.css')}"></head>
+<body class="checkout-view">
+<header th:replace="~{fragments/layout :: siteHeader}"></header>
+
+<main class="order-shell checkout-shell">
+  <div class="order-background checkout-beans" aria-hidden="true"></div>
+  <div class="order-inner">
+    <div class="order-heading">
+      <div class="order-kicker"><span>Seus pedidos</span><i aria-hidden="true"></i></div>
+      <h1>Finalizar pedido</h1>
+      <p>Revise suas informações e conclua sua compra</p>
+    </div>
+
+    <div class="order-columns checkout-columns">
+      <form id="checkout-form" class="checkout-form" method="post" action="/finalizar-pedido.html">
+        <section class="checkout-card" aria-labelledby="contato-titulo">
+          <div class="checkout-card-heading">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M4 21v-3a8 8 0 0 1 16 0v3z"/></svg>
+            <div><h2 id="contato-titulo">Contato</h2><p>Informe seus dados para o pedido</p></div>
+          </div>
+          <div class="form-grid two">
+            <label>Nome completo:
+              <input name="nome" autocomplete="name" required maxlength="120" placeholder="Seu nome completo">
+            </label>
+            <label>Telefone:
+              <input name="telefone" type="tel" autocomplete="tel" required maxlength="20" placeholder="(00) 00000-0000">
+            </label>
+            <label class="span-all">E-mail:
+              <input name="email" type="email" autocomplete="email" required maxlength="150" placeholder="voce@exemplo.com">
+            </label>
+          </div>
+        </section>
+
+        <section class="checkout-card" aria-labelledby="pagamento-titulo">
+          <div class="checkout-card-heading">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20M6 16h5"/></svg>
+            <div><h2 id="pagamento-titulo">Pagamento</h2><p>Escolha uma forma de pagamento</p></div>
+          </div>
+          <fieldset class="payment-methods">
+            <legend class="sr-only">Forma de pagamento</legend>
+            <label class="payment-option">
+              <input type="radio" name="pagamento" value="cartao">
+              <span>▤ &nbsp;Cartão</span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="pagamento" value="pix" checked>
+              <span>◆ &nbsp;PIX</span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="pagamento" value="dinheiro">
+              <span>▣ &nbsp;Dinheiro</span>
+            </label>
+          </fieldset>
+          <div class="card-fields" id="card-fields" hidden>
+            <div class="form-grid two">
+              <label class="span-all">Número do cartão:
+                <input disabled placeholder="Pagamento online ainda não disponível">
+              </label>
+              <label>Validade:<input disabled placeholder="MM/AA"></label>
+              <label>CVV:<input disabled placeholder="•••"></label>
+              <label class="span-all">Nome no cartão:<input disabled></label>
+            </div>
+          </div>
+          <p id="payment-message" class="payment-notice">Pagamento ilustrativo: não há cobrança ou geração de PIX.</p>
+        </section>
+
+        <section id="endereco-entrega" class="checkout-card" aria-labelledby="entrega-titulo">
+          <div class="checkout-card-heading delivery-heading">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-7 8-13A8 8 0 0 0 4 9c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg>
+            <div><h2 id="entrega-titulo">Endereço de entrega</h2>
+              <p>Informe o local que deseja receber o seu pedido</p>
+            </div>
+            <select name="tipoAtendimento" id="delivery-type" aria-label="Tipo de atendimento">
+              <option value="entrega">Receber pedido</option>
+              <option value="retirada">Retirar no local</option>
+            </select>
+          </div>
+          <div id="delivery-fields" class="form-grid delivery-grid">
+            <label>CEP:
+              <input name="cep" inputmode="numeric" autocomplete="postal-code" maxlength="9" required placeholder="00000-000">
+            </label>
+            <label class="span-2">Endereço:
+              <input name="endereco" autocomplete="street-address" maxlength="180" required placeholder="Rua / Avenida">
+            </label>
+            <label>Número:
+              <input name="numero" maxlength="12" required placeholder="Nº">
+            </label>
+            <label>Complemento:
+              <input name="complemento" maxlength="80" placeholder="Apto, bloco...">
+            </label>
+            <label>Bairro:
+              <input name="bairro" maxlength="80" required placeholder="Bairro">
+            </label>
+          </div>
+          <p id="pickup-notice" class="payment-notice" hidden>Retirada ilustrativa: a cafeteria ainda não possui ponto de retirada real cadastrado.</p>
+        </section>
+
+        <section class="checkout-card order-notes-card" aria-labelledby="observacoes-titulo">
+          <div class="checkout-card-heading">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="16" rx="3"/><path d="M6 8h12M6 12h8M8 19l-3 3v-3"/></svg>
+            <div><h2 id="observacoes-titulo">Observações do pedido</h2><p>Alguma observação? (Opcional)</p></div>
+          </div>
+          <textarea name="observacoes" maxlength="500" rows="2" placeholder="Ex.: sem açúcar, retirar ingrediente..."></textarea>
+        </section>
+      </form>
+
+      <aside class="summary-panel checkout-summary" aria-labelledby="checkout-summary-title">
+        <div class="summary-header">
+          <div class="summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l1 14H3L4 7Z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></div>
+          <div><h2 id="checkout-summary-title">Resumo</h2>
+            <p id="checkout-count">0 itens no seu pedido</p>
+          </div>
+        </div>
+        <div id="checkout-items" class="checkout-items"></div>
+        <div class="summary-costs">
+          <div><span>SubTotal:</span><strong id="checkout-subtotal">R$ 0,00</strong></div>
+          <div><span>Taxa de Entrega:</span><strong id="checkout-delivery">R$ 0,00</strong></div>
+        </div>
+        <div class="summary-total"><span>Total</span><strong id="checkout-total">R$ 0,00</strong></div>
+        <button type="submit" form="checkout-form" class="order-cta" id="confirm-order">
+          Confirmar pedido <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 5l7 7-7 7"/></svg>
+        </button>
+        <p class="checkout-security">♙ &nbsp;Modo demonstrativo — nenhum pagamento é processado.</p>
+        <p id="checkout-feedback" role="status" aria-live="polite" hidden></p>
+        <a class="checkout-back" href="/sacola-pedido.html" th:href="@{/sacola-pedido.html}">← Voltar ao carrinho</a>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: siteFooter}"></footer>
+<script src="/js/finalizar-pedido.js" th:src="@{/js/finalizar-pedido.js(v='20261031-checkout-1')}" defer></script>
+<script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
+</body>
+</html>
