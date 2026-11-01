@@ -63,8 +63,7 @@
         <div class="cards-container">
             <div class="about-card">
                 <div class="icon-box">
-                    <img width="50" height="50" src="/img/icons8-grãos-de-café-50.png"
-                        alt="coffee-beans-" />
+                    <img width="50" height="50" src="/img/icons8-grãos-de-café-50.png" alt="coffee-beans-" />
                 </div>
                 <h3>Grãos Selecionados</h3>
                 <p>Lorem ipsum dolor sit amet, conseo ectetur adipiscing elit, sed do eiusmod tempor incididunt ut
@@ -95,16 +94,73 @@
                     labore et dolore magna aliqua.</p>
             </div>
 
-            
+
         </div>
 
     </section>
 
+    <section class="coffee-marquee-section" aria-label="Faixa animada Café Aurora">
+        <div class="coffee-marquee">
+            <div class="coffee-marquee-track">
+
+                <!-- bloco 1 -->
+                <div class="marquee-item">
+                    <span>COFFEE</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+            
+                <div class="marquee-item">
+                    <span>CAFÉ AURORA</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+                <div class="marquee-item">
+                    <span>COFFEE</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+                <div class="marquee-item">
+                    <span>CAFÉ AURORA</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+                <!-- bloco duplicado para o loop ficar infinito e suave -->
+                <div class="marquee-item">
+                    <span>COFFEE</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+                <div class="marquee-item">
+                    <span>CAFÉ AURORA</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+                <div class="marquee-item">
+                    <span>COFFEE</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+                <div class="marquee-item">
+                    <span>CAFÉ AURORA</span>
+                    <img src="/img/grao-faixa.svg" alt="" class="marquee-bean">
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <section id="avaliacoes" class="reviews-section">
+        <span class="about-span">À mesa, boas histórias</span>
         <h2 class="reviews-title">Avaliações</h2>
+        <span class="about-line"></span>
 
         <div class="carousel-wrapper">
-            <button type="button" class="carousel-btn prev-btn" aria-label="Avaliação anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button type="button" class="carousel-btn prev-btn" aria-label="Avaliação anterior"><svg viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <path d="m15 18-6-6 6-6" />
+                </svg></button>
 
             <!-- Comentários demonstrativos: substituir por avaliações reais antes da publicação. -->
             <div class="carousel-track">
@@ -189,13 +245,18 @@
                 </div>
             </div>
 
-            <button type="button" class="carousel-btn next-btn" aria-label="Próxima avaliação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            <button type="button" class="carousel-btn next-btn" aria-label="Próxima avaliação"><svg viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <path d="m9 18 6-6-6-6" />
+                </svg></button>
         </div>
 
         <div class="carousel-dots" aria-label="Selecionar avaliação">
             <button type="button" class="dot" data-review-index="0" aria-label="Ver avaliação de Vitoria G."></button>
             <button type="button" class="dot" data-review-index="1" aria-label="Ver avaliação de Maria S."></button>
-            <button type="button" class="dot active" data-review-index="2" aria-label="Ver avaliação de Meria S." aria-current="true"></button>
+            <button type="button" class="dot active" data-review-index="2" aria-label="Ver avaliação de Meria S."
+                aria-current="true"></button>
             <button type="button" class="dot" data-review-index="3" aria-label="Ver avaliação de Marta S."></button>
             <button type="button" class="dot" data-review-index="4" aria-label="Ver avaliação de Natalia G."></button>
         </div>
@@ -206,7 +267,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/scripts.js"></script>
     <script src="/js/about-beans.js" th:src="@{/js/about-beans.js(v=20261101)}" defer></script>
-  <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
+    <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
 </body>
 
 </html>

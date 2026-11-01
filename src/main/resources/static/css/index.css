@@ -374,6 +374,7 @@
     color: var(--fonteBranca);
     font-size: 64px;
     margin-bottom: 80px;
+    font-weight: 500;
 }
 
 .about-span{
@@ -445,6 +446,81 @@
     font-weight: 300;
 }
 
+/* =========================
+   FAIXA ANIMADA ENTRE SEÇÕES
+========================= */
+
+.coffee-marquee-section {
+    width: 100%;
+    overflow: hidden;
+    background: #f8f2e6;
+    padding: 24px 0;
+    border-top: 1px solid rgba(181, 157, 104, 0.18);
+    border-bottom: 1px solid rgba(181, 157, 104, 0.18);
+    position: relative;
+    z-index: 2;
+}
+
+.coffee-marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.coffee-marquee-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: 50px;
+    animation: marqueeLeft 15s linear infinite;
+}
+
+.marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+}
+
+.marquee-item span {
+    font-family: var(--fontePlayFair);
+    font-size: clamp(34px, 5vw, 68px);
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: rgba(0, 0, 0, 0.95);
+    text-transform: uppercase;
+    line-height: 1;
+}
+.marquee-bean {
+    width: 26px;
+    height: 26px;
+    margin-left: 30px;
+    object-fit: contain;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px rgba(181, 157, 104, 0.18));
+}
+
+@keyframes marqueeLeft {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Pausa opcional quando passar o mouse */
+.coffee-marquee-section:hover .coffee-marquee-track {
+    animation-play-state: paused;
+}
+
+/* Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+    .coffee-marquee-track {
+        animation: none;
+    }
+}
+
 /* =========================================
    AVALIAÇÕES: carrossel com comentários apenas no destaque
 ========================================= */
@@ -463,7 +539,7 @@
 .reviews-title {
     font-family: var(--fontePlayFair);
     color: var(--fonteBranca);
-    font-size: 50px;
+    font-size: 64px;
     margin-bottom: 60px;
     font-weight: 500;
 }
