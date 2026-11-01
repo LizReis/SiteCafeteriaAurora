@@ -1,63 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: siteHead('Carrinho de compras - Café Aurora', 'sacola-pedido.css')}"></head>
+
 <body class="cart-view">
-<header th:replace="~{fragments/layout :: siteHeader}"></header>
+  <header th:replace="~{fragments/layout :: siteHeader}"></header>
 
-<main class="order-shell cart-shell">
-  <div class="order-background cart-beans" aria-hidden="true"></div>
-  <div class="order-inner">
-    <div class="order-heading">
-      <div class="order-kicker"><span>Seus pedidos</span><i aria-hidden="true"></i></div>
-      <h1>Carrinho de compras</h1>
-    </div>
+  <main class="order-shell cart-shell">
+    <div class="order-background cart-beans" aria-hidden="true"></div>
+    <div class="order-inner">
+      <div class="order-heading">
+        <div class="order-kicker"><span>Seus pedidos</span><i aria-hidden="true"></i></div>
+        <h1>Carrinho de compras</h1>
+      </div>
 
-    <div class="order-columns">
-      <section class="cart-main-column" aria-label="Produtos do carrinho">
-        <div class="cart-items-panel">
-          <div id="cart-items" class="cart-items" aria-live="polite"></div>
-          <div id="cart-empty" class="cart-empty" hidden>
-            <h2>Sua sacola está vazia</h2>
-            <p>Escolha seus cafés, comidas e drinks favoritos para começar.</p>
-            <a href="/cardapio.html" th:href="@{/cardapio.html}">Explorar cardápios</a>
+      <div class="order-columns">
+        <section class="cart-main-column" aria-label="Produtos do carrinho">
+          <div class="cart-items-panel">
+            <div id="cart-items" class="cart-items" aria-live="polite"></div>
+            <div id="cart-empty" class="cart-empty" hidden>
+              <h2>Sua sacola está vazia</h2>
+              <p>Escolha seus cafés, comidas e drinks favoritos para começar.</p>
+              <a href="/cardapio.html" th:href="@{/cardapio.html}">Explorar cardápios</a>
+            </div>
           </div>
-        </div>
-        <a class="back-to-menu" href="/cardapio.html" th:href="@{/cardapio.html}">
-          <span aria-hidden="true">⟵</span> Continuar comprando
-        </a>
-      </section>
-
-      <aside class="summary-panel" aria-labelledby="cart-summary-title">
-        <div class="summary-header">
-          <div class="summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l1 14H3L4 7Z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></div>
-          <div>
-            <h2 id="cart-summary-title">Resumo</h2>
-            <p id="cart-summary-count">0 itens no carrinho</p>
-          </div>
-        </div>
-        <div class="summary-costs">
-          <div><span>SubTotal:</span><strong id="cart-subtotal">R$ 0,00</strong></div>
-          <div><span>Taxa de Entrega:</span><strong id="cart-delivery">R$ 0,00</strong></div>
-        </div>
-        <div class="summary-total"><span>Total</span><strong id="cart-total">R$ 0,00</strong></div>
-        <div class="cart-delivery-address">
-          <h3><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-7 8-13A8 8 0 0 0 4 9c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg> Endereço de entrega</h3>
-          <a class="address-preview" href="/finalizar-pedido.html#endereco-entrega" th:href="@{/finalizar-pedido.html#endereco-entrega}">
-            <span>Informe seu endereço ao finalizar o pedido.</span>
-            <span aria-hidden="true">›</span>
+          <a class="back-to-menu" href="/cardapio.html" th:href="@{/cardapio.html}">
+            <span aria-hidden="true">⟵</span> Continuar comprando
           </a>
-        </div>
-        <a class="order-cta" href="/finalizar-pedido.html" th:href="@{/finalizar-pedido.html}" id="cart-checkout">
-          Finalizar pedido <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 5l7 7-7 7"/></svg>
-        </a>
-        <p class="demo-disclaimer">Carrinho de demonstração. Nenhum pagamento será cobrado.</p>
-      </aside>
-    </div>
-  </div>
-</main>
+        </section>
 
-<footer th:replace="~{fragments/layout :: siteFooter}"></footer>
-<script src="/js/sacola-pedido.js" th:src="@{/js/sacola-pedido.js(v='20261031-cart-1')}" defer></script>
-<script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
+        <aside class="summary-panel" aria-labelledby="cart-summary-title">
+          <div class="summary-header">
+            <div class="summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 7h16l1 14H3L4 7Z" />
+                <path d="M8 9V6a4 4 0 0 1 8 0v3" />
+              </svg></div>
+            <div>
+              <h2 id="cart-summary-title">Resumo</h2>
+              <p id="cart-summary-count">0 itens no carrinho</p>
+            </div>
+          </div>
+          <div class="summary-costs">
+            <div><span>SubTotal:</span><strong id="cart-subtotal">R$ 0,00</strong></div>
+            <div><span>Taxa de Entrega:</span><strong id="cart-delivery">R$ 0,00</strong></div>
+          </div>
+          <div class="summary-total"><span>Total</span><strong id="cart-total">R$ 0,00</strong></div>
+          <div class="cart-delivery-address">
+            <h3><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 22s8-7 8-13A8 8 0 0 0 4 9c0 6 8 13 8 13Z" />
+                <circle cx="12" cy="9" r="3" />
+              </svg> Endereço de entrega</h3>
+            <a class="address-preview" href="/finalizar-pedido.html#endereco-entrega"
+              th:href="@{/finalizar-pedido.html#endereco-entrega}">
+              <span>Informe seu endereço ao finalizar o pedido.</span>
+              <span aria-hidden="true">›</span>
+            </a>
+          </div>
+          <a class="order-cta" href="/finalizar-pedido.html" th:href="@{/finalizar-pedido.html}" id="cart-checkout">
+            Finalizar pedido <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h16M13 5l7 7-7 7" />
+            </svg>
+          </a>
+          <p class="demo-disclaimer">Carrinho de demonstração. Nenhum pagamento será cobrado.</p>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer th:replace="~{fragments/layout :: siteFooter}"></footer>
+  <script src="/js/sacola-pedido.js" th:src="@{/js/sacola-pedido.js(v='20261031-cart-1')}" defer></script>
+  <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
 </body>
+
 </html>

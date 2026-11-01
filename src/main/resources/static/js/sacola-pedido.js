@@ -37,7 +37,7 @@
       const plus = document.createElement('button'); plus.type = 'button'; plus.textContent = '+';
       plus.setAttribute('aria-label', 'Aumentar ' + item.name);
       const remove = document.createElement('button'); remove.type = 'button';
-      remove.className = 'remove-item'; remove.innerHTML = '&#128465;';
+      remove.className = 'remove-item'; remove.innerHTML = '&#xF78B;';
       remove.setAttribute('aria-label', 'Remover ' + item.name);
       minus.addEventListener('click', () => CART.setQuantity(item, item.quantity - 1));
       plus.addEventListener('click', () => CART.setQuantity(item, item.quantity + 1));
