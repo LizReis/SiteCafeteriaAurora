@@ -72,3 +72,6 @@
 @media(max-width:1000px){.checkout-columns{gap:32px}.payment-methods{gap:8px}.delivery-heading select{width:160px}}
 @media(max-width:760px){.checkout-columns{grid-template-columns:1fr}.checkout-summary{order:-1}.checkout-beans{opacity:.2;width:80vw}}
 @media(max-width:480px){.form-grid.two{grid-template-columns:1fr}.payment-methods{grid-template-columns:1fr}.delivery-grid{grid-template-columns:1fr 1fr}.delivery-grid .span-2{grid-column:1/-1}.order-notes-card{display:block}.order-notes-card textarea{margin-top:12px}}
+
+/* Garante que o estado HTML hidden prevaleça sobre os grids responsivos. */
+.delivery-grid[hidden],.card-fields[hidden],.payment-notice[hidden]{display:none!important}
