@@ -342,6 +342,7 @@
     object-fit: cover;
     /* Faz a imagem cobrir a área sem distorcer, similar ao background-size: cover [1] */
     z-index: -1;
+    opacity: 0.5;
 }
 
 .about-title {
