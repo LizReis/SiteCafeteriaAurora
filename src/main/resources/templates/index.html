@@ -55,6 +55,7 @@
     </main>
 
     <section id="sobre" class="about-section">
+        <div class="about-beans-animation" aria-hidden="true"><canvas id="about-beans-canvas"></canvas></div>
         <h2 class="about-title">Sobre Nós</h2>
 
         <div class="cards-container">
@@ -92,7 +93,7 @@
                     labore et dolore magna aliqua.</p>
             </div>
 
-            <img id="img-fundo-graos" src="/img/cafe-caindo.png">
+            
         </div>
 
     </section>
@@ -202,6 +203,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/scripts.js"></script>
+    <script src="/js/about-beans.js" th:src="@{/js/about-beans.js(v=20261101)}" defer></script>
   <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
 </body>
 

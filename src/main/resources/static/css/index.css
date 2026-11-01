@@ -330,19 +330,24 @@
     overflow: hidden;
 }
 
-#img-fundo-graos {
-    filter: brightness(0.1);
+/* Animação dos grãos: independente do SVG base, atrás dos cards. */
+.about-section { isolation: isolate; }
+.about-beans-animation {
     position: absolute;
-    top: 70%;
-    left: 16%;
-    transform: translate(-50%, -50%) scaleX(-1);
-    /* Centraliza a imagem */
-    width: 30%;
-    height: auto;
-    object-fit: cover;
-    /* Faz a imagem cobrir a área sem distorcer, similar ao background-size: cover [1] */
+    inset: 0;
+    overflow: hidden;
     z-index: -1;
-    opacity: 0.5;
+    pointer-events: none;
+    opacity: .42;
+}
+.about-beans-animation canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.about-section > :not(.about-beans-animation) { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .about-beans-animation { display: none; }
 }
 
 .about-title {
@@ -698,9 +703,6 @@
         flex-direction: column;
         align-items: flex-start;
     }
-
-    #img-fundo-graos { width: 80%; top: 90%; }
-
     /* Seção Avaliações (Carrossel) */
     .reviews-section { padding: 60px 5%; min-height: auto; }
     .reviews-title { font-size: 40px; margin-bottom: 40px; }
