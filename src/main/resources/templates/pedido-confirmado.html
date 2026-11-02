@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: siteHead('Pedido confirmado - Café Aurora', 'pedido-confirmado.css')}"></head>
+<body class="order-confirmed-page">
+<header th:replace="~{fragments/layout :: siteHeader}"></header>
+<main class="order-confirmed" id="pedido-confirmado">
+  <div class="confirmed-layout">
+    <div class="confirmed-content">
+      <div class="confirmed-heading">
+        <span class="confirmed-large-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+        <div class="confirmed-heading-copy">
+          <h1>Pedido confirmado</h1>
+          <p>Seu pedido foi recebido e já estamos preparando tudo com muito carinho</p>
+          <span class="heading-underline" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <section class="tracking-card" aria-labelledby="tracking-title">
+        <h2 id="tracking-title">Acompanhe o seu pedido</h2>
+        <p class="tracking-subtitle">Acompanhe abaixo o status do seu pedido</p>
+        <ol class="tracking-steps" aria-label="Etapas do pedido">
+          <li class="tracking-step" data-step="0">
+            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span><span class="sr-only">Pedido recebido</span>
+          </li>
+          <li class="tracking-step" data-step="1">
+            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4"/><path d="M6 16h12v4H6z"/></svg></span><span class="sr-only">Em preparo</span>
+          </li>
+          <li class="tracking-step" data-step="2">
+            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="m5 17 5-8 4 8h5l-3.5-8H12M9 7h3M13 4h3l1.5 3H21"/></svg></span><span class="sr-only">Pronto</span>
+          </li>
+          <li class="tracking-step" data-step="3">
+            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="m2.5 11.5 9.5-8 9.5 8V21h-7v-7H9v7H2.5Z"/></svg></span><span class="sr-only">Pedido entregue</span>
+          </li>
+        </ol>
+        <div class="tracking-status" aria-live="polite" role="status">
+          <span class="tracking-current-icon" id="current-status-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4"/><path d="M6 16h12v4H6z"/></svg></span>
+          <strong id="current-status-label">Em preparo</strong>
+          <span class="tracking-status-divider"></span>
+          <p id="current-status-description">Nossa equipe já está preparando o seu pedido.</p>
+        </div>
+        <p id="demo-status-note" class="confirmed-demo-note">Prévia demonstrativa: o status ainda não está conectado à administração.</p>
+        <details class="status-demo-controls">
+          <summary>Testar etapas do acompanhamento</summary>
+          <label for="demo-status-select">Simular status:</label>
+          <select id="demo-status-select">
+            <option value="RECEBIDO">Pedido recebido</option>
+            <option value="EM_PREPARO">Em preparo</option>
+            <option value="PRONTO">Pronto</option>
+            <option value="CONCLUIDO">Pedido entregue</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </details>
+      </section>
+      <div class="confirmed-actions">
+        <button id="review-order-button" class="confirmed-review-button" type="button" disabled aria-describedby="review-blocked-note">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m12 2 3.1 6.4 7.1 1-5.1 5 .9 7-6-3.3-6 3.3.9-7-5.1-5 7.1-1Z"/></svg><span>Avaliar pedido</span>
+        </button>
+        <p id="review-blocked-note" class="sr-only">Disponível somente quando o pedido estiver entregue.</p>
+        <button id="toggle-confirmed-details" class="confirmed-details-button" type="button" aria-expanded="false" aria-controls="confirmed-summary">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h14v20l-3-2-4 2-4-2-3 2Z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span>Ver detalhes</span>
+        </button>
+      </div>
+      <p id="review-feedback" class="review-feedback" role="status" hidden></p>
+    </div>
+
+    <div class="confirmed-visual-column" id="confirmed-visual-column">
+      <div class="confirmed-cup-stage" id="confirmed-cup-stage">
+        <img src="/img/xicara-logo-confirmado.webp" th:src="@{/img/xicara-logo-confirmado.webp}"
+             alt="Xícara de café com a marca Café Aurora" class="confirmed-cup" width="667" height="634">
+      </div>
+      <section id="confirmed-summary" class="confirmed-summary" aria-labelledby="confirmed-summary-title" aria-hidden="true" inert>
+        <div class="confirmed-summary-heading">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16l1 14H3L4 7Z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></span>
+          <div><h2 id="confirmed-summary-title">Resumo</h2><p id="confirmed-item-count">0 itens no seu pedido</p></div>
+        </div>
+        <div class="confirmed-summary-items" id="confirmed-summary-items"></div>
+        <div class="confirmed-summary-costs">
+          <div><span>SubTotal:</span><strong id="confirmed-subtotal">R$ 0,00</strong></div>
+          <div><span>Taxa de Entrega:</span><strong id="confirmed-delivery">R$ 0,00</strong></div>
+        </div>
+        <div class="confirmed-summary-total"><span>Total</span><strong id="confirmed-total">R$ 0,00</strong></div>
+        <div class="confirmed-delivery">
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-7 8-13A8 8 0 0 0 4 9c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><span id="confirmed-address-heading">Endereço de entrega</span></h3>
+          <p id="confirmed-address">Endereço não informado.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: siteFooter}"></footer>
+<script src="/js/pedido-confirmado.js" th:src="@{/js/pedido-confirmado.js(v='20261102-1')}" defer></script>
+<script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
+</body>
+</html>

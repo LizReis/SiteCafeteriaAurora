@@ -27,7 +27,7 @@ class PaginasCompartilhadasTests {
     @ValueSource(strings = {
         "/", "/cardapio.html", "/cardapio-cafe.html",
         "/cardapio-comidas.html", "/cardapio-drinks.html",
-        "/sacola-pedido.html", "/localizacao.html"
+        "/sacola-pedido.html", "/localizacao.html", "/pedido-confirmado.html"
     })
     void renderizaPaginasComRodapeCompartilhado(String caminho) throws Exception {
         MockMvc mvc = MockMvcBuilders.webAppContextSetup(context).build();

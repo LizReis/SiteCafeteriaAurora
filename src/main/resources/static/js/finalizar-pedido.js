@@ -62,9 +62,27 @@
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (!form.reportValidity() || !CART.getCount()) return;
-    feedback.hidden = false;
-    feedback.textContent = 'Demonstração concluída! O formulário está visualmente validado, mas nenhum pedido foi enviado ou pago. Quando integrarmos o backend, esta etapa criará um pedido real.';
-    feedback.scrollIntoView({behavior:'smooth', block:'nearest'});
+    // Fluxo visual de confirmação: não envia dados pessoais nem processa pagamentos.
+    const type = delivery.value;
+    const address = type === 'retirada' ? ''
+      : [
+          form.elements.endereco.value.trim() + ', ' + form.elements.numero.value.trim(),
+          form.elements.complemento.value.trim(),
+          form.elements.bairro.value.trim(),
+          'CEP ' + form.elements.cep.value.trim()
+        ].filter(Boolean).join(' — ');
+    const items = CART.getItems();
+    const subtotalCents = CART.getSubtotalCents();
+    const deliveryCents = type === 'entrega' ? 700 : 0;
+    const preview = {
+      items, type, address,
+      subtotalCents, deliveryCents, totalCents: subtotalCents + deliveryCents,
+      status: 'RECEBIDO', isPreview: true
+    };
+    try {
+      sessionStorage.setItem('cafe-aurora.order-preview.v1', JSON.stringify(preview));
+    } catch (_) {}
+    window.location.assign('/pedido-confirmado.html');
   });
 
   updatePayment();

@@ -41,6 +41,11 @@ public class PaginaController {
         return "finalizar-pedido";
     }
 
+    @GetMapping({"/pedido-confirmado", "/pedido-confirmado.html"})
+    public String pedidoConfirmado() {
+        return "pedido-confirmado";
+    }
+
     @GetMapping({"/sacola-pedido", "/sacola-pedido.html"})
     public String sacolaPedido() {
         return "sacola-pedido";
