@@ -82,11 +82,7 @@
     try {
       sessionStorage.setItem('cafe-aurora.order-preview.v1', JSON.stringify(preview));
     } catch (_) {}
-    if (window.CafeAuroraPageLoader) {
-      window.CafeAuroraPageLoader.navigate('/pedido-confirmado.html');
-    } else {
       window.location.assign('/pedido-confirmado.html');
-    }
   });
 
   updatePayment();
