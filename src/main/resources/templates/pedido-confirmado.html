@@ -1,169 +1,220 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: siteHead('Pedido confirmado - Café Aurora', 'pedido-confirmado.css')}"></head>
+
 <body class="order-confirmed-page">
-<header th:replace="~{fragments/layout :: siteHeader}"></header>
-<main class="order-confirmed" id="pedido-confirmado">
-  <div class="confirmed-layout">
-    <div class="confirmed-content">
-      <div class="confirmed-heading">
-        <span class="confirmed-large-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
-        <div class="confirmed-heading-copy">
-          <h1>Pedido confirmado</h1>
-          <p>Seu pedido foi recebido e já estamos preparando tudo com muito carinho</p>
-          <span class="heading-underline" aria-hidden="true"></span>
-        </div>
-      </div>
-
-      <section class="tracking-card" aria-labelledby="tracking-title">
-        <h2 id="tracking-title">Acompanhe o seu pedido</h2>
-        <p class="tracking-subtitle">Acompanhe abaixo o status do seu pedido</p>
-        <ol class="tracking-steps" aria-label="Etapas do pedido">
-          <li class="tracking-step" data-step="0">
-            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span><span class="sr-only">Pedido recebido</span>
-          </li>
-          <li class="tracking-step" data-step="1">
-            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4"/><path d="M6 16h12v4H6z"/></svg></span><span class="sr-only">Em preparo</span>
-          </li>
-          <li class="tracking-step" data-step="2">
-            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="m5 17 5-8 4 8h5l-3.5-8H12M9 7h3M13 4h3l1.5 3H21"/></svg></span><span class="sr-only">Pronto</span>
-          </li>
-          <li class="tracking-step" data-step="3">
-            <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="m2.5 11.5 9.5-8 9.5 8V21h-7v-7H9v7H2.5Z"/></svg></span><span class="sr-only">Pedido entregue</span>
-          </li>
-        </ol>
-        <div class="tracking-status" aria-live="polite" role="status">
-          <span class="tracking-current-icon" id="current-status-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4"/><path d="M6 16h12v4H6z"/></svg></span>
-          <strong id="current-status-label">Em preparo</strong>
-          <span class="tracking-status-divider"></span>
-          <p id="current-status-description">Nossa equipe já está preparando o seu pedido.</p>
-        </div>
-        <p id="demo-status-note" class="confirmed-demo-note">Prévia demonstrativa: o status ainda não está conectado à administração.</p>
-        <details class="status-demo-controls">
-          <summary>Testar etapas do acompanhamento</summary>
-          <label for="demo-status-select">Simular status:</label>
-          <select id="demo-status-select">
-            <option value="RECEBIDO">Pedido recebido</option>
-            <option value="EM_PREPARO">Em preparo</option>
-            <option value="PRONTO">Pronto</option>
-            <option value="CONCLUIDO">Pedido entregue</option>
-            <option value="CANCELADO">Cancelado</option>
-          </select>
-        </details>
-      </section>
-      <div class="confirmed-actions">
-        <button id="review-order-button" class="confirmed-review-button" type="button" disabled aria-describedby="review-blocked-note">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m12 2 3.1 6.4 7.1 1-5.1 5 .9 7-6-3.3-6 3.3.9-7-5.1-5 7.1-1Z"/></svg><span>Avaliar pedido</span>
-        </button>
-        <p id="review-blocked-note" class="sr-only">Disponível somente quando o pedido estiver entregue.</p>
-        <button id="toggle-confirmed-details" class="confirmed-details-button" type="button" aria-expanded="false" aria-controls="confirmed-summary">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h14v20l-3-2-4 2-4-2-3 2Z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span>Ver detalhes</span>
-        </button>
-      </div>
-      <p id="review-feedback" class="review-feedback" role="status" hidden></p>
-    </div>
-
-    <div class="confirmed-visual-column" id="confirmed-visual-column">
-      <div class="confirmed-cup-stage" id="confirmed-cup-stage">
-        <img src="/img/xicara-logo-confirmado.png" th:src="@{/img/xicara-logo-confirmado.png}"
-             alt="Xícara de café com a marca Café Aurora" class="confirmed-cup" width="667" height="634">
-      </div>
-      <section id="confirmed-summary" class="confirmed-summary" aria-labelledby="confirmed-summary-title" aria-hidden="true" inert>
-        <div class="confirmed-summary-heading">
-          <span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16l1 14H3L4 7Z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></span>
-          <div><h2 id="confirmed-summary-title">Resumo</h2><p id="confirmed-item-count">0 itens no seu pedido</p></div>
-        </div>
-        <div class="confirmed-summary-items" id="confirmed-summary-items"></div>
-        <div class="confirmed-summary-costs">
-          <div><span>SubTotal:</span><strong id="confirmed-subtotal">R$ 0,00</strong></div>
-          <div><span>Taxa de Entrega:</span><strong id="confirmed-delivery">R$ 0,00</strong></div>
-        </div>
-        <div class="confirmed-summary-total"><span>Total</span><strong id="confirmed-total">R$ 0,00</strong></div>
-        <div class="confirmed-delivery">
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-7 8-13A8 8 0 0 0 4 9c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><span id="confirmed-address-heading">Endereço de entrega</span></h3>
-          <p id="confirmed-address">Endereço não informado.</p>
-        </div>
-      </section>
-      <!-- Avaliação: disponível exclusivamente após CONCLUIDO. -->
-      <section id="confirmed-review" class="confirmed-review-panel" aria-labelledby="review-panel-title"
-               aria-hidden="true" inert>
-        <div class="review-panel-header">
-          <div class="review-decorative-stars" aria-hidden="true">★★★★★</div>
-          <h2 id="review-panel-title">Avaliar pedido</h2>
-          <p>Registre a sua experiência no Café Aurora</p>
-        </div>
-
-        <form id="order-review-form" class="order-review-form" novalidate>
-          <div class="review-input-row">
-            <label class="review-field">Seu nome:
-              <input id="review-customer-name" type="text" name="nome" autocomplete="name"
-                     minlength="2" maxlength="100" required placeholder="Seu nome">
-            </label>
-            <fieldset class="review-stars-fieldset">
-              <legend>Sua avaliação:</legend>
-              <div class="review-stars-choice" id="review-stars-choice" aria-label="Escolha de 1 a 5 estrelas">
-                <label><input type="radio" name="nota" value="1" required aria-label="1 estrela"><span aria-hidden="true">☆</span></label>
-                <label><input type="radio" name="nota" value="2" aria-label="2 estrelas"><span aria-hidden="true">☆</span></label>
-                <label><input type="radio" name="nota" value="3" aria-label="3 estrelas"><span aria-hidden="true">☆</span></label>
-                <label><input type="radio" name="nota" value="4" aria-label="4 estrelas"><span aria-hidden="true">☆</span></label>
-                <label><input type="radio" name="nota" value="5" aria-label="5 estrelas"><span aria-hidden="true">☆</span></label>
-              </div>
-            </fieldset>
+  <header th:replace="~{fragments/layout :: siteHeader}"></header>
+  <main class="order-confirmed" id="pedido-confirmado">
+    <div class="confirmed-layout">
+      <div class="confirmed-content">
+        <div class="confirmed-heading">
+          <span class="confirmed-large-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none"
+              stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m5 12 5 5L20 7" />
+            </svg></span>
+          <div class="confirmed-heading-copy">
+            <h1>Pedido confirmado</h1>
+            <p>Seu pedido foi recebido e já estamos preparando tudo com muito carinho</p>
+            <span class="heading-underline" aria-hidden="true"></span>
           </div>
-          <label class="review-field review-comment-label">Comentário:
-            <textarea id="review-comment" name="comentario" rows="3" minlength="5" maxlength="1000"
-                      required placeholder="Conte como foi sua experiência..."></textarea>
-          </label>
-          <div class="review-upload-container">
-            <label class="review-field" for="review-photo">Foto (Opcional):</label>
-            <input id="review-photo" type="file" name="foto" accept="image/jpeg,image/png,image/webp"
-                   aria-describedby="review-photo-help review-photo-feedback">
-            <label class="review-upload-drop" for="review-photo">
-              <svg viewBox="0 0 24 24" width="31" height="31" fill="none" stroke="currentColor"
-                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M20 16.6A5 5 0 0 0 17.5 7 6 6 0 0 0 6 8.5 4.5 4.5 0 0 0 7 17h2"/>
-                <path d="m12 21 0-10m-4 4 4-4 4 4"/>
-              </svg>
-              <span>Clique aqui para enviar uma foto
-                <small id="review-photo-help">JPG, PNG ou WebP — somente 1 foto (até 5 MB)</small>
-              </span>
-            </label>
-            <div id="review-photo-preview" class="review-photo-preview" hidden>
-              <img id="review-photo-thumbnail" alt="Prévia da foto selecionada">
-              <span id="review-photo-name"></span>
-              <button type="button" id="review-photo-remove" aria-label="Remover foto selecionada">Remover</button>
+        </div>
+
+        <section class="tracking-card" aria-labelledby="tracking-title">
+          <h2 id="tracking-title">Acompanhe o seu pedido</h2>
+          <p class="tracking-subtitle">Acompanhe abaixo o status do seu pedido</p>
+          <ol class="tracking-steps" aria-label="Etapas do pedido">
+            <li class="tracking-step" data-step="0">
+              <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                  stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m5 12 5 5L20 7" />
+                </svg></span><span class="sr-only">Pedido recebido</span>
+            </li>
+            <li class="tracking-step" data-step="1">
+              <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                  stroke-width="1.35" stroke-linejoin="round">
+                  <path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4" />
+                  <path d="M6 16h12v4H6z" />
+                </svg></span><span class="sr-only">Em preparo</span>
+            </li>
+            <li class="tracking-step" data-step="2">
+              <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                  stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="5" cy="17" r="3" />
+                  <circle cx="19" cy="17" r="3" />
+                  <path d="m5 17 5-8 4 8h5l-3.5-8H12M9 7h3M13 4h3l1.5 3H21" />
+                </svg></span><span class="sr-only">Pronto</span>
+            </li>
+            <li class="tracking-step" data-step="3">
+              <span class="tracking-dot"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                  stroke-width="1.5" stroke-linejoin="round">
+                  <path d="m2.5 11.5 9.5-8 9.5 8V21h-7v-7H9v7H2.5Z" />
+                </svg></span><span class="sr-only">Pedido entregue</span>
+            </li>
+          </ol>
+          <div class="tracking-status" aria-live="polite" role="status">
+            <span class="tracking-current-icon" id="current-status-icon"><svg viewBox="0 0 24 24" aria-hidden="true"
+                fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round">
+                <path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4" />
+                <path d="M6 16h12v4H6z" />
+              </svg></span>
+            <strong id="current-status-label">Em preparo</strong>
+            <span class="tracking-status-divider"></span>
+            <p id="current-status-description">Nossa equipe já está preparando o seu pedido.</p>
+          </div>
+          <p id="demo-status-note" class="confirmed-demo-note">Prévia demonstrativa: o status ainda não está conectado à
+            administração.</p>
+          <details class="status-demo-controls">
+            <summary>Testar etapas do acompanhamento</summary>
+            <label for="demo-status-select">Simular status:</label>
+            <select id="demo-status-select">
+              <option value="RECEBIDO">Pedido recebido</option>
+              <option value="EM_PREPARO">Em preparo</option>
+              <option value="PRONTO">Pronto</option>
+              <option value="CONCLUIDO">Pedido entregue</option>
+              <option value="CANCELADO">Cancelado</option>
+            </select>
+          </details>
+        </section>
+        <div class="confirmed-actions">
+          <button id="review-order-button" class="confirmed-review-button" type="button" disabled
+            aria-describedby="review-blocked-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"
+              stroke-linejoin="round">
+              <path d="m12 2 3.1 6.4 7.1 1-5.1 5 .9 7-6-3.3-6 3.3.9-7-5.1-5 7.1-1Z" />
+            </svg><span>Avaliar pedido</span>
+          </button>
+          <p id="review-blocked-note" class="sr-only">Disponível somente quando o pedido estiver entregue.</p>
+          <button id="toggle-confirmed-details" class="confirmed-details-button" type="button" aria-expanded="false"
+            aria-controls="confirmed-summary">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 2h14v20l-3-2-4 2-4-2-3 2Z" />
+              <path d="M9 7h6M9 11h6M9 15h4" />
+            </svg><span>Ver detalhes</span>
+          </button>
+        </div>
+        <p id="review-feedback" class="review-feedback" role="status" hidden></p>
+      </div>
+
+      <div class="confirmed-visual-column" id="confirmed-visual-column">
+        <div class="confirmed-cup-stage" id="confirmed-cup-stage">
+          <img src="/img/xicara-logo-confirmado.png" th:src="@{/img/xicara-logo-confirmado.png}"
+            alt="Xícara de café com a marca Café Aurora" class="confirmed-cup" width="667" height="634">
+        </div>
+        <section id="confirmed-summary" class="confirmed-summary" aria-labelledby="confirmed-summary-title"
+          aria-hidden="true" inert>
+          <div class="confirmed-summary-heading">
+            <span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round">
+                <path d="M4 7h16l1 14H3L4 7Z" />
+                <path d="M8 9V6a4 4 0 0 1 8 0v3" />
+              </svg></span>
+            <div>
+              <h2 id="confirmed-summary-title">Resumo</h2>
+              <p id="confirmed-item-count">0 itens no seu pedido</p>
             </div>
-            <p id="review-photo-feedback" class="review-validation-message" role="status" aria-live="polite"></p>
           </div>
-          <p id="review-form-error" class="review-validation-message" role="alert" hidden></p>
-          <div class="review-form-actions">
-            <button type="button" id="review-cancel" class="review-cancel-btn">Cancelar</button>
-            <button type="submit" id="review-submit" class="review-send-btn">
-              Enviar avaliação
-              <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor"
-                   stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
-                <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
-              </svg>
-            </button>
+          <div class="confirmed-summary-items" id="confirmed-summary-items"></div>
+          <div class="confirmed-summary-costs">
+            <div><span>SubTotal:</span><strong id="confirmed-subtotal">R$ 0,00</strong></div>
+            <div><span>Taxa de Entrega:</span><strong id="confirmed-delivery">R$ 0,00</strong></div>
           </div>
-          <p class="review-demo-note">Demonstração: nenhuma avaliação ou foto é enviada ao servidor nesta etapa.</p>
-        </form>
-      </section>
-      <section id="confirmed-review-thanks" class="confirmed-review-thanks" aria-labelledby="review-thanks-title"
-               aria-hidden="true" inert>
-        <img src="/img/logo-agrupada.svg" th:src="@{/img/logo-agrupada.svg}"
-             alt="Café Aurora" class="review-thanks-logo">
-        <h2 id="review-thanks-title" class="sr-only">Obrigado por avaliar o Café Aurora!</h2>
-        <p>Agradecemos a sua avaliação e<br>desejamos que você retorne em breve</p>
-        <a href="/" th:href="@{/}" class="review-home-link">Voltar para a Home</a>
-        <small>Prévia de interface — avaliação ainda não publicada.</small>
-      </section>
+          <div class="confirmed-summary-total"><span>Total</span><strong id="confirmed-total">R$ 0,00</strong></div>
+          <div class="confirmed-delivery">
+            <h3><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 22s8-7 8-13A8 8 0 0 0 4 9c0 6 8 13 8 13Z" />
+                <circle cx="12" cy="9" r="3" />
+              </svg><span id="confirmed-address-heading">Endereço de entrega</span></h3>
+            <p id="confirmed-address">Endereço não informado.</p>
+          </div>
+        </section>
+        <!-- Avaliação: disponível exclusivamente após CONCLUIDO. -->
+        <section id="confirmed-review" class="confirmed-review-panel" aria-labelledby="review-panel-title"
+          aria-hidden="true" inert>
+          <div class="review-panel-header">
+            <div class="review-decorative-stars" aria-hidden="true">★★★★★</div>
+            <h2 id="review-panel-title">Avaliar pedido</h2>
+            <p>Registre a sua experiência no Café Aurora</p>
+          </div>
+
+          <form id="order-review-form" class="order-review-form" novalidate>
+            <div class="review-input-row">
+              <label class="review-field">Seu nome:
+                <input id="review-customer-name" type="text" name="nome" autocomplete="name" minlength="2"
+                  maxlength="100" required placeholder="Seu nome">
+              </label>
+              <fieldset class="review-stars-fieldset">
+                <legend>Sua avaliação:</legend>
+                <div class="review-stars-choice" id="review-stars-choice" aria-label="Escolha de 1 a 5 estrelas">
+                  <label><input type="radio" name="nota" value="1" required aria-label="1 estrela"><span
+                      aria-hidden="true">☆</span></label>
+                  <label><input type="radio" name="nota" value="2" aria-label="2 estrelas"><span
+                      aria-hidden="true">☆</span></label>
+                  <label><input type="radio" name="nota" value="3" aria-label="3 estrelas"><span
+                      aria-hidden="true">☆</span></label>
+                  <label><input type="radio" name="nota" value="4" aria-label="4 estrelas"><span
+                      aria-hidden="true">☆</span></label>
+                  <label><input type="radio" name="nota" value="5" aria-label="5 estrelas"><span
+                      aria-hidden="true">☆</span></label>
+                </div>
+              </fieldset>
+            </div>
+            <label class="review-field review-comment-label">Comentário:
+              <textarea id="review-comment" name="comentario" rows="3" minlength="5" maxlength="1000" required
+                placeholder="Conte como foi sua experiência..."></textarea>
+            </label>
+            <div class="review-upload-container">
+              <label class="review-field" for="review-photo">Foto (Opcional):</label>
+              <input id="review-photo" type="file" name="foto" accept="image/jpeg,image/png,image/webp"
+                aria-describedby="review-photo-help review-photo-feedback">
+              <label class="review-upload-drop" for="review-photo">
+                <svg viewBox="0 0 24 24" width="31" height="31" fill="none" stroke="currentColor" stroke-width="1.6"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 16.6A5 5 0 0 0 17.5 7 6 6 0 0 0 6 8.5 4.5 4.5 0 0 0 7 17h2" />
+                  <path d="m12 21 0-10m-4 4 4-4 4 4" />
+                </svg>
+                <span>Clique aqui para enviar uma foto
+                  <small id="review-photo-help">JPG, PNG ou WebP — somente 1 foto (até 5 MB)</small>
+                </span>
+              </label>
+              <div id="review-photo-preview" class="review-photo-preview" hidden>
+                <img id="review-photo-thumbnail" alt="Prévia da foto selecionada">
+                <span id="review-photo-name"></span>
+                <button type="button" id="review-photo-remove" aria-label="Remover foto selecionada">Remover</button>
+              </div>
+              <p id="review-photo-feedback" class="review-validation-message" role="status" aria-live="polite"></p>
+            </div>
+            <p id="review-form-error" class="review-validation-message" role="alert" hidden></p>
+            <div class="review-form-actions">
+              <button type="button" id="review-cancel" class="review-cancel-btn">Cancelar</button>
+              <button type="submit" id="review-submit" class="review-send-btn">
+                Enviar avaliação
+                <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="m22 2-7 20-4-9-9-4Z" />
+                  <path d="M22 2 11 13" />
+                </svg>
+              </button>
+            </div>
+            <p class="review-demo-note">Demonstração: nenhuma avaliação ou foto é enviada ao servidor nesta etapa.</p>
+          </form>
+        </section>
+        <section id="confirmed-review-thanks" class="confirmed-review-thanks" aria-labelledby="review-thanks-title"
+          aria-hidden="true" inert>
+          <img src="/img/logo.svg" th:src="@{/img/logo.svg}" alt="Café Aurora" class="review-thanks-logo">
+          <h2 id="review-thanks-title" class="sr-only">Obrigado por avaliar o Café Aurora!</h2>
+          <p>Agradecemos a sua avaliação e<br>desejamos que você retorne em breve</p>
+          <a href="/" th:href="@{/}" class="review-home-link">Voltar para a Home</a>
+          <small>Prévia de interface — avaliação ainda não publicada.</small>
+        </section>
+      </div>
     </div>
-  </div>
-</main>
-<footer th:replace="~{fragments/layout :: siteFooter}"></footer>
-<script src="/js/pedido-confirmado.js" th:src="@{/js/pedido-confirmado.js(v='20261102-review-1')}" defer></script>
-<script src="/js/pedido-avaliacao.js" th:src="@{/js/pedido-avaliacao.js(v='20261102-review-1')}" defer></script>
-<script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
+  </main>
+  <footer th:replace="~{fragments/layout :: siteFooter}"></footer>
+  <script src="/js/pedido-confirmado.js" th:src="@{/js/pedido-confirmado.js(v='20261102-review-1')}" defer></script>
+  <script src="/js/pedido-avaliacao.js" th:src="@{/js/pedido-avaliacao.js(v='20261102-review-1')}" defer></script>
+  <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
 </body>
+
 </html>
