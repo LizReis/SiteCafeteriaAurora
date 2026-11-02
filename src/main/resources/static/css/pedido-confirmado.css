@@ -103,46 +103,47 @@
     color: #aaa;
 }
 
+/* Uma linha contínua ligando o centro dos quatro ícones.
+   A base é pontilhada; a parte concluída torna-se sólida e dourada. */
 .tracking-steps {
+    --tracking-progress: 0;
+    --tracking-icon-size: 39px;
     list-style: none;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    position: relative;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 28px 3px 22px;
     padding: 0;
+}
+
+.tracking-steps::before,
+.tracking-steps::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--tracking-icon-size) / 2);
+    right: calc(var(--tracking-icon-size) / 2);
+    top: calc(var(--tracking-icon-size) / 2 - 1px);
+    border-top: 2px dotted #d1d1d1;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* A linha começa na primeira etapa e chega ao centro da etapa atual.
+   Os círculos cobrem suas extremidades para a conexão parecer perfeita. */
+.tracking-steps::after {
+    border-top: 2px solid var(--fonteDestaque);
+    transform-origin: left center;
+    transform: scaleX(var(--tracking-progress));
+    transition: transform .48s cubic-bezier(.22, 1, .36, 1);
 }
 
 .tracking-step {
     position: relative;
     display: flex;
     justify-content: center;
-}
-
-.tracking-step:first-child {
-    justify-content: flex-start;
-}
-
-.tracking-step:last-child {
-    justify-content: flex-end;
-}
-
-.tracking-step:not(:first-child)::before {
-    content: '';
-    position: absolute;
-    right: calc(50% + 19px);
-    left: calc(-50% + 19px);
-    top: 18px;
-    border-top: 2px dotted #d1d1d1;
-    opacity: .9;
-}
-
-.tracking-step:nth-child(2)::before {
-    left: calc(-50% + 19px);
-}
-
-.tracking-step.is-done::before {
-    border-top-style: solid;
-    border-top-color: var(--fonteDestaque);
+    flex: 0 0 var(--tracking-icon-size);
+    z-index: 1;
 }
 
 .tracking-dot {
@@ -1043,4 +1044,7 @@
     .review-stars-choice label span {
         transition: none !important
     }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tracking-steps::after { transition: none !important; }
 }

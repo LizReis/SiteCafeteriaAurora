@@ -86,6 +86,11 @@
       ?'Retirada concluída. Obrigado por escolher o Café Aurora!'
       :pickup&&next==='PRONTO'?'Seu pedido está pronto para retirada.':status.description;
     byId('current-status-icon').innerHTML=ICONS[next];
+    // As 3 conexões ocupam exatamente um terço da linha cada.
+    // Recebido: 0/3 | Em preparo: 1/3 | Pronto: 2/3 | Entregue: 3/3.
+    root.querySelector('.tracking-steps').style.setProperty(
+      '--tracking-progress',String(Math.max(0,status.step)/3)
+    );
     root.querySelectorAll('.tracking-step').forEach(el=>{
       const n=Number(el.dataset.step);
       el.classList.toggle('is-done',status.step>=0&&n<status.step);
