@@ -94,25 +94,17 @@
       else el.removeAttribute('aria-current');
     });
     review.disabled=next!=='CONCLUIDO';
+    document.dispatchEvent(new CustomEvent('cafeaurora:review-status',{detail:{status:next}}));
     previewSelector.value=next;
     if(persist){try{sessionStorage.setItem(STORAGE_KEY,JSON.stringify(order));}catch(_){}}
   }
-  function toggleDetails() {
-    const open=!layout.classList.contains('is-details');
-    layout.classList.toggle('is-details',open);
-    button.setAttribute('aria-expanded',String(open));
-    button.querySelector('span').textContent=open?'Ocultar detalhes':'Ver detalhes';
-    summary.setAttribute('aria-hidden',String(!open));
-    summary.inert=!open;
-    if(open&&matchMedia('(max-width:800px)').matches)
-      summary.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
-  }
-  button.addEventListener('click',toggleDetails);
+  button.addEventListener('click',()=>{
+    document.dispatchEvent(new CustomEvent('cafeaurora:toggle-details'));
+  });
   previewSelector.addEventListener('change',event=>applyStatus(event.target.value));
   review.addEventListener('click',()=>{
-    if(review.disabled)return;
-    const el=byId('review-feedback');el.hidden=false;
-    el.textContent='A tela de avaliação será adicionada na próxima etapa.';
+    if (review.disabled) return;
+    document.dispatchEvent(new CustomEvent('cafeaurora:open-review'));
   });
   document.addEventListener('cafeaurora:order-status-changed',event=>{
     const status=event.detail?.status;
