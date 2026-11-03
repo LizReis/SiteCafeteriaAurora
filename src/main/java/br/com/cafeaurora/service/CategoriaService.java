@@ -28,6 +28,7 @@ public class CategoriaService {
         String nome = req.nome().trim();
         validarDuplicidade(nome, null);
         Categoria c = new Categoria(nome, req.descricao(), req.ativa());
+        c.classificar(req.tipoCardapio(), req.ordemExibicao());
         return CategoriaResponse.de(repo.save(c));
     }
 
@@ -37,6 +38,7 @@ public class CategoriaService {
         String nome = req.nome().trim();
         validarDuplicidade(nome, id);
         c.atualizar(nome, req.descricao(), req.ativa());
+        c.classificar(req.tipoCardapio(), req.ordemExibicao());
         return CategoriaResponse.de(repo.save(c));
     }
 

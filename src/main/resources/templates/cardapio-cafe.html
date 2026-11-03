@@ -14,7 +14,7 @@
 
     <div class="cafe-menu-intro">
       <div class="cafe-menu-intro-copy">
-        <div class="cafe-script-heading"><span>just coffe</span><span class="cafe-heading-line"></span></div>
+        <div class="cafe-script-heading"><span>just coffee</span><span class="cafe-heading-line"></span></div>
         <h1>Menu de Café</h1>
         <p>Sabores cuidadosamente selecionados para transformar o seu dia em um bom momento.</p>
       </div>
@@ -24,95 +24,28 @@
       </a>
     </div>
 
-    <section class="coffee-category" aria-labelledby="expressos-heading">
-      <div class="coffee-category-heading">
-        <h2 id="expressos-heading"><span class="coffee-cup-icon" aria-hidden="true">♨</span> Espressos</h2>
+    <section class="coffee-category" th:each="secao : ${secoes}" th:attr="aria-labelledby=${'secao-' + secao.id}">
+        <div class="coffee-category-heading">
+        <h2 th:id="${'secao-' + secao.id}"><span class="coffee-cup-icon" aria-hidden="true">♨</span> <span th:text="${secao.nome}"></span></h2>
         <span class="coffee-category-rule" aria-hidden="true"></span>
       </div>
-      <div class="coffee-products-grid">
-        <article class="coffee-product" data-product-id="espresso-italiano">
-          <img src="/img/42953.jpg" alt="Espresso Italiano servido em xícara" loading="lazy">
+        <p class="menu-empty" th:if="${#lists.isEmpty(secao.produtos)}">Nenhum produto nesta seção no momento.</p>
+        <div class="coffee-products-grid"><article class="coffee-product" th:each="produto : ${secao.produtos}"
+          th:attr="data-product-id=${produto.id},data-price-cents=${produto.precoCentavos},data-available=${produto.disponivel}">
+          <img th:src="${produto.imagem}" th:alt="${produto.nome}" loading="lazy"
+            onerror="this.onerror=null;this.src='/img/produto-sem-imagem.svg'">
           <div class="coffee-product-info">
-            <div class="coffee-product-name"><h3>Espresso Italiano</h3><span class="price-leader"></span><strong>R$ 10,00</strong></div>
-            <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
+            <div class="coffee-product-name"><h3 th:text="${produto.nome}"></h3><span class="price-leader"></span><strong th:text="${produto.precoFormatado}"></strong></div>
+            <p th:text="${produto.descricao}"></p><small class="menu-status" th:unless="${produto.disponivel}">Indisponível</small>
           </div>
-          <div class="coffee-quantity" aria-label="Quantidade de Espresso Italiano">
-            <button type="button" class="quantity-minus" aria-label="Diminuir Espresso Italiano">−</button>
+          <div class="coffee-quantity" th:attr="aria-label=${'Quantidade de ' + produto.nome}">
+            <button type="button" class="quantity-minus" th:attr="aria-label=${'Diminuir ' + produto.nome}" th:disabled="${!produto.disponivel}">−</button>
             <output aria-live="polite">0</output>
-            <button type="button" class="quantity-plus" aria-label="Aumentar Espresso Italiano">+</button>
+            <button type="button" class="quantity-plus" th:attr="aria-label=${'Aumentar ' + produto.nome}" th:disabled="${!produto.disponivel}">+</button>
           </div>
-        </article>
-        <article class="coffee-product" data-product-id="latte-macchiato">
-          <img src="/img/1050.jpg" alt="Latte Macchiato servido em copo de vidro" loading="lazy">
-          <div class="coffee-product-info">
-            <div class="coffee-product-name"><h3>Latte Macchiato</h3><span class="price-leader"></span><strong>R$ 16,00</strong></div>
-            <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
-          </div>
-          <div class="coffee-quantity" aria-label="Quantidade de Latte Macchiato">
-            <button type="button" class="quantity-minus" aria-label="Diminuir Latte Macchiato">−</button>
-            <output aria-live="polite">0</output>
-            <button type="button" class="quantity-plus" aria-label="Aumentar Latte Macchiato">+</button>
-          </div>
-        </article>
-        <article class="coffee-product" data-product-id="cappuccino">
-          <img src="/img/42953.jpg" alt="Cappuccino com arte no leite" loading="lazy">
-          <div class="coffee-product-info">
-            <div class="coffee-product-name"><h3>Cappuccino</h3><span class="price-leader"></span><strong>R$ 14,00</strong></div>
-            <p>Cappuccino clássico com leite vaporizado e polvilhado com cacau.</p>
-          </div>
-          <div class="coffee-quantity" aria-label="Quantidade de Cappuccino">
-            <button type="button" class="quantity-minus" aria-label="Diminuir Cappuccino">−</button>
-            <output aria-live="polite">0</output>
-            <button type="button" class="quantity-plus" aria-label="Aumentar Cappuccino">+</button>
-          </div>
-        </article>
-        <article class="coffee-product" data-product-id="espresso-duplo">
-          <img src="/img/1050.jpg" alt="Café espresso servido em copo transparente" loading="lazy">
-          <div class="coffee-product-info">
-            <div class="coffee-product-name"><h3>Espresso Italiano</h3><span class="price-leader"></span><strong>R$ 10,00</strong></div>
-            <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
-          </div>
-          <div class="coffee-quantity" aria-label="Quantidade de Espresso Italiano">
-            <button type="button" class="quantity-minus" aria-label="Diminuir Espresso Italiano">−</button>
-            <output aria-live="polite">0</output>
-            <button type="button" class="quantity-plus" aria-label="Aumentar Espresso Italiano">+</button>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="coffee-category" aria-labelledby="cappuccino-heading">
-      <div class="coffee-category-heading">
-        <h2 id="cappuccino-heading"><span class="coffee-cup-icon" aria-hidden="true">♨</span> Capucino</h2>
-        <span class="coffee-category-rule" aria-hidden="true"></span>
-      </div>
-      <div class="coffee-products-grid">
-        <article class="coffee-product" data-product-id="cappuccino-classico">
-          <img src="/img/42953.jpg" alt="Cappuccino artesanal" loading="lazy">
-          <div class="coffee-product-info">
-            <div class="coffee-product-name"><h3>Espresso Italiano</h3><span class="price-leader"></span><strong>R$ 10,00</strong></div>
-            <p>A nossa especialidade. Do clássico espresso às criações autorais.</p>
-          </div>
-          <div class="coffee-quantity" aria-label="Quantidade de café">
-            <button type="button" class="quantity-minus" aria-label="Diminuir quantidade">−</button>
-            <output aria-live="polite">0</output>
-            <button type="button" class="quantity-plus" aria-label="Aumentar quantidade">+</button>
-          </div>
-        </article>
-        <article class="coffee-product" data-product-id="latte-art">
-          <img src="/img/1050.jpg" alt="Latte com leite cremoso" loading="lazy">
-          <div class="coffee-product-info">
-            <div class="coffee-product-name"><h3>Latte Macchiato</h3><span class="price-leader"></span><strong>R$ 16,00</strong></div>
-            <p>Leite cremoso manchado com um shot de café espresso intenso.</p>
-          </div>
-          <div class="coffee-quantity" aria-label="Quantidade de Latte Macchiato">
-            <button type="button" class="quantity-minus" aria-label="Diminuir quantidade">−</button>
-            <output aria-live="polite">0</output>
-            <button type="button" class="quantity-plus" aria-label="Aumentar quantidade">+</button>
-          </div>
-        </article>
-      </div>
-    </section>
+        </article></div>
+      </section>
+      <p class="menu-empty" th:if="${#lists.isEmpty(secoes)}">Cardápio em atualização.</p>
   </div>
 </main>
 <script src="/js/cardapio-cafe.js" th:src="@{/js/cardapio-cafe.js(v='20261019-animacoes-3')}" defer></script>
