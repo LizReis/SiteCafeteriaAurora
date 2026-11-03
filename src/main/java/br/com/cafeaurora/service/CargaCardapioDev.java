@@ -22,7 +22,7 @@ public class CargaCardapioDev {
         var sucos = categoria("Sucos", TipoCardapio.DRINKS, 1);
         var salgados = categoria("Salgados", TipoCardapio.COMIDAS, 0);
         var doces = categoria("Doces", TipoCardapio.COMIDAS, 1);
-        produto(espresso, "Espresso Italiano", "Café espresso intenso servido em xícara.", "10.00", "produto-sem-imagem.svg");
+        produto(espresso, "Espresso Italiano", "Café espresso intenso servido em xícara.", "10.00", "cupEsquerdaCima.jpg");
         produto(espresso, "Latte Macchiato", "Leite cremoso com um shot de café espresso.", "16.00", "42953.jpg");
         produto(capuccino, "Cappuccino", "Café com leite vaporizado e cacau.", "14.00", "1050.jpg");
         produto(alcool, "Coquetel de Frutas Vermelhas", "Coquetel alcoólico com frutas vermelhas.", "24.00", "5493.jpg");

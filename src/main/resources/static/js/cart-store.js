@@ -104,6 +104,7 @@
   // Reconcile saved metadata and visibility against the public catalogue, including
   // products removed while another menu was open. Never trust this at checkout.
   async function reconcile() {
+    if (document.getElementById('checkout-form')) { renderCounters(); updateBadge(); return; }
     if (!state.length) { renderCounters(); updateBadge(); return; }
     try {
       const response = await fetch('/api/produtos');

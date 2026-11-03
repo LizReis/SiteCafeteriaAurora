@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PaginaController {
     private final CardapioService cardapio;
-    public PaginaController(CardapioService cardapio) { this.cardapio = cardapio; }
+    private final java.math.BigDecimal taxaEntrega;
+    public PaginaController(CardapioService cardapio,
+        @org.springframework.beans.factory.annotation.Value("${cafe.pedido.taxa-entrega:7.00}") java.math.BigDecimal taxaEntrega) {
+        this.cardapio = cardapio; this.taxaEntrega=taxaEntrega;
+    }
 
 
     @GetMapping({"/", "/index", "/index.html"})
@@ -56,7 +60,8 @@ public class PaginaController {
     }
 
     @GetMapping({"/sacola-pedido", "/sacola-pedido.html"})
-    public String sacolaPedido() {
+    public String sacolaPedido(Model model) {
+        model.addAttribute("taxaEntregaCentavos", taxaEntrega.movePointRight(2).longValueExact());
         return "sacola-pedido";
     }
 }

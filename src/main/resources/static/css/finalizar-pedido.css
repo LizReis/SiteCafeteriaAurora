@@ -529,3 +529,10 @@
     display: block;
 }
 .payment-option .payment-icon-pix { object-fit: contain; }
+/* Ação de recuperação do resumo mantém a aparência dos links existentes. */
+#refresh-quote {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-decoration: underline;
+}

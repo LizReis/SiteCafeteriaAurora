@@ -3,7 +3,7 @@
   const CART = window.CafeAuroraCart;
   const items = document.getElementById('cart-items');
   if (!CART || !items) return;
-  const deliveryFee = 700;
+  const deliveryFee = Number(items.closest('main').dataset.deliveryCents);
   const currency = CART.formatBRL;
   const text = (node, value) => { const element = document.getElementById(node); if (element) element.textContent = value; };
 

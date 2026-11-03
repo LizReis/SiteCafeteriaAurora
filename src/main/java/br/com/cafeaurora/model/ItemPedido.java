@@ -26,6 +26,18 @@ public class ItemPedido {
     @Column(name = "preco_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precoUnitario;
 
+    ItemPedido(Pedido pedido, Produto produto, int quantidade) {
+        if (pedido == null || produto == null || quantidade < 1 || quantidade > 99
+            || !produto.isAtivo() || !produto.isDisponivel() || !produto.getCategoria().isAtiva()
+            || produto.getPreco() == null || produto.getPreco().signum() <= 0)
+            throw new IllegalArgumentException("Item inválido");
+        this.pedido=pedido; this.produto=produto; this.quantidade=quantidade;
+        this.nomeProduto=produto.getNome(); this.precoUnitario=produto.getPreco();
+        this.imagemUrl=produto.getImagemUrl();
+    }
+    @Column(length=500)
+    private String imagemUrl;
+    public String getImagemUrl() { return imagemUrl; }
     protected ItemPedido() {}
 
     public Long getId() { return id; }

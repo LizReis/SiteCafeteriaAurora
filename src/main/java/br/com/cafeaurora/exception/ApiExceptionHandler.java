@@ -36,9 +36,19 @@ public class ApiExceptionHandler {
         return erro(HttpStatus.BAD_REQUEST, "Dados de entrada inválidos", detalhes);
     }
 
+    @ExceptionHandler(PedidoPersistenciaException.class)
+    public ResponseEntity<ErroApi> falhaPedido(PedidoPersistenciaException ex) {
+        return erro(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), List.of());
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErroApi> restricaoBanco(DataIntegrityViolationException ex) {
         return erro(HttpStatus.CONFLICT, "O registro viola uma restrição de integridade do banco", List.of());
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErroApi> jsonInvalido(Exception ex) {
+        return erro(HttpStatus.BAD_REQUEST, "JSON inválido ou campos não permitidos", List.of());
     }
 
     private ResponseEntity<ErroApi> erro(HttpStatus status, String mensagem, List<String> detalhes) {

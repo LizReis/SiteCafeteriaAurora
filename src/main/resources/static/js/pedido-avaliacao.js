@@ -18,7 +18,7 @@
   let selectedPhoto=null;
   let objectURL=null;
   let submitted=false;
-  let status=window.CafeAuroraPedidoDemo?.getStatus?.()||'RECEBIDO';
+  let status=window.CafeAuroraPedido?.getStatus?.()||'RECEBIDO';
 
   function accessible(panel,enabled) {
     panel.inert=!enabled;
@@ -90,7 +90,7 @@
     view(state);
   });
   document.addEventListener('cafeaurora:open-review',()=>{
-    status=window.CafeAuroraPedidoDemo?.getStatus?.()||status;
+    status=window.CafeAuroraPedido?.getStatus?.()||status;
     if(status!=='CONCLUIDO'||submitted)return;
     error.hidden=true;
     view('review');

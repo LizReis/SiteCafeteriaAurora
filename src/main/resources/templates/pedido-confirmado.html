@@ -14,8 +14,8 @@
               <path d="m5 12 5 5L20 7" />
             </svg></span>
           <div class="confirmed-heading-copy">
-            <h1>Pedido confirmado</h1>
-            <p>Seu pedido foi recebido e já estamos preparando tudo com muito carinho</p>
+            <h1 id="order-heading-title">Consultar pedido</h1>
+            <p>Consulte o registro e acompanhe o status do seu pedido.</p>
             <span class="heading-underline" aria-hidden="true"></span>
           </div>
         </div>
@@ -58,23 +58,12 @@
                 <path d="M6 17v-4a5 5 0 0 1-1-9 5 5 0 0 1 6 1 5 5 0 0 1 6-1 5 5 0 0 1 1 9v4" />
                 <path d="M6 16h12v4H6z" />
               </svg></span>
-            <strong id="current-status-label">Em preparo</strong>
+            <strong id="current-status-label">Carregando pedido</strong>
             <span class="tracking-status-divider"></span>
-            <p id="current-status-description">Nossa equipe já está preparando o seu pedido.</p>
+            <p id="current-status-description">Aguarde a consulta ao servidor.</p>
           </div>
-          <p id="demo-status-note" class="confirmed-demo-note">Prévia demonstrativa: o status ainda não está conectado à
-            administração.</p>
-          <details class="status-demo-controls">
-            <summary>Testar etapas do acompanhamento</summary>
-            <label for="demo-status-select">Simular status:</label>
-            <select id="demo-status-select">
-              <option value="RECEBIDO">Pedido recebido</option>
-              <option value="EM_PREPARO">Em preparo</option>
-              <option value="PRONTO">Pronto</option>
-              <option value="CONCLUIDO">Pedido entregue</option>
-              <option value="CANCELADO">Cancelado</option>
-            </select>
-          </details>
+          <p id="order-reference" class="confirmed-demo-note" role="status">Consultando pedido registrado…</p>
+          <p id="order-payment" class="confirmed-demo-note"></p>
         </section>
         <div class="confirmed-actions">
           <button id="review-order-button" class="confirmed-review-button" type="button" disabled
