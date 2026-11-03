@@ -6,7 +6,7 @@
 <body class="cart-view">
   <header th:replace="~{fragments/layout :: siteHeader}"></header>
 
-  <main class="order-shell cart-shell">
+  <main class="order-shell cart-shell" th:attr="data-delivery-cents=${taxaEntregaCentavos}">
     <div class="order-background cart-beans" aria-hidden="true"></div>
     <div class="order-inner">
       <div class="order-heading">

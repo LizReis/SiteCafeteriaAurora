@@ -15,7 +15,8 @@ public record CardapioProduto(Long id, String nome, String descricao, BigDecimal
         return NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR")).format(preco);
     }
     public long getPrecoCentavos() { return preco.movePointRight(2).longValueExact(); }
-    public String getImagem() {
+    public String getImagem() { return imagemSegura(imagemUrl); }
+    public static String imagemSegura(String imagemUrl) {
         if (imagemUrl == null || imagemUrl.isBlank()) return "/img/produto-sem-imagem.svg";
         // Apenas caminhos locais absolutos e URLs HTTPS, nunca esquemas executáveis.
         return imagemUrl.matches("^/(?!/).*|^https://.+") ? imagemUrl : "/img/produto-sem-imagem.svg";

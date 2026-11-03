@@ -79,7 +79,7 @@ Não é correto afirmar que todos os princípios SOLID estão integralmente aten
 - Senhas não são salvas em arquivos versionados. HTTP Basic exige HTTPS fora do ambiente local.
 - Proteção CSRF é ignorada **somente** para `/api/admin/**`, que usa autenticação Basic sem cookies de sessão. Para um painel web com login/sessões, rever CSRF e a estratégia de autenticação.
 - Console H2 está bloqueado pela configuração de segurança, inclusive no perfil dev, até definirmos uma política local segura para liberá-lo.
-- O frontend continua com cardápio e sacola estáticos; endpoints de pedidos, painel administrativo HTML e pagamentos não estão implementados.
+- Os cardápios consultam H2 e a sacola permanece local; o backend de pedidos está implementado (Etapa 2); painel administrativo HTML e processamento de pagamentos ainda não estão implementados.
 - Para implantar em produção, migrar H2 para um banco adequado, gerenciar segredos, criar migrações em vez de `ddl-auto=update` e implementar autenticação apropriada para usuários administradores.
 
 
@@ -88,3 +88,7 @@ Não é correto afirmar que todos os princípios SOLID estão integralmente aten
 Os três cardápios renderizam produtos e seções do banco. Categorias usam `tipoCardapio` (`CAFE`, `DRINKS`, `COMIDAS`) e `ordemExibicao` (inteiro não negativo), obrigatórios no POST/PUT administrativo. O nome permanece editável.
 
 Consulte [a documentação da Etapa 1](docs/etapa-1-cardapios.md) para arquitetura, compatibilidade com bancos anteriores, contrato da API, sacola e testes. Categorias legadas personalizadas sem classificação devem receber um tipo pelo CRUD para aparecer nas páginas. Não apague o banco existente.
+
+## Pedidos persistidos — Etapa 2
+
+O checkout solicita uma cotação oficial, registra pedidos/itens no H2 com CSRF e idempotência e consulta a confirmação por referência aleatória. O pagamento é apenas intenção (`PENDENTE`), sem gateway ou coleta de dados de cartão. Consulte [contratos, imagens, compatibilidade e testes](docs/etapa-2-pedidos.md). A taxa oficial é configurada por `cafe.pedido.taxa-entrega` (padrão `7.00`; retirada sem taxa).

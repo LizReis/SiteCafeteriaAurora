@@ -50,11 +50,62 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens = new ArrayList<>();
 
+    // Colunas novas anuláveis permitem abrir tabelas de pedidos legadas.
+    @Column(length=150)
+    private String emailCliente;
+    @Column(precision=10, scale=2)
+    private BigDecimal subtotal;
+    @Column(precision=10, scale=2)
+    private BigDecimal taxaEntrega;
+    @Column(length=43, unique=true)
+    private String referenciaPublica;
+    @Column(length=64, unique=true)
+    private String idempotenciaHash;
+    @Column(length=64)
+    private String requisicaoHash;
+    @Column(length=64, unique=true)
+    private String cotacaoHash;
+
+    public String getEmailCliente() { return emailCliente; }
+    public BigDecimal getSubtotal() { return subtotal; }
+    public BigDecimal getTaxaEntrega() { return taxaEntrega; }
+    public String getReferenciaPublica() { return referenciaPublica; }
+    public String getRequisicaoHash() { return requisicaoHash; }
+
+    public Pedido(String nome, String telefone, String email, String endereco, String observacoes,
+                  TipoAtendimento tipo, FormaPagamento pagamento, BigDecimal taxa,
+                  String referencia, String idempotencia, String requisicao, String cotacao) {
+        if (nome == null || nome.isBlank() || telefone == null || telefone.isBlank() || email == null || email.isBlank()
+            || tipo == null || pagamento == null || taxa == null || taxa.signum() < 0
+            || referencia == null || idempotencia == null || requisicao == null || cotacao == null)
+            throw new IllegalArgumentException("Dados obrigatórios do pedido");
+        if (tipo == TipoAtendimento.ENTREGA && (endereco == null || endereco.isBlank()))
+            throw new IllegalArgumentException("Entrega exige endereço");
+        if (tipo == TipoAtendimento.RETIRADA && taxa.signum() != 0)
+            throw new IllegalArgumentException("Retirada não tem taxa");
+        this.nomeCliente=nome.trim(); this.telefoneCliente=telefone; this.emailCliente=email;
+        this.enderecoEntrega=tipo == TipoAtendimento.ENTREGA ? endereco : null;
+        this.observacoes=observacoes; this.tipoAtendimento=tipo; this.formaPagamento=pagamento;
+        this.taxaEntrega=taxa; this.subtotal=BigDecimal.ZERO.setScale(2); this.total=taxa;
+        this.referenciaPublica=referencia; this.idempotenciaHash=idempotencia;
+        this.requisicaoHash=requisicao; this.cotacaoHash=cotacao;
+    }
+    public void adicionarItem(Produto produto, int quantidade) {
+        if (itens.stream().anyMatch(i -> i.getProduto().getId().equals(produto.getId())))
+            throw new IllegalArgumentException("Produto duplicado");
+        ItemPedido item = new ItemPedido(this, produto, quantidade);
+        BigDecimal novoSubtotal=subtotal.add(item.getSubtotal());
+        BigDecimal novoTotal=novoSubtotal.add(taxaEntrega);
+        if (novoTotal.compareTo(new BigDecimal("99999999.99")) > 0)
+            throw new br.com.cafeaurora.exception.EntradaInvalidaException("Valor do pedido excede o limite");
+        itens.add(item); subtotal=novoSubtotal; total=novoTotal;
+    }
     protected Pedido() {}
 
     @PrePersist
     void antesDeSalvar() {
-        if (criadoEm == null) criadoEm = Instant.now();
+        if (itens.isEmpty()) throw new IllegalStateException("Pedido sem itens");
+        if (criadoEm == null) criadoEm = Instant.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
     }
 
     public Long getId() { return id; }
@@ -68,5 +119,5 @@ public class Pedido {
     public StatusPagamento getStatusPagamento() { return statusPagamento; }
     public BigDecimal getTotal() { return total; }
     public Instant getCriadoEm() { return criadoEm; }
-    public List<ItemPedido> getItens() { return itens; }
+    public List<ItemPedido> getItens() { return List.copyOf(itens); }
 }
