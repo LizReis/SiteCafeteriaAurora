@@ -26,104 +26,30 @@
         </a>
       </div>
 
-      <section class="food-category" aria-labelledby="food-salgados">
-        <div class="food-category-heading"><h2 id="food-salgados">Salgados</h2><span class="food-rule"></span></div>
-        <div class="food-grid">
-          <article class="food-product" data-product-id="quiche-artesanal">
-            <img src="/img/21690.jpg" th:src="@{/img/21690.jpg}" alt="Fatia de torta artesanal" loading="lazy">
+      <section class="food-category" th:each="secao : ${secoes}" th:attr="aria-labelledby=${'secao-' + secao.id}">
+        <div class="food-category-heading"><h2 th:id="${'secao-' + secao.id}"><span th:text="${secao.nome}"></span></h2><span class="food-rule"></span></div>
+        <p class="menu-empty" th:if="${#lists.isEmpty(secao.produtos)}">Nenhum produto nesta seção no momento.</p>
+        <div class="food-grid"><article class="food-product" th:each="produto : ${secao.produtos}"
+          th:attr="data-product-id=${produto.id},data-price-cents=${produto.precoCentavos},data-available=${produto.disponivel}">
+            <img th:src="${produto.imagem}" th:alt="${produto.nome}" loading="lazy"
+            onerror="this.onerror=null;this.src='/img/produto-sem-imagem.svg'">
             <div class="food-product-description">
               <div class="food-product-title">
-                <h3>Quiche Artesanal</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 18,00</strong>
+                <h3 th:text="${produto.nome}"></h3><span class="food-dots" aria-hidden="true"></span><strong th:text="${produto.precoFormatado}"></strong>
               </div>
-              <p>Massa dourada com recheio cremoso, preparada diariamente.</p>
+              <p th:text="${produto.descricao}"></p><small class="menu-status" th:unless="${produto.disponivel}">Indisponível</small>
             </div>
-            <div class="food-stepper" aria-label="Quantidade de Quiche Artesanal">
-              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Quiche Artesanal">−</button>
+            <div class="food-stepper" th:attr="aria-label=${'Quantidade de ' + produto.nome}">
+              <button type="button" class="food-minus" th:attr="aria-label=${'Diminuir ' + produto.nome}" th:disabled="${!produto.disponivel}">−</button>
               <output aria-live="polite">0</output>
-              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Quiche Artesanal">+</button>
+              <button type="button" class="food-plus" th:attr="aria-label=${'Aumentar ' + produto.nome}" th:disabled="${!produto.disponivel}">+</button>
             </div>
-          </article>
-          <article class="food-product" data-product-id="sanduiche-casa">
-            <img src="/img/4368.jpg" th:src="@{/img/4368.jpg}" alt="Sanduíche artesanal com queijo" loading="lazy">
-            <div class="food-product-description">
-              <div class="food-product-title">
-                <h3>Sanduíche da Casa</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 22,00</strong>
-              </div>
-              <p>Pão macio, queijo e ingredientes frescos selecionados.</p>
-            </div>
-            <div class="food-stepper" aria-label="Quantidade de Sanduíche da Casa">
-              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Sanduíche da Casa">−</button>
-              <output aria-live="polite">0</output>
-              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Sanduíche da Casa">+</button>
-            </div>
-          </article>
-          <article class="food-product" data-product-id="torta-especial">
-            <img src="/img/21690.jpg" th:src="@{/img/21690.jpg}" alt="Fatia de torta" loading="lazy">
-            <div class="food-product-description">
-              <div class="food-product-title">
-                <h3>Torta Especial da Casa</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 16,00</strong>
-              </div>
-              <p>Uma fatia de torta para acompanhar a pausa do café.</p>
-            </div>
-            <div class="food-stepper" aria-label="Quantidade de Torta Especial da Casa">
-              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Torta Especial da Casa">−</button>
-              <output aria-live="polite">0</output>
-              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Torta Especial da Casa">+</button>
-            </div>
-          </article>
-          <article class="food-product" data-product-id="croissant-queijo">
-            <img src="/img/1320.jpg" th:src="@{/img/1320.jpg}" alt="Croissants artesanais folhados" loading="lazy">
-            <div class="food-product-description">
-              <div class="food-product-title">
-                <h3>Croissant de Queijo</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 15,00</strong>
-              </div>
-              <p>Massa folhada crocante e recheio delicado de queijo.</p>
-            </div>
-            <div class="food-stepper" aria-label="Quantidade de Croissant de Queijo">
-              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Croissant de Queijo">−</button>
-              <output aria-live="polite">0</output>
-              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Croissant de Queijo">+</button>
-            </div>
-          </article>
-        </div>
+          </article></div>
       </section>
-
-      <section class="food-category" aria-labelledby="food-doces">
-        <div class="food-category-heading"><h2 id="food-doces">Doces</h2><span class="food-rule"></span></div>
-        <div class="food-grid">
-          <article class="food-product" data-product-id="brownie-sorvete">
-            <img src="/img/cardapioComida.jpg" th:src="@{/img/cardapioComida.jpg}" alt="Sobremesa de confeitaria" loading="lazy">
-            <div class="food-product-description">
-              <div class="food-product-title">
-                <h3>Brownie com Sorvete</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 22,00</strong>
-              </div>
-              <p>Brownie de chocolate servido com gelato de baunilha.</p>
-            </div>
-            <div class="food-stepper" aria-label="Quantidade de Brownie com Sorvete">
-              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Brownie com Sorvete">−</button>
-              <output aria-live="polite">0</output>
-              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Brownie com Sorvete">+</button>
-            </div>
-          </article>
-          <article class="food-product" data-product-id="torta-frutas">
-            <img src="/img/21690.jpg" th:src="@{/img/21690.jpg}" alt="Fatia de torta de confeitaria" loading="lazy">
-            <div class="food-product-description">
-              <div class="food-product-title">
-                <h3>Torta de Frutas Silvestres</h3><span class="food-dots" aria-hidden="true"></span><strong>R$ 16,00</strong>
-              </div>
-              <p>Massa amanteigada com frutas e geleia da casa.</p>
-            </div>
-            <div class="food-stepper" aria-label="Quantidade de Torta de Frutas Silvestres">
-              <button type="button" class="food-minus" aria-label="Diminuir quantidade de Torta de Frutas Silvestres">−</button>
-              <output aria-live="polite">0</output>
-              <button type="button" class="food-plus" aria-label="Aumentar quantidade de Torta de Frutas Silvestres">+</button>
-            </div>
-          </article>
-        </div>
-      </section>
+      <p class="menu-empty" th:if="${#lists.isEmpty(secoes)}">Cardápio em atualização.</p>
     </div>
   </main>
-  <!-- Os valores e controles são demonstrativos até a integração com o backend de pedidos. -->
+
   <script src="/js/cardapio-comidas.js" th:src="@{/js/cardapio-comidas.js(v='20261029-food-1')}" defer></script>
   <footer th:replace="~{fragments/layout :: siteFooter}"></footer>
   <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>

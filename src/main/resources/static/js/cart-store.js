@@ -5,11 +5,11 @@
  */
 (() => {
   'use strict';
-  const KEY = 'cafe-aurora.cart.v1';
+  const KEY = 'cafe-aurora.cart.v2';
   const MAX_QTY = 99;
-  const FALLBACK_IMAGE = '/img/42953.jpg';
+  const FALLBACK_IMAGE = '/img/produto-sem-imagem.svg';
 
-  const safeImage = value => typeof value === 'string' && /^\/img\/[\w-]+\.(?:jpg|jpeg|png|webp)$/i.test(value)
+  const safeImage = value => typeof value === 'string' && /^(?:\/(?!\/)|https:\/\/)/i.test(value)
     ? value : FALLBACK_IMAGE;
   const formatBRL = cents => (Math.max(0, cents) / 100).toLocaleString('pt-BR', {
     style: 'currency', currency: 'BRL'
@@ -21,16 +21,17 @@
     const name = typeof item.name === 'string' ? item.name.slice(0, 120).trim() : '';
     const cents = Number(item.priceCents);
     const qty = Number(item.quantity);
-    if (!id || !name || !Number.isSafeInteger(cents) || cents <= 0 || cents > 10000000 ||
+    if (!/^[1-9]\d*$/.test(id) || !name || !Number.isSafeInteger(cents) || cents <= 0 || cents > 9999999999 ||
         !Number.isInteger(qty) || qty < 1 || qty > MAX_QTY) return null;
     return { id, name, description: String(item.description || '').slice(0, 250),
       priceCents: cents, image: safeImage(item.image), quantity: qty };
   };
 
   let state = [];
+  try { localStorage.removeItem('cafe-aurora.cart.v1'); } catch (_) {}
   try {
     const parsed = JSON.parse(localStorage.getItem(KEY) || '[]');
-    if (Array.isArray(parsed)) state = parsed.map(cleanItem).filter(Boolean).slice(0, 100);
+    if (Array.isArray(parsed)) state = [...new Map(parsed.map(cleanItem).filter(Boolean).map(item => [item.id, item])).values()].slice(0, 100);
   } catch (_) { /* localStorage indisponível: permanece em memória */ }
 
   function getItems() { return state.map(item => ({ ...item })); }
@@ -50,7 +51,9 @@
   }
   function setQuantity(item, quantity) {
     const id = String(item?.id || '').slice(0, 100);
-    if (!id) return;
+    if (!/^[1-9]\d*$/.test(id)) return;
+    const card = Array.from(menuCards()).find(c => c.dataset.productId === id);
+    if (card && card.dataset.available !== 'true') { remove(id); return; }
     const count = Math.min(MAX_QTY, Math.max(0, Math.floor(Number(quantity) || 0)));
     state = state.filter(current => current.id !== id);
     if (count > 0) {
@@ -68,55 +71,84 @@
   });
 
   function getMenuCardInfo(card) {
-    const title = card.querySelector('h3')?.textContent?.trim();
-    const priceText = card.querySelector('strong')?.textContent || '';
-    const priceMatch = priceText.match(/R\$\s*([\d.]+),([\d]{2})/);
-    const id = card.dataset.productId || (card.dataset.drinkIndex === undefined
-      ? '' : 'drink-' + card.dataset.drinkIndex);
-    if (!title || !priceMatch || !id) return null;
-    const whole = Number(priceMatch[1].replaceAll('.', ''));
-    const cents = whole * 100 + Number(priceMatch[2]);
-    return {
-      id, name: title, priceCents: cents,
-      description: card.querySelector('p')?.textContent?.trim() || '',
-      image: card.querySelector('img')?.getAttribute('src') || FALLBACK_IMAGE
-    };
+    return { id: card.dataset.productId, name: card.querySelector('h3')?.textContent.trim(),
+      priceCents: Number(card.dataset.priceCents),
+      description: card.querySelector('p')?.textContent.trim() || '',
+      image: card.querySelector('img')?.getAttribute('src') || FALLBACK_IMAGE };
   }
-
   function menuCards() {
     return document.querySelectorAll('.coffee-product, .drink-product, .food-product');
   }
-
-  // As páginas do menu já têm os próprios handlers dos steppers.
-  // Escutamos o click na fase de bolha, APÓS o contador visual ser atualizado.
-  document.addEventListener('click', event => {
-    const button = event.target.closest(
-      '.quantity-plus, .quantity-minus, .drink-plus, .drink-minus, .food-plus, .food-minus'
-    );
-    if (!button) return;
-    const card = button.closest('.coffee-product, .drink-product, .food-product');
-    if (!card) return;
-    const item = getMenuCardInfo(card);
-    const amount = Number(card.querySelector('output')?.textContent || 0);
-    if (item && Number.isInteger(amount)) setQuantity(item, amount);
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    updateBadge();
-    // Aguarda os scripts das páginas terminarem de inicializar o valor do output.
-    requestAnimationFrame(() => {
-      menuCards().forEach(card => {
-        const info = getMenuCardInfo(card);
-        const saved = info ? get(info.id) : null;
-        const output = card.querySelector('output');
-        if (output) {
-          const count = saved?.quantity || 0;
-          output.value = String(count);
-          output.textContent = String(count);
-          const minus = card.querySelector('.quantity-minus, .drink-minus, .food-minus');
-          if (minus) minus.disabled = count === 0;
-        }
+  function renderCounters() {
+    menuCards().forEach(card => {
+      const available = card.dataset.available === 'true';
+      const quantity = available ? (get(card.dataset.productId)?.quantity || 0) : 0;
+      const output = card.querySelector('output');
+      if (output) { output.value = String(quantity); output.textContent = String(quantity); }
+      card.querySelectorAll('button').forEach(button => {
+        const minus = button.matches('.quantity-minus, .drink-minus, .food-minus');
+        button.disabled = !available || (minus ? quantity === 0 : quantity >= MAX_QTY);
       });
     });
+  }
+  document.addEventListener('click', event => {
+    const button = event.target.closest('.quantity-plus, .quantity-minus, .drink-plus, .drink-minus, .food-plus, .food-minus');
+    if (!button || button.disabled) return;
+    const card = button.closest('[data-product-id]');
+    if (!card || card.dataset.available !== 'true') return;
+    const item = getMenuCardInfo(card);
+    const minus = button.matches('.quantity-minus, .drink-minus, .food-minus');
+    setQuantity(item, (get(item.id)?.quantity || 0) + (minus ? -1 : 1));
+  });
+  document.addEventListener('cafeaurora:cart-change', renderCounters);
+  // Reconcile saved metadata and visibility against the public catalogue, including
+  // products removed while another menu was open. Never trust this at checkout.
+  async function reconcile() {
+    if (!state.length) { renderCounters(); updateBadge(); return; }
+    try {
+      const response = await fetch('/api/produtos');
+      if (!response.ok) throw new Error('Catálogo indisponível');
+      const products = await response.json();
+      state = state.flatMap(saved => {
+        const p = products.find(p => String(p.id) === saved.id && p.disponivel);
+        if (!p) return [];
+        const item = cleanItem({ ...saved, name: p.nome, description: p.descricao,
+          priceCents: p.precoCentavos, image: p.imagem });
+        return item ? [item] : [];
+      });
+      notify();
+    } catch (_) { renderCounters(); updateBadge(); }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    menuCards().forEach(card => {
+      const item = getMenuCardInfo(card);
+      const saved = get(item.id);
+      if (saved) {
+        state = state.filter(p => p.id !== item.id);
+        if (card.dataset.available === 'true') {
+          const prepared = cleanItem({ ...item, quantity: saved.quantity });
+          if (prepared) state.push(prepared);
+        }
+      }
+    });
+    notify();
+    reconcile();
+  });
+  function restoreStoredState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(KEY) || '[]');
+      if (Array.isArray(parsed)) state = [...new Map(parsed.map(cleanItem).filter(Boolean)
+        .map(item => [item.id, item])).values()].slice(0, 100);
+    } catch (_) { /* Mantém estado em memória se o armazenamento estiver indisponível. */ }
+  }
+  window.addEventListener('pageshow', () => {
+    // Voltar pelo histórico pode restaurar uma página congelada (bfcache).
+    // Releia a store antes de reconciliar para não sobrescrever quantidades novas.
+    restoreStoredState(); renderCounters(); updateBadge(); reconcile();
+  });
+  window.addEventListener('storage', event => {
+    if (event.key === KEY || event.key === null) {
+      restoreStoredState(); renderCounters(); updateBadge();
+    }
   });
 })();

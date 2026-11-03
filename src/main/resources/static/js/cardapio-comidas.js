@@ -11,24 +11,6 @@
   let previousRevealAt = 0;
   const VERSION = '20261029-food-1';
 
-  function initQuantity() {
-    page.querySelectorAll('.food-product').forEach(card => {
-      const output = card.querySelector('output');
-      const minus = card.querySelector('.food-minus');
-      const plus = card.querySelector('.food-plus');
-      if (!output || !minus || !plus) return;
-      let quantity = 0;
-      const render = () => {
-        output.value = String(quantity);
-        output.textContent = String(quantity);
-        minus.disabled = quantity === 0;
-      };
-      minus.addEventListener('click', () => { quantity = Math.max(0, quantity - 1); render(); });
-      plus.addEventListener('click', () => { quantity = Math.min(99, quantity + 1); render(); });
-      render();
-    });
-  }
-
   function schedule(fn, delay) {
     const id = window.setTimeout(() => { timers.delete(id); fn(); }, delay);
     timers.add(id);
@@ -64,7 +46,6 @@
   }
 
   function init() {
-    initQuantity();
     if (reducedMotion.matches || !('IntersectionObserver' in window)) {
       showAll();
       return;

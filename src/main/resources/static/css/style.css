@@ -431,3 +431,14 @@ nav ul li a:hover {
     .site-header .logo { margin-left: 0; }
 }
 
+/* Estados dos cardápios dinâmicos; identidade e grades permanecem nos CSS locais. */
+.menu-status, .menu-empty { color: var(--fonteDestaque); font: 400 12px/1.5 var(--fontMotserrat); }
+.menu-empty { padding-block: 12px; }
+[data-product-id] button:disabled { opacity: .45; cursor: not-allowed; }
+/* Larguras percentuais somadas às margens existentes cortavam os steppers no celular. */
+@media (max-width: 1160px) {
+    .food-page .food-content, .drink-page .drink-content { width: auto; }
+}
+@media (max-width: 870px) {
+    .cafe-menu-page .cafe-menu-inner { width: auto; }
+}

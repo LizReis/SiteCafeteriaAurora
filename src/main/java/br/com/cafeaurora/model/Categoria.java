@@ -1,6 +1,7 @@
 package br.com.cafeaurora.model;
 
 import jakarta.persistence.*;
+import br.com.cafeaurora.enums.TipoCardapio;
 
 @Entity
 @Table(name = "categorias", uniqueConstraints = @UniqueConstraint(columnNames = "nome"))
@@ -17,6 +18,23 @@ public class Categoria {
     @Column(nullable = false)
     private boolean ativa = true;
 
+    // Nullable para atualização segura dos bancos anteriores. Categorias não
+    // reconhecidas permanecem sem classificação até decisão administrativa.
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private TipoCardapio tipoCardapio;
+    private Integer ordemExibicao;
+
+    public TipoCardapio getTipoCardapio() { return tipoCardapio; }
+    public Integer getOrdemExibicao() { return ordemExibicao; }
+    public void classificar(TipoCardapio tipo, Integer ordem) {
+        this.tipoCardapio = tipo;
+        this.ordemExibicao = ordem;
+    }
+    public Categoria(String nome, String descricao, boolean ativa, TipoCardapio tipo, Integer ordem) {
+        this(nome, descricao, ativa);
+        classificar(tipo, ordem);
+    }
     protected Categoria() {}
 
     public Categoria(String nome, String descricao, boolean ativa) {

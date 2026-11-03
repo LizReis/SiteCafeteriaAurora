@@ -41,7 +41,7 @@ Exemplo de criação de categoria (PowerShell):
 
 ```powershell
 $cred = Get-Credential -UserName admin
-$body = @{nome="Sobremesas"; descricao="Doces"; ativa=$true} | ConvertTo-Json
+$body = @{nome="Sobremesas"; descricao="Doces"; ativa=$true; tipoCardapio="COMIDAS"; ordemExibicao=0} | ConvertTo-Json
 Invoke-RestMethod -Uri "http://localhost:8080/api/admin/categorias" -Method Post -Credential $cred -Authentication Basic -ContentType "application/json" -Body $body
 ```
 
@@ -82,3 +82,9 @@ Não é correto afirmar que todos os princípios SOLID estão integralmente aten
 - O frontend continua com cardápio e sacola estáticos; endpoints de pedidos, painel administrativo HTML e pagamentos não estão implementados.
 - Para implantar em produção, migrar H2 para um banco adequado, gerenciar segredos, criar migrações em vez de `ddl-auto=update` e implementar autenticação apropriada para usuários administradores.
 
+
+## Cardápios integrados ao H2 — Etapa 1
+
+Os três cardápios renderizam produtos e seções do banco. Categorias usam `tipoCardapio` (`CAFE`, `DRINKS`, `COMIDAS`) e `ordemExibicao` (inteiro não negativo), obrigatórios no POST/PUT administrativo. O nome permanece editável.
+
+Consulte [a documentação da Etapa 1](docs/etapa-1-cardapios.md) para arquitetura, compatibilidade com bancos anteriores, contrato da API, sacola e testes. Categorias legadas personalizadas sem classificação devem receber um tipo pelo CRUD para aparecer nas páginas. Não apague o banco existente.
