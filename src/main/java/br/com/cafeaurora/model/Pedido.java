@@ -120,4 +120,19 @@ public class Pedido {
     public BigDecimal getTotal() { return total; }
     public Instant getCriadoEm() { return criadoEm; }
     public List<ItemPedido> getItens() { return List.copyOf(itens); }
+    public List<StatusPedido> proximosStatus() {
+        return switch (status) {
+            case RECEBIDO -> List.of(StatusPedido.EM_PREPARO, StatusPedido.CANCELADO);
+            case EM_PREPARO -> List.of(StatusPedido.PRONTO, StatusPedido.CANCELADO);
+            case PRONTO -> List.of(StatusPedido.CONCLUIDO, StatusPedido.CANCELADO);
+            case CONCLUIDO, CANCELADO -> List.of();
+        };
+    }
+
+    public void alterarStatus(StatusPedido novo) {
+        if (novo == null || !proximosStatus().contains(novo))
+            throw new br.com.cafeaurora.exception.RegraNegocioException(
+                "Transição de status não permitida para este pedido");
+        this.status = novo;
+    }
 }
