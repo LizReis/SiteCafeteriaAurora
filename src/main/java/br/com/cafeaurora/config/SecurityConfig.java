@@ -1,10 +1,19 @@
 package br.com.cafeaurora.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -28,15 +37,53 @@ public class SecurityConfig {
                 .password(encoder.encode(senha)).roles("ADMIN").build());
     }
 
+    // Compartilhado entre login por formulário e HTTP Basic.
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/h2-console/**").denyAll()
-                .anyRequest().permitAll())
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/admin/**"))
+    AuthenticationManager adminAuthenticationManager(UserDetailsService adminUser, PasswordEncoder encoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(adminUser);
+        provider.setPasswordEncoder(encoder);
+        return new ProviderManager(provider);
+    }
+
+    // A API antiga continua aceitando exclusivamente HTTP Basic, sem sessões/cookies.
+    // Separar os filtros impede que um login via formulário autentique POSTs sem CSRF na API.
+    @Bean
+    @Order(1)
+    SecurityFilterChain apiAdmin(HttpSecurity http, AuthenticationManager adminAuthenticationManager) throws Exception {
+        http.securityMatcher("/api/admin/**")
+            .authenticationManager(adminAuthenticationManager)
+            .authorizeHttpRequests(auth -> auth.anyRequest().hasRole("ADMIN"))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .csrf(csrf -> csrf.disable())
             .httpBasic(Customizer.withDefaults())
             .formLogin(form -> form.disable());
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    SecurityFilterChain paginas(HttpSecurity http, AuthenticationManager adminAuthenticationManager) throws Exception {
+        http.authenticationManager(adminAuthenticationManager)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/admin/login").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/h2-console/**").denyAll()
+                .anyRequest().permitAll())
+            // CSRF permanece ativo para todos os POSTs HTML e para o checkout público.
+            .formLogin(form -> form
+                .loginPage("/admin/login")
+                .loginProcessingUrl("/admin/login")
+                .defaultSuccessUrl("/admin", true)
+                .failureUrl("/admin/login?error")
+                .permitAll())
+            .logout(logout -> logout
+                .logoutUrl("/admin/logout")
+                .logoutSuccessUrl("/admin/login?logout")
+                .permitAll())
+            .exceptionHandling(ex -> ex.defaultAuthenticationEntryPointFor(
+                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                request -> request.getRequestURI().startsWith(
+                    request.getContextPath() + "/h2-console/")));
         return http.build();
     }
 }

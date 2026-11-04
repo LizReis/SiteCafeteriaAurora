@@ -92,3 +92,22 @@ Consulte [a documentação da Etapa 1](docs/etapa-1-cardapios.md) para arquitetu
 ## Pedidos persistidos — Etapa 2
 
 O checkout solicita uma cotação oficial, registra pedidos/itens no H2 com CSRF e idempotência e consulta a confirmação por referência aleatória. O pagamento é apenas intenção (`PENDENTE`), sem gateway ou coleta de dados de cartão. Consulte [contratos, imagens, compatibilidade e testes](docs/etapa-2-pedidos.md). A taxa oficial é configurada por `cafe.pedido.taxa-entrega` (padrão `7.00`; retirada sem taxa).
+
+## Área administrativa — Etapa 3
+
+Após configurar CAFE_ADMIN_PASSWORD e iniciar o projeto, visite http://localhost:8080/admin/login.
+Entre com CAFE_ADMIN_USERNAME (padrão: admin) e a senha configurada no ambiente.
+
+- /admin: indicadores e últimos pedidos;
+- /admin/categorias: criar, editar e desativar categorias;
+- /admin/produtos: criar, editar e desativar produtos, incluindo preço, categoria, imagem existente em /img e disponibilidade;
+- /admin/pedidos: filtrar e paginar pedidos;
+- /admin/pedidos/{id}: consultar detalhes e avançar status.
+
+Fluxo de status permitido: RECEBIDO → EM_PREPARO → PRONTO → CONCLUIDO, com CANCELADO permitido antes da conclusão. Estados finais não podem ser reabertos. PRONTO indica pedido pronto; para retirada, pronto para retirar; não existe enum EM_ENTREGA ainda.
+
+O painel usa autenticação por formulário e sessão com proteção CSRF. A API /api/admin/** preserva HTTP Basic stateless. Não exponha credenciais nem utilize HTTP sem TLS fora do desenvolvimento local. A desativação não exclui dados históricos.
+
+**Limites:** O painel usa caminhos para imagens já existentes em static/img (não há upload). O pagamento online não foi implementado. A configuração atual permanece orientada a ambiente local H2, não a produção.
+
+Execute `.\\mvnw.cmd test` e `.\\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"` (PowerShell) para validação local. Teste também os formulários HTML, login/logout, CSRF e a consulta pública dos pedidos após mudança de status.

@@ -13,4 +13,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     boolean existsByCotacaoHash(String hash);
     List<Pedido> findAllByOrderByCriadoEmDesc();
     List<Pedido> findByStatusOrderByCriadoEmDesc(StatusPedido status);
+    org.springframework.data.domain.Page<Pedido> findByStatus(StatusPedido status, org.springframework.data.domain.Pageable pagina);
+    long countByStatus(StatusPedido status);
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths={"itens"})
+    @org.springframework.data.jpa.repository.Query("select p from Pedido p where p.id = :id")
+    java.util.Optional<Pedido> buscarComItens(@org.springframework.data.repository.query.Param("id") Long id);
 }
