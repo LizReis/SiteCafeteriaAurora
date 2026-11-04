@@ -19,7 +19,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
 
-@SpringBootTest
+// Testes usam credenciais determinísticas, sem serem sobrescritas por
+// CAFE_ADMIN_USERNAME/CAFE_ADMIN_PASSWORD do Codespaces ou do computador.
+@SpringBootTest(properties = {
+    "cafe.admin.username=admin",
+    "cafe.admin.password=senha-exclusiva-para-testes"
+})
 class CardapioIntegracaoTests {
     @Autowired CategoriaRepository categorias;
     @Autowired ProdutoRepository produtos;
