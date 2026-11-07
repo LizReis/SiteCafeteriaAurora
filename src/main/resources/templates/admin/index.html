@@ -1,1 +1,127 @@
-<!doctype html><html lang="pt-br" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>Café Aurora | Administração</title><link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"><link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css"></head><body class="aurora-admin"><header class="admin-topbar"><a class="admin-brand" th:href="@{/admin}">Café <span>Aurora</span><small>ADMINISTRAÇÃO</small></a><nav aria-label="Área administrativa"><a th:href="@{/admin}">Visão geral</a><a th:href="@{/admin/categorias}">Categorias</a><a th:href="@{/admin/produtos}">Produtos</a><a th:href="@{/admin/pedidos}">Pedidos</a><a th:href="@{/}">Ver site</a></nav><form th:action="@{/admin/logout}" method="post"><button class="admin-logout" type="submit">Sair da conta</button></form></header><main><div class="admin-watermark" aria-hidden="true"></div><section class="admin-content"><div class="admin-kicker">JUST COFFEE <span></span> CAFÉ AURORA</div><h1>Gestão com <em>aroma de café.</em></h1><p class="admin-subtitle">Acompanhe o movimento da cafeteria e mantenha os cardápios sempre atualizados.</p><p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p><p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p><p role="alert" class="admin-alert error" th:if="${erroNegocio}" th:text="${erroNegocio}"></p><div class="admin-stats"><article><span>Pedidos recebidos</span><strong th:text="${totalPedidos}">0</strong></article><article><span>Aguardando preparo</span><strong th:text="${pendentes}">0</strong></article><article><span>Em preparo</span><strong th:text="${emPreparo}">0</strong></article><article><span>Prontos</span><strong th:text="${prontos}">0</strong></article><article><span>Produtos cadastrados</span><strong th:text="${totalProdutos}">0</strong></article></div><div class="admin-section-head"><div><h2>Últimos pedidos</h2><p>Informações atualizadas diretamente do banco de dados.</p></div><a class="admin-link" th:href="@{/admin/pedidos}">Ver todos →</a></div><div class="admin-table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Recebido</th><th>Status</th><th>Valor</th><th></th></tr></thead><tbody><tr th:each="p : ${recentes}"><td th:text="${'#' + p.id}"></td><td th:text="${p.cliente}"></td><td th:text="${p.recebidoEm}"></td><td><span class="admin-tag" th:text="${p.situacao}"></span></td><td th:text="${'R$ ' + #numbers.formatDecimal(p.total,1,'POINT',2,'COMMA')}"></td><td><a class="admin-link" th:href="@{/admin/pedidos/{id}(id=${p.id})}">Detalhes →</a></td></tr><tr th:if="${#lists.isEmpty(recentes)}"><td colspan="6">Nenhum pedido registrado até o momento.</td></tr></tbody></table></div><div class="admin-actions"><a th:href="@{/admin/categorias}">Gerenciar categorias →</a><a th:href="@{/admin/produtos}">Gerenciar produtos →</a></div></section><footer class="admin-footer">Café Aurora · Painel de gestão</footer></body></html>
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Café Aurora | Visão geral</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css">
+</head>
+<body class="aurora-admin admin-overview-page">
+    <header class="admin-topbar admin-overview-topbar">
+        <a class="admin-overview-brand" th:href="@{/admin}" href="/admin">
+            <span class="admin-overview-brand-title">Café Aurora</span>
+            <span class="admin-overview-brand-subtitle">– Administração</span>
+        </a>
+        <nav class="admin-overview-nav" aria-label="Área administrativa">
+            <a class="active" aria-current="page" th:href="@{/admin}" href="/admin">Visão geral</a>
+            <a th:href="@{/admin/categorias}" href="/admin/categorias">Categorias</a>
+            <a th:href="@{/admin/produtos}" href="/admin/produtos">Produtos</a>
+            <a th:href="@{/admin/pedidos}" href="/admin/pedidos">Pedidos</a>
+            <a th:href="@{/}" href="/">Ver site</a>
+        </nav>
+        <form th:action="@{/admin/logout}" action="/admin/logout" method="post">
+            <button class="admin-logout" type="submit">Sair da conta</button>
+        </form>
+    </header>
+
+    <main class="admin-overview-main">
+        <section class="admin-overview-intro" aria-labelledby="overview-title">
+            <h1 id="overview-title">Visão geral</h1>
+            <p>Acompanhe o movimento da cafeteria e mantenha os cardápios sempre atualizados.</p>
+        </section>
+
+        <p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p>
+        <p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p>
+
+        <section class="admin-overview-section" aria-labelledby="overview-orders">
+            <h2 id="overview-orders">Pedidos</h2>
+            <p class="admin-overview-description">Visualização dos pedidos em andamento</p>
+            <div class="admin-overview-grid">
+                <article class="admin-overview-card">
+                    <span>Pedidos recebidos</span>
+                    <strong th:text="${totalPedidos}">0</strong>
+                </article>
+                <article class="admin-overview-card">
+                    <span>Aguardando preparo</span>
+                    <strong th:text="${pendentes}">0</strong>
+                </article>
+                <article class="admin-overview-card">
+                    <span>Em preparo</span>
+                    <strong th:text="${emPreparo}">0</strong>
+                </article>
+                <article class="admin-overview-card">
+                    <span>Prontos</span>
+                    <strong th:text="${prontos}">0</strong>
+                </article>
+            </div>
+        </section>
+
+        <section class="admin-overview-section" aria-labelledby="overview-latest">
+            <div class="admin-overview-section-heading">
+                <div>
+                    <h2 class="admin-overview-gold" id="overview-latest">Últimos pedidos</h2>
+                    <p class="admin-overview-description">Informações atualizadas diretamente do banco de dados.</p>
+                </div>
+                <a class="admin-overview-all" th:href="@{/admin/pedidos}" href="/admin/pedidos">
+                    Ver todos <span aria-hidden="true">→</span>
+                </a>
+            </div>
+            <div class="admin-overview-table-wrap">
+                <table class="admin-overview-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Pedido</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Recebido em</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Atendimento</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${recentes}">
+                            <td th:text="${'#' + p.id}">#1</td>
+                            <td th:text="${p.cliente}">Cliente</td>
+                            <td th:text="${p.recebidoEm}">01/01/2026</td>
+                            <td><span class="admin-overview-status" th:text="${p.situacao}">Recebido</span></td>
+                            <td th:text="${p.atendimento}">RETIRADA</td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                            <td><a class="admin-overview-detail" th:href="@{/admin/pedidos/{id}(id=${p.id})}" href="/admin/pedidos">Ver detalhes</a></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentes)}">
+                            <td class="admin-overview-empty" colspan="7">Nenhum pedido registrado até o momento.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="admin-overview-section" aria-labelledby="overview-menu">
+            <h2 id="overview-menu">Configuração dos cardápios</h2>
+            <p class="admin-overview-description">Visualização da configuração dos cardápios do site</p>
+            <div class="admin-overview-grid">
+                <article class="admin-overview-card">
+                    <span>Categorias cadastradas</span>
+                    <strong th:text="${totalCategorias}">0</strong>
+                </article>
+                <article class="admin-overview-card">
+                    <span>Produtos cadastrados</span>
+                    <strong th:text="${totalProdutos}">0</strong>
+                </article>
+                <article class="admin-overview-card">
+                    <span>Categorias ativas</span>
+                    <strong th:text="${categoriasAtivas}">0</strong>
+                </article>
+                <article class="admin-overview-card">
+                    <span>Produtos ativos</span>
+                    <strong th:text="${produtosAtivos}">0</strong>
+                </article>
+            </div>
+        </section>
+    </main>
+    <footer class="admin-footer">Café Aurora · Painel de gestão</footer>
+</body>
+</html>
