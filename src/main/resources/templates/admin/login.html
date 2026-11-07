@@ -1,1 +1,58 @@
-<!doctype html><html lang="pt-br" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>Café Aurora | Administração</title><link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"><link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css"></head><body class="aurora-admin"><main class="admin-login"><div class="admin-login-card"><a class="admin-login-logo" th:href="@{/}"><img th:src="@{/img/logo-agrupada.svg}" src="/img/logo-agrupada.svg" alt="Café Aurora"></a><p class="admin-kicker">ÁREA RESTRITA</p><h1>Bem-vindo de volta</h1><p>Entre com suas credenciais para administrar a cafeteria.</p><p class="admin-alert error" role="alert" th:if="${param.error}">Usuário ou senha incorretos.</p><p class="admin-alert success" role="status" th:if="${param.logout}">Sessão encerrada com sucesso.</p><form th:action="@{/admin/login}" method="post"><label for="username">Usuário</label><input id="username" name="username" autocomplete="username" required autofocus><label for="password">Senha</label><input id="password" name="password" type="password" autocomplete="current-password" required><button class="admin-button" type="submit">Entrar no painel</button></form><a class="admin-return" th:href="@{/}">← Voltar para o Café Aurora</a></div></main></body></html>
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <meta name="theme-color" content="#000000">
+    <title>Área Administrativa | Café Aurora</title>
+
+    <!-- Fontes e variáveis compartilhadas do site -->
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+    <!-- Isolado: não altera categorias, produtos, pedidos ou dashboard -->
+    <link rel="stylesheet" href="/css/admin.css" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="/css/admin-login.css" th:href="@{/css/admin-login.css}">
+</head>
+<body class="aurora-admin admin-login-page">
+    <main class="admin-login-layout">
+        <section class="admin-login-panel" aria-labelledby="admin-login-heading">
+            <a class="admin-login-logo" href="/" th:href="@{/}"
+               aria-label="Voltar à página inicial do Café Aurora">
+                <img src="/img/logo-agrupada.svg" th:src="@{/img/logo-agrupada.svg}"
+                     alt="Café Aurora" width="220">
+            </a>
+
+            <h1 id="admin-login-heading">Área Administrativa</h1>
+            <p class="admin-login-subtitle">Entre com suas credenciais para administrar a cafeteria.</p>
+            <div class="admin-login-divider" aria-hidden="true"></div>
+
+            <p th:if="${param.error}" class="admin-alert error" role="alert">
+                Usuário ou senha incorretos.
+            </p>
+            <p th:if="${param.logout}" class="admin-alert success" role="status">
+                Sessão encerrada com sucesso.
+            </p>
+
+            <form class="admin-login-form" action="/admin/login" th:action="@{/admin/login}" method="post">
+                <div class="admin-login-field">
+                    <label for="username">Usuário:</label>
+                    <input id="username" name="username" type="text"
+                           autocomplete="username" required autofocus>
+                </div>
+
+                <div class="admin-login-field">
+                    <label for="password">Senha:</label>
+                    <input id="password" name="password" type="password"
+                           autocomplete="current-password" required>
+                </div>
+
+                <button type="submit" class="admin-login-submit">Entrar no painel</button>
+            </form>
+
+            <a class="admin-login-back" href="/" th:href="@{/}">
+                <span aria-hidden="true">←</span> Voltar para o Café Aurora
+            </a>
+        </section>
+    </main>
+</body>
+</html>
