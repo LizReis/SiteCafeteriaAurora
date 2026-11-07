@@ -32,11 +32,22 @@ public class AdminPainelController {
 
     @GetMapping({"", "/"})
     public String inicio(Model model) {
+        // Reaproveita os DTOs existentes: os números refletem o H2, não valores fictícios.
+        var listaCategorias = categorias.listar();
+        var listaProdutos = produtos.listar();
+
         model.addAttribute("totalPedidos", pedidos.contar());
         model.addAttribute("pendentes", pedidos.contar(StatusPedido.RECEBIDO));
         model.addAttribute("emPreparo", pedidos.contar(StatusPedido.EM_PREPARO));
         model.addAttribute("prontos", pedidos.contar(StatusPedido.PRONTO));
-        model.addAttribute("totalProdutos", produtos.listar().size());
+
+        model.addAttribute("totalCategorias", listaCategorias.size());
+        model.addAttribute("totalProdutos", listaProdutos.size());
+        model.addAttribute("categoriasAtivas",
+                listaCategorias.stream().filter(CategoriaResponse::ativa).count());
+        model.addAttribute("produtosAtivos",
+                listaProdutos.stream().filter(ProdutoResponse::ativo).count());
+
         model.addAttribute("recentes", pedidos.listar(null, 0, 5).getContent());
         return "admin/index";
     }
