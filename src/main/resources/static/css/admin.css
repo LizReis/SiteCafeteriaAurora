@@ -121,7 +121,8 @@
     padding: 22px 23px;
     border-radius: 13px;
     border: 1px solid var(--overview-border);
-    background: var(--overview-surface);
+    /* Canva: transparência ajustada para 60 (60% de opacidade do preenchimento). */
+    background: rgba(18, 8, 6, .60);
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.012);
 }
 .admin-overview-card span {
