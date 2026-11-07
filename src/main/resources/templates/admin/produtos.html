@@ -114,7 +114,7 @@
                     <div class="catalog-entry-actions">
                         <a th:href="@{/admin/produtos(editar=${p.id})}" href="/admin/produtos" th:aria-label="${'Editar produto ' + p.nome}">Editar</a>
                         <form th:if="${p.ativo}" method="post" th:action="@{/admin/produtos/{id}/desativar(id=${p.id})}">
-                            <button type="submit" th:attr="data-confirm='Desativar o produto ' + ${p.nome} + '?'" 
+                            <button type="submit"  
                                     onclick="return confirm('Desativar este produto?')" th:aria-label="${'Desativar produto ' + p.nome}">Desativar</button>
                         </form>
                     </div>
