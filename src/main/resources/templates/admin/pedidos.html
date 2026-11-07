@@ -1,1 +1,87 @@
-<!doctype html><html lang="pt-br" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>Café Aurora | Administração</title><link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"><link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css"></head><body class="aurora-admin"><header class="admin-topbar"><a class="admin-brand" th:href="@{/admin}">Café <span>Aurora</span><small>ADMINISTRAÇÃO</small></a><nav aria-label="Área administrativa"><a th:href="@{/admin}">Visão geral</a><a th:href="@{/admin/categorias}">Categorias</a><a th:href="@{/admin/produtos}">Produtos</a><a th:href="@{/admin/pedidos}">Pedidos</a><a th:href="@{/}">Ver site</a></nav><form th:action="@{/admin/logout}" method="post"><button class="admin-logout" type="submit">Sair da conta</button></form></header><main><div class="admin-watermark" aria-hidden="true"></div><section class="admin-content"><div class="admin-kicker">JUST COFFEE <span></span> CAFÉ AURORA</div><h1>Pedidos <em>em andamento.</em></h1><p class="admin-subtitle">Consulte os pedidos e acompanhe cada etapa do atendimento.</p><p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p><p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p><p role="alert" class="admin-alert error" th:if="${erroNegocio}" th:text="${erroNegocio}"></p><form method="get" th:action="@{/admin/pedidos}" class="admin-filter"><label for="status">Filtrar por situação</label><select id="status" name="status"><option value="">Todos os pedidos</option><option th:each="s : ${situacoes}" th:value="${s}" th:selected="${filtro == s}" th:text="${s}"></option></select><button class="admin-button" type="submit">Filtrar</button></form><div class="admin-table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Recebido</th><th>Atendimento</th><th>Status</th><th>Total</th><th></th></tr></thead><tbody><tr th:each="p : ${pedidos}"><td th:text="${'#' + p.id}"></td><td th:text="${p.cliente}"></td><td th:text="${p.recebidoEm}"></td><td th:text="${p.atendimento}"></td><td><span class="admin-tag" th:text="${p.situacao}"></span></td><td th:text="${'R$ ' + #numbers.formatDecimal(p.total,1,'POINT',2,'COMMA')}"></td><td><a class="admin-link" th:href="@{/admin/pedidos/{id}(id=${p.id})}">Ver pedido →</a></td></tr><tr th:if="${#lists.isEmpty(pedidos)}"><td colspan="7">Nenhum pedido encontrado.</td></tr></tbody></table></div><nav class="admin-pagination" th:if="${pagina.totalPages > 1}" aria-label="Paginação"><a th:if="${pagina.hasPrevious()}" th:href="@{/admin/pedidos(pagina=${pagina.number - 1},status=${filtro})}">← Anterior</a><span th:text="${'Página ' + (pagina.number + 1) + ' de ' + pagina.totalPages}"></span><a th:if="${pagina.hasNext()}" th:href="@{/admin/pedidos(pagina=${pagina.number + 1},status=${filtro})}">Próxima →</a></nav></section><footer class="admin-footer">Café Aurora · Painel de gestão</footer></body></html>
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <meta name="theme-color" content="#000000">
+    <title>Pedidos em andamento | Café Aurora</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css">
+    <link rel="stylesheet" th:href="@{/css/admin-orders.css}" href="/css/admin-orders.css">
+</head>
+<body class="aurora-admin admin-orders-page">
+    <header class="admin-topbar orders-topbar">
+        <a class="orders-brand" th:href="@{/admin}" href="/admin">
+            <span class="orders-brand-name">Café Aurora</span>
+            <span class="orders-brand-caption">– Administração</span>
+        </a>
+        <nav class="orders-nav" aria-label="Área administrativa">
+            <a th:href="@{/admin}" href="/admin">Visão geral</a>
+            <a th:href="@{/admin/categorias}" href="/admin/categorias">Categorias</a>
+            <a th:href="@{/admin/produtos}" href="/admin/produtos">Produtos</a>
+            <a class="active" aria-current="page" th:href="@{/admin/pedidos}" href="/admin/pedidos">Pedidos</a>
+            <a th:href="@{/}" href="/">Ver site</a>
+        </nav>
+        <form th:action="@{/admin/logout}" action="/admin/logout" method="post">
+            <button class="admin-logout orders-logout" type="submit">Sair da conta</button>
+        </form>
+    </header>
+    <main class="orders-main">
+        <section class="orders-intro" aria-labelledby="orders-title">
+            <h1 id="orders-title">Pedidos em andamento</h1>
+            <p>Consulte os pedidos e acompanhe cada etapa do atendimento.</p>
+        </section>
+        <p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p>
+        <p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p>
+        <p role="alert" class="admin-alert error" th:if="${erroNegocio}" th:text="${erroNegocio}"></p>
+        <section class="orders-filter-section" aria-label="Filtrar pedidos">
+            <form method="get" th:action="@{/admin/pedidos}" action="/admin/pedidos" class="orders-filter-form">
+                <div class="orders-filter-field">
+                    <label for="status">Filtrar por situação</label>
+                    <select id="status" name="status">
+                        <option value="" th:selected="${filtro == null}">Todos os pedidos</option>
+                        <option th:each="s : ${situacoes}"
+                                th:value="${s}"
+                                th:selected="${filtro == s}"
+                                th:text="${s.name() == 'RECEBIDO' ? 'Recebido' : (s.name() == 'EM_PREPARO' ? 'Em preparo' : (s.name() == 'PRONTO' ? 'Pronto' : (s.name() == 'CONCLUIDO' ? 'Concluído' : 'Cancelado')))}">Recebido</option>
+                    </select>
+                </div>
+                <button class="orders-filter-button" type="submit">Filtrar</button>
+            </form>
+        </section>
+        <section class="orders-table-card" aria-label="Lista de pedidos">
+            <div class="orders-table-scroll">
+                <table class="orders-table" th:if="${!#lists.isEmpty(pedidos)}">
+                    <thead><tr>
+                        <th scope="col">Número</th>
+                        <th scope="col">Cliente</th>
+                        <th scope="col">Recebido</th>
+                        <th scope="col">Atendimento</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Total</th>
+                        <th scope="col"><span class="orders-sr-only">Ação</span></th>
+                    </tr></thead>
+                    <tbody>
+                        <tr th:each="p : ${pedidos}">
+                            <td th:text="${'#' + p.id}">#1</td>
+                            <td th:text="${p.cliente}">Cliente</td>
+                            <td th:text="${p.recebidoEm}">01/01/2026</td>
+                            <td th:text="${p.atendimento}">RETIRADA</td>
+                            <td><span class="orders-status-tag" th:text="${p.situacao}">Recebido</span></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                            <td><a class="orders-detail-link" th:href="@{/admin/pedidos/{id}(id=${p.id})}" href="/admin/pedidos">Ver pedido →</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="orders-empty" th:if="${#lists.isEmpty(pedidos)}">Nenhum pedido encontrado.</p>
+            <nav class="orders-pagination" th:if="${pagina.totalPages > 1}" aria-label="Paginação dos pedidos">
+                <a th:if="${pagina.hasPrevious()}" th:href="@{/admin/pedidos(pagina=${pagina.number - 1},status=${filtro})}">← Anterior</a>
+                <span th:text="${'Página ' + (pagina.number + 1) + ' de ' + pagina.totalPages}">Página 1 de 1</span>
+                <a th:if="${pagina.hasNext()}" th:href="@{/admin/pedidos(pagina=${pagina.number + 1},status=${filtro})}">Próxima →</a>
+            </nav>
+        </section>
+    </main>
+</body>
+</html>
