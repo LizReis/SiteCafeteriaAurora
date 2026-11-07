@@ -1,1 +1,117 @@
-<!doctype html><html lang="pt-br" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>Café Aurora | Administração</title><link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"><link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css"></head><body class="aurora-admin"><header class="admin-topbar"><a class="admin-brand" th:href="@{/admin}">Café <span>Aurora</span><small>ADMINISTRAÇÃO</small></a><nav aria-label="Área administrativa"><a th:href="@{/admin}">Visão geral</a><a th:href="@{/admin/categorias}">Categorias</a><a th:href="@{/admin/produtos}">Produtos</a><a th:href="@{/admin/pedidos}">Pedidos</a><a th:href="@{/}">Ver site</a></nav><form th:action="@{/admin/logout}" method="post"><button class="admin-logout" type="submit">Sair da conta</button></form></header><main><div class="admin-watermark" aria-hidden="true"></div><section class="admin-content"><div class="admin-kicker">JUST COFFEE <span></span> CAFÉ AURORA</div><h1>Categorias <em>do cardápio.</em></h1><p class="admin-subtitle">Organize suas seções de café, drinks e comidas sem alterar o código.</p><p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p><p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p><p role="alert" class="admin-alert error" th:if="${erroNegocio}" th:text="${erroNegocio}"></p><div class="admin-split"><section class="admin-panel"><h2 th:text="${editando == null ? 'Nova categoria' : 'Editar categoria'}">Nova categoria</h2><form method="post" th:action="@{/admin/categorias/salvar}" th:object="${form}"><input type="hidden" name="id" th:if="${editando != null}" th:value="${editando}"><label for="nome">Nome da categoria</label><input id="nome" type="text" th:field="*{nome}" maxlength="80" required><small class="admin-field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></small><label for="descricao">Descrição</label><textarea id="descricao" th:field="*{descricao}" maxlength="255" rows="3"></textarea><label for="tipoCardapio">Cardápio</label><select id="tipoCardapio" th:field="*{tipoCardapio}" required><option value="">Selecione</option><option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option></select><small class="admin-field-error" th:if="${#fields.hasErrors('tipoCardapio')}" th:errors="*{tipoCardapio}"></small><label for="ordemExibicao">Ordem de exibição</label><input id="ordemExibicao" type="number" th:field="*{ordemExibicao}" min="0" required><small class="admin-field-error" th:if="${#fields.hasErrors('ordemExibicao')}" th:errors="*{ordemExibicao}"></small><label class="admin-check"><input type="checkbox" th:field="*{ativa}"> Categoria ativa</label><button class="admin-button" type="submit">Salvar categoria</button><a class="admin-return" th:if="${editando != null}" th:href="@{/admin/categorias}">Cancelar edição</a></form></section><section class="admin-panel"><h2>Categorias cadastradas</h2><div class="admin-list"><article class="admin-list-item" th:each="c : ${categorias}"><div><strong th:text="${c.nome}"></strong><p th:text="${(c.tipoCardapio == null ? 'Sem classificação' : c.tipoCardapio) + ' · Ordem ' + (c.ordemExibicao == null ? '—' : c.ordemExibicao)}"></p><small th:text="${c.ativa ? 'Ativa' : 'Inativa'}"></small></div><div class="admin-item-actions"><a th:href="@{/admin/categorias(editar=${c.id})}">Editar</a><form th:if="${c.ativa}" method="post" th:action="@{/admin/categorias/{id}/desativar(id=${c.id})}"><button type="submit" onclick="return confirm('Desativar esta categoria?')">Desativar</button></form></div></article><p th:if="${#lists.isEmpty(categorias)}">Ainda não há categorias.</p></div></section></div></section><footer class="admin-footer">Café Aurora · Painel de gestão</footer></body></html>
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <meta name="theme-color" content="#000000">
+    <title>Categorias dos cardápios | Café Aurora</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="/css/admin.css" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="/css/admin-catalog.css" th:href="@{/css/admin-catalog.css}">
+</head>
+<body class="aurora-admin admin-catalog-page">
+<header class="admin-topbar catalog-topbar">
+    <a class="catalog-brand" th:href="@{/admin}" href="/admin">
+        <span class="catalog-brand-name">Café Aurora</span>
+        <span class="catalog-brand-caption">– Administração</span>
+    </a>
+    <nav class="catalog-nav" aria-label="Área administrativa">
+        <a th:href="@{/admin}" href="/admin">Visão geral</a>
+        <a class="active" aria-current="page" th:href="@{/admin/categorias}" href="/admin/categorias">Categorias</a>
+        <a th:href="@{/admin/produtos}" href="/admin/produtos">Produtos</a>
+        <a th:href="@{/admin/pedidos}" href="/admin/pedidos">Pedidos</a>
+        <a th:href="@{/}" href="/">Ver site</a>
+    </nav>
+    <form action="/admin/logout" th:action="@{/admin/logout}" method="post">
+        <button type="submit" class="admin-logout catalog-logout">Sair da conta</button>
+    </form>
+</header>
+
+<main class="catalog-main">
+    <section class="catalog-intro" aria-labelledby="catalog-page-title">
+        <h1 id="catalog-page-title">Categorias dos cardápios</h1>
+        <p>Organize suas seções de café, drinks e comidas.</p>
+    </section>
+
+    <p th:if="${sucesso}" th:text="${sucesso}" role="status" class="admin-alert success catalog-flash"></p>
+    <p th:if="${erro}" th:text="${erro}" role="alert" class="admin-alert error catalog-flash"></p>
+    <p th:if="${erroNegocio}" th:text="${erroNegocio}" role="alert" class="admin-alert error catalog-flash"></p>
+
+    <div class="catalog-grid">
+        <section class="catalog-card catalog-editor" aria-labelledby="category-form-title">
+            <h2 id="category-form-title"
+                th:text="${editando == null ? 'Nova categoria' : 'Editar categoria'}">Nova categoria</h2>
+            <p class="catalog-card-description">Cadastre uma nova categoria para um cardápio da sua escolha</p>
+
+            <form class="catalog-form" method="post" th:action="@{/admin/categorias/salvar}" th:object="${form}">
+                <input type="hidden" name="id" th:if="${editando != null}" th:value="${editando}">
+
+                <div class="catalog-field">
+                    <label for="nome">Nome da categoria:</label>
+                    <input id="nome" type="text" maxlength="80" th:field="*{nome}"
+                           th:classappend="${#fields.hasErrors('nome')} ? ' is-invalid' : ''"
+                           aria-describedby="nome-error" required>
+                    <small id="nome-error" class="catalog-field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></small>
+                </div>
+
+                <div class="catalog-field">
+                    <label for="descricao">Descrição da categoria:</label>
+                    <textarea id="descricao" rows="3" maxlength="255" th:field="*{descricao}"></textarea>
+                    <small class="catalog-field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></small>
+                </div>
+
+                <div class="catalog-field">
+                    <label for="tipoCardapio">Cardápio:</label>
+                    <select id="tipoCardapio" th:field="*{tipoCardapio}" required>
+                        <option value="">Selecione</option>
+                        <option th:each="tipo : ${tipos}" th:value="${tipo}"
+                                th:text="${tipo.name() == 'CAFE' ? 'Café' : (tipo.name() == 'DRINKS' ? 'Drinks' : 'Comidas')}">Café</option>
+                    </select>
+                    <small class="catalog-field-error" th:if="${#fields.hasErrors('tipoCardapio')}" th:errors="*{tipoCardapio}"></small>
+                </div>
+
+                <div class="catalog-field">
+                    <label for="ordemExibicao">Ordem de exibição:</label>
+                    <input id="ordemExibicao" type="number" min="0" step="1" th:field="*{ordemExibicao}" required>
+                    <small class="catalog-field-error" th:if="${#fields.hasErrors('ordemExibicao')}" th:errors="*{ordemExibicao}"></small>
+                </div>
+
+                <label class="catalog-check">
+                    <input type="checkbox" th:field="*{ativa}">
+                    <span>Categoria ativa?</span>
+                </label>
+
+                <button class="catalog-submit" type="submit">Salvar categoria</button>
+                <a class="catalog-cancel" th:if="${editando != null}" th:href="@{/admin/categorias}">
+                    Cancelar edição
+                </a>
+            </form>
+        </section>
+
+        <section class="catalog-card catalog-list-card" aria-labelledby="category-list-title">
+            <h2 id="category-list-title">Categorias cadastradas</h2>
+            <p class="catalog-card-description">Painel das categorias já cadastradas no sistema. Aqui você pode editar, ativar ou desativar uma categoria</p>
+
+            <div class="catalog-list">
+                <article class="catalog-entry" th:each="c : ${categorias}">
+                    <div class="catalog-entry-info">
+                        <h3 th:text="${c.nome}">Cafés Especiais</h3>
+                        <p th:text="${(c.tipoCardapio == null ? 'Sem classificação' : (c.tipoCardapio.name() == 'CAFE' ? 'CAFÉ' : c.tipoCardapio.name())) + ' · Ordem ' + (c.ordemExibicao == null ? '—' : c.ordemExibicao)}">CAFÉ · Ordem 0</p>
+                        <p th:text="${c.ativa ? 'Ativa' : 'Inativa'}">Ativa</p>
+                    </div>
+                    <div class="catalog-entry-actions">
+                        <a th:href="@{/admin/categorias(editar=${c.id})}" href="/admin/categorias" th:aria-label="${'Editar categoria ' + c.nome}">Editar</a>
+                        <form th:if="${c.ativa}" method="post" th:action="@{/admin/categorias/{id}/desativar(id=${c.id})}">
+                            <button type="submit"  
+                                    onclick="return confirm('Desativar esta categoria?')" th:aria-label="${'Desativar categoria ' + c.nome}">Desativar</button>
+                        </form>
+                    </div>
+                </article>
+                <p class="catalog-empty" th:if="${#lists.isEmpty(categorias)}">Ainda não há categorias cadastradas.</p>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>
