@@ -1,94 +1,145 @@
 <!doctype html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
-    <title>Café Aurora | Administração</title>
+    <meta name="theme-color" content="#000000">
+    <title>Detalhes do pedido | Café Aurora</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
     <link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css">
+    <!-- Reutiliza exatamente os estilos do cabeçalho de Pedidos em andamento. -->
+    <link rel="stylesheet" th:href="@{/css/admin-orders.css}" href="/css/admin-orders.css">
+    <link rel="stylesheet" th:href="@{/css/admin-order-detail.css}" href="/css/admin-order-detail.css">
 </head>
-
-<body class="aurora-admin">
-    <header class="admin-topbar"><a class="admin-brand" th:href="@{/admin}">Café
-            <span>Aurora</span><small>ADMINISTRAÇÃO</small></a>
-        <nav aria-label="Área administrativa"><a th:href="@{/admin}">Visão geral</a><a
-                th:href="@{/admin/categorias}">Categorias</a><a th:href="@{/admin/produtos}">Produtos</a><a
-                th:href="@{/admin/pedidos}">Pedidos</a><a th:href="@{/}">Ver site</a></nav>
-        <form th:action="@{/admin/logout}" method="post"><button class="admin-logout" type="submit">Sair da
-                conta</button></form>
+<body class="aurora-admin admin-orders-page admin-order-detail-page">
+    <!-- Mesmo cabeçalho utilizado na listagem de pedidos da área administrativa. -->
+    <header class="admin-topbar orders-topbar">
+        <a class="orders-brand" th:href="@{/admin}" href="/admin">
+            <span class="orders-brand-name">Café Aurora</span>
+            <span class="orders-brand-caption">– Administração</span>
+        </a>
+        <nav class="orders-nav" aria-label="Área administrativa">
+            <a th:href="@{/admin}" href="/admin">Visão geral</a>
+            <a th:href="@{/admin/categorias}" href="/admin/categorias">Categorias</a>
+            <a th:href="@{/admin/produtos}" href="/admin/produtos">Produtos</a>
+            <a class="active" aria-current="page" th:href="@{/admin/pedidos}" href="/admin/pedidos">Pedidos</a>
+            <a th:href="@{/}" href="/">Ver site</a>
+        </nav>
+        <form th:action="@{/admin/logout}" action="/admin/logout" method="post">
+            <button class="admin-logout orders-logout" type="submit">Sair da conta</button>
+        </form>
     </header>
-    <main>
-        <div class="admin-watermark" aria-hidden="true"></div>
-        <section class="admin-content">
-            <div class="admin-kicker">JUST COFFEE <span></span> CAFÉ AURORA</div><a class="admin-return"
-                th:href="@{/admin/pedidos}">← Todos os pedidos</a>
-            <h1>Detalhes do <em>pedido.</em></h1>
-            <p class="admin-subtitle" th:text="${'Pedido #' + pedido.id + ' · ' + pedido.recebidoEm}"></p>
-            <p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p>
-            <p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p>
-            <p role="alert" class="admin-alert error" th:if="${erroNegocio}" th:text="${erroNegocio}"></p>
-            <div class="admin-split">
-                <section class="admin-panel">
-                    <h2>Informações do pedido</h2>
-                    <dl class="admin-details">
-                        <dt>Cliente</dt>
-                        <dd th:text="${pedido.cliente}"></dd>
-                        <dt>Telefone</dt>
-                        <dd th:text="${pedido.telefone}"></dd>
-                        <dt>E-mail</dt>
-                        <dd th:text="${pedido.email}"></dd>
-                        <dt>Atendimento</dt>
-                        <dd th:text="${pedido.atendimento}"></dd>
-                        <dt>Endereço</dt>
-                        <dd th:text="${pedido.endereco == null ? 'Retirada no local' : pedido.endereco}"></dd>
-                        <dt>Pagamento</dt>
-                        <dd th:text="${pedido.pagamento}"></dd>
-                        <dt>Situação do pagamento</dt>
-                        <dd th:text="${pedido.statusPagamento}"></dd>
-                        <dt>Observações</dt>
-                        <dd th:text="${pedido.observacoes == null ? 'Nenhuma' : pedido.observacoes}"></dd>
-                    </dl>
-                </section>
-                <section class="admin-panel">
-                    <h2>Atendimento</h2>
-                    <p>Estado atual: <span class="admin-tag" th:text="${pedido.situacao}"></span></p>
-                    <form method="post" th:if="${!#lists.isEmpty(pedido.proximosStatus)}"
-                        th:action="@{/admin/pedidos/{id}/status(id=${pedido.id})}"><label for="status">Próxima
-                            situação</label><select id="status" name="status" required>
-                            <option value="">Selecione uma ação</option>
-                            <option th:each="s : ${pedido.proximosStatus}" th:value="${s}" th:text="${s}"></option>
-                        </select><button class="admin-button" type="submit">Atualizar status</button></form>
-                    <p class="admin-hint" th:if="${#lists.isEmpty(pedido.proximosStatus)}">Este pedido foi finalizado e
-                        não permite novas alterações de status.</p>
-                    <h2 class="admin-items-title">Itens do pedido</h2>
-                    <div class="admin-list">
-                        <article class="admin-list-item" th:each="item : ${pedido.itens}">
-                            <div><strong th:text="${item.nome}"></strong>
-                                <p
-                                    th:text="${item.quantidade + ' × R$ ' + #numbers.formatDecimal(item.precoUnitario,1,'POINT',2,'COMMA')}">
-                                </p>
-                            </div><strong
-                                th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal,1,'POINT',2,'COMMA')}"></strong>
+
+    <main class="order-detail-main">
+        <section class="order-detail-intro" aria-labelledby="order-detail-title">
+            <a class="order-detail-return" th:href="@{/admin/pedidos}" href="/admin/pedidos">
+                <span aria-hidden="true">←</span> Todos os pedidos
+            </a>
+            <h1 id="order-detail-title">Detalhes do pedido</h1>
+            <p class="order-detail-subtitle"
+               th:text="${'Pedido #' + pedido.id + ' · ' + pedido.recebidoEm}">Pedido #1 · 03/11/2026 às 18:19</p>
+        </section>
+
+        <p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p>
+        <p role="alert" class="admin-alert error" th:if="${erro}" th:text="${erro}"></p>
+        <p role="alert" class="admin-alert error" th:if="${erroNegocio}" th:text="${erroNegocio}"></p>
+
+        <div class="order-detail-grid">
+            <section class="order-detail-card order-detail-information" aria-labelledby="order-information-title">
+                <div class="order-detail-section-heading">
+                    <h2 id="order-information-title">Informações do pedido</h2>
+                    <p>Aqui tem todas as informações do pedido</p>
+                </div>
+
+                <dl class="order-detail-fields">
+                    <dt>Cliente</dt>
+                    <dd th:text="${pedido.cliente}">Nome do cliente</dd>
+
+                    <dt>Telefone</dt>
+                    <dd th:text="${pedido.telefone == null ? 'Não informado' : pedido.telefone}">Telefone do cliente</dd>
+
+                    <dt>E-mail</dt>
+                    <dd th:text="${pedido.email == null ? 'Não informado' : pedido.email}">E-mail do cliente</dd>
+
+                    <dt>Atendimento</dt>
+                    <dd th:text="${pedido.atendimento}">ENTREGA</dd>
+
+                    <dt>Endereço</dt>
+                    <dd th:text="${pedido.endereco == null ? 'Retirada no local' : pedido.endereco}">Endereço de entrega</dd>
+
+                    <dt>Pagamento</dt>
+                    <dd th:text="${pedido.pagamento}">DINHEIRO</dd>
+
+                    <dt>Situação do pagamento</dt>
+                    <dd th:text="${pedido.statusPagamento}">PENDENTE</dd>
+
+                    <dt>Observações</dt>
+                    <dd th:text="${pedido.observacoes == null ? 'Nenhuma' : pedido.observacoes}">Nenhuma</dd>
+                </dl>
+            </section>
+
+            <section class="order-detail-card order-detail-service" aria-labelledby="order-service-title">
+                <div class="order-detail-section-heading">
+                    <h2 id="order-service-title">Atendimento</h2>
+                    <p>Mude o status do pedido para que o cliente acompanhe</p>
+                </div>
+
+                <div class="order-detail-current-status">
+                    <span>Estado atual:</span>
+                    <strong class="order-detail-status-pill" th:text="${pedido.situacao}">Recebido</strong>
+                </div>
+
+                <!-- Preserva o POST, o CSRF do Thymeleaf e as transições permitidas pelo serviço. -->
+                <form class="order-detail-status-form" method="post"
+                      th:if="${!#lists.isEmpty(pedido.proximosStatus)}"
+                      th:action="@{/admin/pedidos/{id}/status(id=${pedido.id})}">
+                    <label for="status">Próxima situação</label>
+                    <select id="status" name="status" required>
+                        <option value="">Selecione uma ação</option>
+                        <option th:each="s : ${pedido.proximosStatus}"
+                                th:value="${s}"
+                                th:text="${s.name() == 'RECEBIDO' ? 'Recebido' : (s.name() == 'EM_PREPARO' ? 'Em preparo' : (s.name() == 'PRONTO' ? 'Pronto' : (s.name() == 'CONCLUIDO' ? 'Concluído' : 'Cancelado')))}">Em preparo</option>
+                    </select>
+                    <button class="order-detail-update-button" type="submit">Atualizar status</button>
+                </form>
+
+                <p class="order-detail-finished" th:if="${#lists.isEmpty(pedido.proximosStatus)}">
+                    Este pedido foi finalizado e não permite novas alterações de status.
+                </p>
+
+                <section class="order-detail-items" aria-labelledby="order-items-title">
+                    <div class="order-detail-section-heading">
+                        <h2 id="order-items-title">Itens do pedido</h2>
+                        <p>Resumo dos itens do pedido</p>
+                    </div>
+
+                    <div class="order-detail-item-list">
+                        <article class="order-detail-item" th:each="item : ${pedido.itens}">
+                            <div class="order-detail-item-description">
+                                <h3 th:text="${item.nome}">Cappuccino</h3>
+                                <p th:text="${item.quantidade + ' × R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">2 × R$ 14,00</p>
+                            </div>
+                            <strong th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 28,00</strong>
                         </article>
                     </div>
-                    <dl class="admin-details admin-totals">
-                        <dt>Subtotal</dt>
-                        <dd
-                            th:text="${pedido.subtotal == null ? 'Não registrado' : 'R$ ' + #numbers.formatDecimal(pedido.subtotal,1,'POINT',2,'COMMA')}">
-                        </dd>
-                        <dt>Taxa de entrega</dt>
-                        <dd
-                            th:text="${pedido.taxaEntrega == null ? 'Não registrada' : 'R$ ' + #numbers.formatDecimal(pedido.taxaEntrega,1,'POINT',2,'COMMA')}">
-                        </dd>
-                        <dt>Total</dt>
-                        <dd th:text="${'R$ ' + #numbers.formatDecimal(pedido.total,1,'POINT',2,'COMMA')}"></dd>
+
+                    <dl class="order-detail-totals">
+                        <dt>Subtotal:</dt>
+                        <dd th:text="${pedido.subtotal == null ? 'Não registrado' : 'R$ ' + #numbers.formatDecimal(pedido.subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 28,00</dd>
+
+                        <dt>Taxa de entrega:</dt>
+                        <dd th:text="${pedido.taxaEntrega == null ? 'Não registrada' : 'R$ ' + #numbers.formatDecimal(pedido.taxaEntrega, 1, 'POINT', 2, 'COMMA')}">R$ 7,00</dd>
+
+                        <dt>Total:</dt>
+                        <dd th:text="${'R$ ' + #numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}">R$ 35,00</dd>
                     </dl>
                 </section>
-            </div>
-        </section>
-        <footer class="admin-footer">Café Aurora · Painel de gestão</footer>
-</body>
+            </section>
+        </div>
+    </main>
 
+    <!-- Mesmo rodapé da área administrativa. -->
+    <footer class="admin-footer">Café Aurora · Painel de gestão</footer>
+</body>
 </html>
