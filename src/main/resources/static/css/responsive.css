@@ -1,0 +1,329 @@
+/* ==============================================================
+   CAFÉ AURORA — RESPONSIVIDADE CONSOLIDADA
+   Somente layout, largura, espaçamento, alinhamento e tipografia
+   responsiva. Nenhuma cor, animação, transição ou regra de negócio.
+   Desktop (>1100px) permanece com CSS original.
+   Carregar após os CSS específicos das páginas.
+   ============================================================== */
+
+@media (max-width: 1100px) {
+  /* Cabeçalho compartilhado: evita colisão com a sacola e os links. */
+  .site-header { padding: 15px 3%; gap: 14px; }
+  .site-header nav ul { gap: 13px; }
+  .site-header nav ul li a { font-size: 13px; }
+  .footer-content { min-width: 0; }
+  .footer-col { min-width: 0; }
+  .newsletter-form input { min-width: 0; }
+
+  /* Abertura da home: remove coordenadas desktop fora do viewport. */
+  .video-container { width: 100%; }
+  #meuVideo { width: 100%; height: 100%; object-fit: cover; }
+  .overlay-text { left: 50%; width: min(94%, 820px); }
+  .titulo-principal { flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 5px 16px; }
+  #column-title-left { position: relative; padding: 0; }
+  #column-title-right { padding: 0; }
+  #column-title-left span { font-size: clamp(54px, 8vw, 105px); }
+  #column-title-right span { font-size: clamp(70px, 11vw, 150px); }
+  .logo-principal { position: relative; left: auto; bottom: auto; width: 100%; justify-content: center; }
+  .logo-principal #logo-aurora { width: clamp(80px, 14vw, 150px); height: auto; }
+  .subtitle { font-size: clamp(16px, 2vw, 24px); }
+  .about-card { max-width: 100%; }
+  .carousel-track { min-width: 0; }
+
+  /* Todas as páginas de produtos. */
+  .cafe-menu-inner, .drink-content, .food-content {
+    width: min(92%, 960px);
+    max-width: 960px;
+    margin-inline: auto;
+    min-width: 0;
+  }
+  .coffee-menu-brand img, .drink-brand img, .food-brand img { max-width: 100%; }
+  .coffee-products-grid, .drink-grid, .food-grid { min-width: 0; }
+  .coffee-product, .drink-product, .food-product { min-width: 0; }
+  .coffee-product-info, .drink-product-description, .food-product-description { min-width: 0; }
+  .coffee-product-name, .drink-product-title, .food-product-title { min-width: 0; }
+
+  /* Sacola e checkout: a grade vira uma coluna antes de ficar estreita demais. */
+  .order-columns, .checkout-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 25px;
+  }
+  .order-columns > *, .checkout-columns > * { min-width: 0; }
+  .summary-panel { width: 100%; }
+  .payment-methods { gap: 12px; }
+  .checkout-form { min-width: 0; }
+
+  /* Painel admin: listas, formulários e cartões não espremem conteúdo. */
+  .aurora-admin .admin-topbar { gap: 12px; }
+  .aurora-admin .admin-topbar nav { gap: 12px 20px; }
+  .admin-overview-grid { gap: 16px; }
+  .admin-catalog-page .catalog-grid { gap: 20px; }
+  .admin-overview-main, .admin-orders-page .orders-main,
+  .admin-catalog-page .catalog-main, .admin-order-detail-page .order-detail-main {
+    max-width: calc(100% - 40px);
+  }
+  .admin-overview-table-wrap, .admin-orders-page .orders-table-scroll,
+  .admin-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+@media (max-width: 850px) {
+  /* Cabeçalho público em duas linhas: marca/sacola e navegação rolável.
+     Em fluxo sticky, os conteúdos deixam de precisar de 190–220px
+     de compensação para o header fixed antigo. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px 13px;
+    padding: 12px 18px;
+  }
+  .site-header .logo { grid-column: 1; grid-row: 1; margin-left: 0; min-width: 0; }
+  .site-header .auth-buttons {
+    grid-column: 2; grid-row: 1;
+    width: auto; min-width: 0; justify-content: flex-end; gap: 10px;
+  }
+  .site-header nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .site-header nav ul {
+    display: flex;
+    flex-flow: row nowrap;
+    width: max-content;
+    min-width: 100%;
+    gap: 18px;
+    justify-content: flex-start;
+    padding: 4px 2px 7px;
+  }
+  .site-header nav li { flex: 0 0 auto; }
+  .site-header nav li a { white-space: nowrap; }
+  .site-header .btn-icon-nav { padding: 8px 12px; }
+  .site-header .btn-bag-nav { flex: 0 0 40px; }
+  .site-footer { padding-top: 55px; }
+  .footer-content { gap: 32px; margin-bottom: 36px; }
+
+  /* Hero mantém vídeo e textos sobrepostos, nunca em posições absolutas
+     de desktop que saiam do celular. */
+  .hero-container { display: block; position: relative; margin-top: 0; padding: 0; min-height: 0; }
+  .video-container { width: 100%; height: min(78svh, 740px); min-height: 430px; }
+  #meuVideo { min-width: 100%; min-height: 100%; }
+  .overlay-text {
+    position: absolute; top: 47%; left: 50%;
+    width: min(90%, 600px); margin-top: 0;
+    transform: translate(-50%, -50%);
+  }
+  .titulo-principal { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  #column-title-left, #column-title-right { position: relative; padding: 0; margin: 0; }
+  #column-title-left span { font-size: clamp(48px, 10vw, 82px); }
+  #column-title-right span { font-size: clamp(68px, 14vw, 112px); }
+  .logo-principal { position: relative; left: auto; bottom: auto; width: 100%; }
+  .logo-principal #logo-aurora { width: clamp(85px, 17vw, 135px); height: auto; }
+  #slogan { margin-top: 12px; }
+  .subtitle { font-size: clamp(14px, 2.5vw, 18px); max-width: 100%; }
+  .scroll-down-wrapper { bottom: 18px; }
+  .button-2-border { width: 74px; height: 54px; }
+  .about-section { min-height: 0; }
+  .about-card { min-width: 0; }
+
+  /* Cardápios de escolha e detalhes (café, drinks, comidas). */
+  .menu-section { padding-top: 55px; padding-bottom: 70px; }
+  .menu-title { font-size: clamp(32px, 6.5vw, 43px); }
+  .menu-grid { gap: 20px; }
+  .menu-card { max-width: 100%; }
+
+  .cafe-menu, .drink-menu, .food-menu { padding-top: 50px; }
+  .cafe-menu-inner, .drink-content, .food-content { width: min(92%, 680px); margin: 0 auto; }
+  .coffee-menu-brand, .drink-brand, .food-brand { height: auto; }
+  .coffee-menu-brand img, .drink-brand img, .food-brand img { width: min(330px, 75vw); max-width: 100%; }
+  .cafe-menu-intro, .drink-intro, .food-intro { margin-top: 50px; }
+  .coffee-products-grid, .drink-grid, .food-grid { grid-template-columns: minmax(0, 1fr); }
+  .coffee-product, .drink-product, .food-product {
+    grid-template-columns: 86px minmax(0, 1fr) 84px;
+    column-gap: 10px;
+  }
+  .coffee-product img, .drink-product img, .food-product img { width: 86px; height: 86px; }
+  .coffee-product-name h3, .drink-product-title h3, .food-product-title h3 {
+    overflow-wrap: anywhere;
+  }
+  .menu-detail-container { margin: 40px auto; }
+  .menu-list-container { padding: 26px; }
+  .menu-banner-img { height: 280px; }
+
+  /* Checkout e sacola com o cabeçalho sticky em fluxo. */
+  .order-shell, .checkout-shell, .cart-shell { padding-top: 45px; }
+  .order-columns, .checkout-columns { grid-template-columns: minmax(0, 1fr); }
+  .checkout-summary { order: -1; }
+  .form-grid > *, .delivery-grid > * { min-width: 0; }
+  .payment-option { min-width: 0; }
+
+  /* Localização passa a uma coluna sem deslocamento do cabeçalho antigo. */
+  .localizacao-main { padding-top: 0; }
+  .localizacao-hero { top: 0; }
+  .localizacao-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; max-width: 550px; }
+  .localizacao-section { padding: 36px 5% 65px; }
+
+  /* Confirmação e avaliação não ficam atrás do cabeçalho. */
+  .order-confirmed { padding-top: 50px; }
+  .confirmed-layout { grid-template-columns: minmax(0, 1fr); max-width: 600px; }
+  .confirmed-layout > *, .confirmed-visual-column { min-width: 0; }
+  .confirmed-cup { margin: 0 auto; max-width: 100%; }
+  .confirmed-review-panel { width: 100%; }
+  .review-input-row { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+
+  /* Administração: manter o mesmo header/footer e permitir menus sem cortes. */
+  .aurora-admin .admin-topbar,
+  .aurora-admin.admin-overview-page .admin-overview-topbar,
+  .aurora-admin.admin-orders-page .orders-topbar,
+  .admin-catalog-page .catalog-topbar {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 13px 20px; padding: 16px 20px;
+  }
+  .aurora-admin .admin-topbar nav,
+  .aurora-admin .admin-overview-topbar .admin-overview-nav,
+  .aurora-admin.admin-orders-page .orders-nav,
+  .admin-catalog-page .catalog-nav {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 11px 20px; min-width: 0;
+  }
+  .aurora-admin .admin-topbar form { flex: 0 0 auto; }
+  .admin-catalog-page .catalog-grid,
+  .admin-order-detail-page .order-detail-grid,
+  .admin-split { grid-template-columns: minmax(0, 1fr); }
+  .admin-catalog-page .catalog-card,
+  .admin-order-detail-page .order-detail-card { min-width: 0; min-height: 0; }
+  .admin-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-orders-page .orders-table-scroll { overflow-x: auto; }
+  .admin-orders-page .orders-table { min-width: 820px; }
+  .admin-overview-table { min-width: 780px; }
+  .admin-login-page .admin-login-panel { min-width: 0; }
+}
+
+@media (max-width: 560px) {
+  .site-header { padding: 10px 13px; gap: 7px 9px; }
+  .site-header .logo { font-size: 21px; }
+  .site-header .auth-buttons { gap: 8px; }
+  .site-header .btn-icon-nav { padding: 7px 10px; font-size: 12px; }
+  .site-header .btn-bag-nav { width: 38px; height: 38px; flex-basis: 38px; }
+  .site-header nav ul { gap: 16px; }
+  .footer-content { grid-template-columns: minmax(0, 1fr); }
+  .newsletter-form { width: min(100%, 400px); margin-inline: auto; }
+  .newsletter-form button { padding-inline: 12px; }
+  .footer-bottom { min-width: 0; }
+
+  .video-container { height: 72svh; min-height: 405px; }
+  .overlay-text { top: 45%; width: 94%; }
+  #column-title-left span { font-size: clamp(43px, 13vw, 62px); }
+  #column-title-right span { font-size: clamp(58px, 16vw, 82px); }
+  .logo-principal #logo-aurora { width: 88px; }
+  .subtitle { font-size: 14px; }
+  .about-section, .reviews-section { padding-inline: 6%; }
+  .about-card { width: 100%; padding-inline: 22px; }
+  .carousel-wrapper { min-width: 0; gap: 6px; }
+  .carousel-track { min-width: 0; }
+  .center-card { flex-basis: min(240px, calc(100vw - 126px)); }
+  .carousel-btn { flex-shrink: 0; }
+
+  .menu-section { padding: 42px 18px 60px; }
+  .menu-card { width: min(100%, 360px); }
+  .menu-card-img { height: 220px; }
+  .menu-card-content { padding: 0 22px 26px; }
+  .menu-detail-title { font-size: clamp(31px, 8vw, 43px); }
+  .menu-list-container { padding: 18px; }
+  .menu-item-row { align-items: flex-start; flex-wrap: wrap; gap: 14px; }
+  .menu-item-row .item-info { flex: 1 1 100%; }
+  .menu-item-row .btn-add { max-width: 100%; }
+  .menu-banner-img { height: 220px; border-radius: 18px; }
+
+  .cafe-menu-inner, .drink-content, .food-content { width: 92%; }
+  .cafe-menu-intro, .drink-intro, .food-intro {
+    flex-direction: column; align-items: flex-start; gap: 14px;
+    margin-top: 36px; margin-bottom: 26px;
+  }
+  .cafe-menu-intro h1, .drink-intro h1, .food-intro h1 { font-size: clamp(27px, 7vw, 34px); }
+  .coffee-products-grid, .drink-grid, .food-grid { padding-inline: 0; }
+  .coffee-product, .drink-product, .food-product {
+    grid-template-columns: 66px minmax(0, 1fr) 72px;
+    gap: 8px;
+  }
+  .coffee-product img, .drink-product img, .food-product img { width: 66px; height: 70px; }
+  .coffee-product-name h3, .drink-product-title h3, .food-product-title h3 {
+    max-width: 100%; font-size: 12px;
+  }
+  .coffee-product-info p, .drink-product-description p, .food-product-description p { font-size: 11px; }
+  .coffee-quantity, .drink-stepper, .food-stepper { min-width: 0; gap: 2px; }
+
+  .order-shell, .checkout-shell, .cart-shell { padding: 35px 4% 65px; }
+  .order-columns, .checkout-columns { gap: 18px; }
+  .cart-items-panel { padding: 12px; }
+  .cart-item { grid-template-columns: 64px minmax(0,1fr); gap: 9px; }
+  .cart-item img { width: 64px; height: 64px; }
+  .cart-item-controls { grid-column: 2; justify-content: flex-start; flex-wrap: wrap; }
+  .summary-panel, .checkout-summary { padding: 20px 16px; }
+  .form-grid.two, .delivery-grid { grid-template-columns: minmax(0, 1fr); }
+  .delivery-grid .span-2, .form-grid .span-all { grid-column: 1 / -1; }
+  .payment-methods { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .delivery-heading select { width: 100%; max-width: 100%; }
+  .order-notes-card { flex-direction: column; align-items: stretch; }
+  .order-notes-card textarea { width: 100%; }
+  .checkout-card { padding: 18px 14px; }
+  .checkout-item { min-width: 0; }
+  .checkout-item > * { min-width: 0; }
+  .summary-costs > div, .summary-total { min-width: 0; gap: 8px; }
+  .address-preview { min-width: 0; margin-left: 0; }
+  .address-preview > span:first-child { overflow-wrap: anywhere; }
+
+  .localizacao-hero-content { width: 90%; }
+  .localizacao-map-frame { height: 250px; }
+  .localizacao-hours { gap: 8px 16px; }
+  .localizacao-directions { margin-inline: 0; }
+
+  .order-confirmed { padding: 35px 4% 60px; }
+  .confirmed-heading h1 { font-size: clamp(26px, 7vw, 34px); white-space: normal; }
+  .confirmed-heading { min-width: 0; }
+  .tracking-card { margin-left: 0; padding: 20px 12px; }
+  .tracking-status { grid-template-columns: 30px minmax(0, 1fr); gap: 10px; }
+  .tracking-status-divider { display: none; }
+  .tracking-status p { grid-column: 1 / -1; padding-left: 0; }
+  .confirmed-actions, .review-feedback { margin-left: 0; }
+  .confirmed-cup-stage { width: 100%; left: 0; right: 0; }
+  .confirmed-summary, .confirmed-review-panel { padding: 18px 14px; }
+  .review-panel-header h2 { font-size: 26px; }
+  .review-stars-choice label span { font-size: clamp(23px, 7vw, 34px); }
+  .review-input-row { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .review-upload-drop { flex-wrap: wrap; text-align: center; }
+
+  .admin-overview-grid { grid-template-columns: minmax(0, 1fr); }
+  .admin-overview-main, .admin-orders-page .orders-main,
+  .admin-catalog-page .catalog-main, .admin-order-detail-page .order-detail-main {
+    width: calc(100% - 30px); max-width: calc(100% - 30px);
+  }
+  .admin-overview-section-heading { flex-wrap: wrap; align-items: flex-start; }
+  .aurora-admin .admin-topbar, .admin-catalog-page .catalog-topbar { padding: 13px; }
+  .admin-catalog-page .catalog-card, .admin-order-detail-page .order-detail-card { padding: 22px 17px; }
+  .admin-catalog-page .catalog-entry { flex-wrap: wrap; }
+  .admin-catalog-page .catalog-entry-actions { justify-content: flex-start; }
+  .admin-orders-page .orders-filter-form { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+  .admin-orders-page .orders-filter-button { width: 100%; }
+  .admin-order-detail-page .order-detail-fields { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .admin-order-detail-page .order-detail-fields dd { text-align: left; margin-bottom: 12px; }
+  .admin-login-page .admin-login-layout { padding-inline: 17px; }
+  .admin-login-page .admin-login-logo img { max-width: 100%; }
+}
+@media (max-width: 360px) {
+  .center-card { flex-basis: min(205px, calc(100vw - 112px)); }
+  .site-header .logo { font-size: 19px; }
+  .site-header .btn-icon-nav { padding-inline: 8px; }
+  .coffee-product, .drink-product, .food-product {
+    grid-template-columns: 58px minmax(0, 1fr) 64px; gap: 5px;
+  }
+  .coffee-product img, .drink-product img, .food-product img { width: 58px; height: 64px; }
+  .coffee-product-name h3, .drink-product-title h3, .food-product-title h3 { font-size: 11px; }
+}
