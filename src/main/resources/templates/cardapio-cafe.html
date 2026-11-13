@@ -26,7 +26,7 @@
 
     <section class="coffee-category" th:each="secao : ${secoes}" th:attr="aria-labelledby=${'secao-' + secao.id}">
         <div class="coffee-category-heading">
-        <h2 th:id="${'secao-' + secao.id}"><span class="coffee-cup-icon" aria-hidden="true">♨</span> <span th:text="${secao.nome}"></span></h2>
+        <h2 th:id="${'secao-' + secao.id}"> <span th:text="${secao.nome}"></span></h2>
         <span class="coffee-category-rule" aria-hidden="true"></span>
       </div>
         <p class="menu-empty" th:if="${#lists.isEmpty(secao.produtos)}">Nenhum produto nesta seção no momento.</p>

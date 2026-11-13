@@ -17,7 +17,10 @@
     position: relative;
     isolation: isolate;
     padding: clamp(75px, 6vw, 88px) 0 100px;
-    background: linear-gradient(to bottom, #000000 40%, #4c241b 100%);
+    background: radial-gradient(circle at 50% 50%,
+            rgb(27, 16, 14) 0%,
+            rgb(0, 0, 0) 50%,
+            rgb(0, 0, 0) 100%);
     overflow: hidden;
 }
 
@@ -27,7 +30,7 @@
     z-index: -1;
     height: 1000px;
     background: url('/img/graos-cafe.svg') center top / 100% auto no-repeat;
-    opacity: 0.45;
+    opacity: 0.35;
     pointer-events: none;
 }
 
@@ -136,7 +139,7 @@
 
 .coffee-category-heading h2 {
     font: 700 32px/1.1 var(--fontePlayFair);
-    color: var(--fonteDestaque);
+    color: var(--fonteBranca);
     white-space: nowrap;
 }
 
@@ -144,7 +147,7 @@
     flex: 1;
     height: 1px;
     margin-top: 22px;
-    background: linear-gradient(90deg, rgba(175, 142, 72, 0.7), rgba(175, 142, 72, 0)); 
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.7), rgba(175, 142, 72, 0));
 }
 
 
@@ -193,7 +196,7 @@
 .coffee-product-name h3,
 .coffee-product-name strong {
     font: 500 20px var(--fontePlayFair);
-    color: var(--fonteDestaque);
+    color: var(--fonteBranca);
 }
 
 .coffee-product-name h3 {
@@ -207,7 +210,7 @@
 .price-leader {
     min-width: 8px;
     flex: 1;
-    border-bottom: 1px dotted var(--fonteDestaque);
+    border-bottom: 1px dotted var(--fonteBranca);
     opacity: .95;
     transform: translateY(-3px);
 }
@@ -218,7 +221,7 @@
 
 .coffee-product-info p {
     font: 400 12px/1.45 var(--fontMotserrat);
-    color: rgba(255, 255, 255, .80);
+    color: rgba(175, 142, 72, .78);
     margin-top: 5px;
     max-width: 270px;
 }
@@ -234,7 +237,7 @@
 .coffee-quantity button {
     width: 25px;
     height: 25px;
-    background: var(--fonteDestaque);
+    background: var(--fonteBranca);
     color: #000000;
     border: 0;
     border-radius: 5px;
@@ -407,13 +410,14 @@
    ===================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
+
     /* A logo ganha foco e opacidade sem vir de nenhuma direção. */
     .cafe-menu-page .coffee-menu-brand img {
         animation: aurora-logo-reveal 1.35s cubic-bezier(.18, .8, .25, 1) .10s both;
     }
 
     /* O texto manuscrito é desvelado progressivamente, como traços de tinta. */
-    .cafe-menu-page .cafe-script-heading > span:first-child {
+    .cafe-menu-page .cafe-script-heading>span:first-child {
         display: inline-block;
         clip-path: inset(-8px 100% -8px 0);
         animation: aurora-ink-writing 1.45s cubic-bezier(.43, 0, .23, 1) 1.00s both;
@@ -429,7 +433,8 @@
     .cafe-menu-page .cafe-menu-intro h1 {
         animation: aurora-descend .90s cubic-bezier(.22, 1, .36, 1) 2.72s both;
     }
-    .cafe-menu-page .cafe-menu-intro-copy > p {
+
+    .cafe-menu-page .cafe-menu-intro-copy>p {
         animation: aurora-descend .90s cubic-bezier(.22, 1, .36, 1) 2.95s both;
     }
 
@@ -437,12 +442,14 @@
     .cafe-menu-page .cafe-other-menu small {
         animation: aurora-descend .75s cubic-bezier(.22, 1, .36, 1) 2.92s both;
     }
-    .cafe-menu-page .cafe-other-menu > span {
+
+    .cafe-menu-page .cafe-other-menu>span {
         position: relative;
         border-bottom: 0;
         animation: aurora-descend .90s cubic-bezier(.22, 1, .36, 1) 3.12s both;
     }
-    .cafe-menu-page .cafe-other-menu > span::after {
+
+    .cafe-menu-page .cafe-other-menu>span::after {
         content: "";
         position: absolute;
         left: 0;
@@ -453,7 +460,8 @@
         transform-origin: left center;
         animation: aurora-line-grow .80s cubic-bezier(.22, 1, .36, 1) 3.77s both;
     }
-    .cafe-menu-page .cafe-other-menu > span > span {
+
+    .cafe-menu-page .cafe-other-menu>span>span {
         display: inline-block;
         animation: aurora-arrow-reveal .55s cubic-bezier(.22, 1, .36, 1) 3.45s both;
     }
@@ -470,56 +478,114 @@
             transform .90s cubic-bezier(.22, 1, .36, 1),
             filter .90s ease-out;
     }
+
     .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-category-heading,
     .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product {
         opacity: 1;
         transform: translateY(0);
         filter: blur(0);
     }
+
     .cafe-menu-page.coffee-reveal-enabled .coffee-category .coffee-category-rule {
         transform: scaleX(0);
         transform-origin: left center;
         transition: transform 1.15s cubic-bezier(.22, 1, .36, 1);
     }
+
     .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-category-rule {
         transform: scaleX(1);
         transition-delay: .36s;
     }
-    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(1) { transition-delay: .20s; }
-    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(2) { transition-delay: .32s; }
-    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(3) { transition-delay: .44s; }
-    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(4) { transition-delay: .56s; }
-    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(n+5) { transition-delay: .66s; }
+
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(1) {
+        transition-delay: .20s;
+    }
+
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(2) {
+        transition-delay: .32s;
+    }
+
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(3) {
+        transition-delay: .44s;
+    }
+
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(4) {
+        transition-delay: .56s;
+    }
+
+    .cafe-menu-page.coffee-reveal-enabled .coffee-category.is-revealed .coffee-product:nth-child(n+5) {
+        transition-delay: .66s;
+    }
 }
 
 @keyframes aurora-logo-reveal {
-    from { opacity: 0; filter: blur(13px); transform: scale(.94); }
-    to   { opacity: 1; filter: blur(0); transform: scale(1); }
+    from {
+        opacity: 0;
+        filter: blur(13px);
+        transform: scale(.94);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
 }
+
 @keyframes aurora-ink-writing {
-    from { clip-path: inset(-8px 100% -8px 0); }
-    to   { clip-path: inset(-8px 0 -8px 0); }
+    from {
+        clip-path: inset(-8px 100% -8px 0);
+    }
+
+    to {
+        clip-path: inset(-8px 0 -8px 0);
+    }
 }
+
 @keyframes aurora-line-grow {
-    from { transform: scaleX(0); }
-    to   { transform: scaleX(1); }
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
 }
+
 @keyframes aurora-descend {
-    from { opacity: 0; transform: translateY(-22px); filter: blur(4px); }
-    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-22px);
+        filter: blur(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
 }
+
 @keyframes aurora-arrow-reveal {
-    from { opacity: 0; transform: translate(-5px, 5px) scale(.90); }
-    to   { opacity: 1; transform: translate(0, 0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translate(-5px, 5px) scale(.90);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
 }
 
 /* Legibilidade é prioritária para usuários com movimento reduzido. */
 @media (prefers-reduced-motion: reduce) {
+
     .cafe-menu-page .coffee-menu-brand img,
-    .cafe-menu-page .cafe-script-heading > span:first-child,
+    .cafe-menu-page .cafe-script-heading>span:first-child,
     .cafe-menu-page .cafe-heading-line,
     .cafe-menu-page .cafe-menu-intro h1,
-    .cafe-menu-page .cafe-menu-intro-copy > p,
+    .cafe-menu-page .cafe-menu-intro-copy>p,
     .cafe-menu-page .cafe-other-menu,
     .cafe-menu-page .coffee-category-heading,
     .cafe-menu-page .coffee-product {

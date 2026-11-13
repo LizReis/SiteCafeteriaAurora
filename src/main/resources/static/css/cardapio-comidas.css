@@ -9,7 +9,9 @@
     isolation: isolate;
     overflow: hidden;
     min-height: 100vh;
-    background: linear-gradient(180deg, #000000 0%, #000000 45%, #825b2e 100%);
+    background: radial-gradient(circle at 50% 50%,
+            #2c0c02 0%,
+            rgb(0, 0, 0) 100%);
     padding: clamp(75px, 6vw, 88px) 0 110px
 }
 
@@ -27,19 +29,6 @@
     pointer-events: none;
 }
 
-.food-liquid-left {
-    left: -350px;
-    right: auto;
-    background-image: url('/img/macaron-esquerdo-new.svg');
-    background-position: left top;
-}
-
-.food-liquid-right {
-    right: -350px;
-    left: auto;
-    background-image: url('/img/macaron-direito-new.svg');
-    background-position: right top;
-}
 
 .food-content {
     margin: 0px 10%;
@@ -403,13 +392,14 @@
    ===================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
+
     /* A logo ganha foco e opacidade sem vir de nenhuma direção. */
     .food-page .food-brand img {
         animation: food-logo-reveal 1.35s cubic-bezier(.18, .8, .25, 1) .10s both;
     }
 
     /* O texto manuscrito é desvelado progressivamente, como traços de tinta. */
-    .food-page .food-script > span:first-child {
+    .food-page .food-script>span:first-child {
         display: inline-block;
         clip-path: inset(-8px 100% -8px 0);
         animation: food-ink-writing 1.45s cubic-bezier(.43, 0, .23, 1) 1.00s both;
@@ -425,7 +415,8 @@
     .food-page .food-intro h1 {
         animation: food-descend .90s cubic-bezier(.22, 1, .36, 1) 2.72s both;
     }
-    .food-page .food-intro-copy > p {
+
+    .food-page .food-intro-copy>p {
         animation: food-descend .90s cubic-bezier(.22, 1, .36, 1) 2.95s both;
     }
 
@@ -433,12 +424,14 @@
     .food-page .food-link small {
         animation: food-descend .75s cubic-bezier(.22, 1, .36, 1) 2.92s both;
     }
-    .food-page .food-link > span {
+
+    .food-page .food-link>span {
         position: relative;
         border-bottom: 0;
         animation: food-descend .90s cubic-bezier(.22, 1, .36, 1) 3.12s both;
     }
-    .food-page .food-link > span::after {
+
+    .food-page .food-link>span::after {
         content: "";
         position: absolute;
         left: 0;
@@ -449,7 +442,8 @@
         transform-origin: left center;
         animation: food-line-grow .80s cubic-bezier(.22, 1, .36, 1) 3.77s both;
     }
-    .food-page .food-link > span > span {
+
+    .food-page .food-link>span>span {
         display: inline-block;
         animation: food-arrow-reveal .55s cubic-bezier(.22, 1, .36, 1) 3.45s both;
     }
@@ -466,56 +460,114 @@
             transform .90s cubic-bezier(.22, 1, .36, 1),
             filter .90s ease-out;
     }
+
     .food-page.food-reveal-enabled .food-category.is-revealed .food-category-heading,
     .food-page.food-reveal-enabled .food-category.is-revealed .food-product {
         opacity: 1;
         transform: translateY(0);
         filter: blur(0);
     }
+
     .food-page.food-reveal-enabled .food-category .food-rule {
         transform: scaleX(0);
         transform-origin: left center;
         transition: transform 1.15s cubic-bezier(.22, 1, .36, 1);
     }
+
     .food-page.food-reveal-enabled .food-category.is-revealed .food-rule {
         transform: scaleX(1);
         transition-delay: .36s;
     }
-    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(1) { transition-delay: .20s; }
-    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(2) { transition-delay: .32s; }
-    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(3) { transition-delay: .44s; }
-    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(4) { transition-delay: .56s; }
-    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(n+5) { transition-delay: .66s; }
+
+    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(1) {
+        transition-delay: .20s;
+    }
+
+    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(2) {
+        transition-delay: .32s;
+    }
+
+    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(3) {
+        transition-delay: .44s;
+    }
+
+    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(4) {
+        transition-delay: .56s;
+    }
+
+    .food-page.food-reveal-enabled .food-category.is-revealed .food-product:nth-child(n+5) {
+        transition-delay: .66s;
+    }
 }
 
 @keyframes food-logo-reveal {
-    from { opacity: 0; filter: blur(13px); transform: scale(.94); }
-    to   { opacity: 1; filter: blur(0); transform: scale(1); }
+    from {
+        opacity: 0;
+        filter: blur(13px);
+        transform: scale(.94);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
 }
+
 @keyframes food-ink-writing {
-    from { clip-path: inset(-8px 100% -8px 0); }
-    to   { clip-path: inset(-8px 0 -8px 0); }
+    from {
+        clip-path: inset(-8px 100% -8px 0);
+    }
+
+    to {
+        clip-path: inset(-8px 0 -8px 0);
+    }
 }
+
 @keyframes food-line-grow {
-    from { transform: scaleX(0); }
-    to   { transform: scaleX(1); }
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
 }
+
 @keyframes food-descend {
-    from { opacity: 0; transform: translateY(-22px); filter: blur(4px); }
-    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-22px);
+        filter: blur(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
 }
+
 @keyframes food-arrow-reveal {
-    from { opacity: 0; transform: translate(-5px, 5px) scale(.90); }
-    to   { opacity: 1; transform: translate(0, 0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translate(-5px, 5px) scale(.90);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
 }
 
 /* Legibilidade é prioritária para usuários com movimento reduzido. */
 @media (prefers-reduced-motion: reduce) {
+
     .food-page .food-brand img,
-    .food-page .food-script > span:first-child,
+    .food-page .food-script>span:first-child,
     .food-page .food-script-rule,
     .food-page .food-intro h1,
-    .food-page .food-intro-copy > p,
+    .food-page .food-intro-copy>p,
     .food-page .food-link,
     .food-page .food-category-heading,
     .food-page .food-product {
@@ -530,12 +582,16 @@
 
 /* Os recortes acompanham as bordas também em telas pequenas. */
 @media (max-width: 560px) {
+
     .food-liquid-left,
     .food-liquid-right {
         top: 175px;
         width: min(800px, 66vw);
         opacity: .35;
     }
+
     .food-product-title h3,
-    .food-product-title strong { font-size: 10px; }
+    .food-product-title strong {
+        font-size: 10px;
+    }
 }
