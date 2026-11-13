@@ -229,7 +229,7 @@ body.aurora-admin.admin-catalog-page {
 .admin-catalog-page .catalog-entry h3 {
     overflow-wrap: anywhere;
     margin: 0 0 5px;
-    color: #a88a4b;
+    color: #e2c78d;
     font: 400 18px/1.45 var(--fontMotserrat, sans-serif);
 }
 .admin-catalog-page .catalog-entry-info p {

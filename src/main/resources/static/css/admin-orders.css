@@ -95,7 +95,7 @@ body.aurora-admin.admin-orders-page {
 .admin-orders-page .orders-filter-field label {
     margin: 0;
     font: 400 15px/1.4 var(--fontMotserrat, sans-serif);
-    color: #a29c9a;
+    color: #e2c78d;
 }
 .admin-orders-page .orders-filter-field select {
     display: block;

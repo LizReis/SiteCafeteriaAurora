@@ -28,9 +28,20 @@
     margin-bottom: 10px;
 }
 
+.menu-line{
+    flex: 0 0 1px;
+    display: block;
+    width: min(420px, 80%);
+    height: 1px;
+    align-self: center;
+    margin-top: -55px;
+    margin-bottom: 45px;
+    background: rgba(175, 142, 72, .65);
+}
+
 .menu-subtitle {
     font-family: var(--fontMotserrat);
-    color: var(--fonteBranca);
+    color: var(--fonteDestaque);
     opacity: 0.7;
     font-size: 18px;
 }
