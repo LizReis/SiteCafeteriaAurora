@@ -25,17 +25,14 @@
     font-family: var(--fontePlayFair);
     color: var(--fonteBranca);
     font-size: 54px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
-.menu-line{
-    flex: 0 0 1px;
+.menu-line {
     display: block;
     width: min(420px, 80%);
     height: 1px;
-    align-self: center;
-    margin-top: -55px;
-    margin-bottom: 45px;
+    margin: 25px auto 0;
     background: rgba(175, 142, 72, .65);
 }
 
