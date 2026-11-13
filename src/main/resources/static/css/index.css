@@ -65,14 +65,11 @@
 .logo-principal {
     display: flex;
     position: absolute;
-    left: 45%;
-    bottom: 32%;
 }
 
 .logo-principal #logo-aurora {
-    width: 85%;
-    height: 80%;
-    transform: rotate(-10deg);
+    width: 35vw;
+    height: auto;
 }
 
 #logo-aurora {
@@ -82,7 +79,6 @@
     /* Começa invisível */
     /* A mágica da elegância está no cubic-bezier, que dá uma desacelerada suave no final */
     animation: fadeUpElegante 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    transform: rotate(-10deg) !important;
 }
 
 #column-title-left {
@@ -993,6 +989,10 @@
 @media (max-width: 480px) {
     .title-main {
         font-size: 50px;
+    }
+
+    .about-line{
+        margin-top: -15px;
     }
 }
 
