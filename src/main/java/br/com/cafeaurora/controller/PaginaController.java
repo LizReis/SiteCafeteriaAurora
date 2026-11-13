@@ -9,15 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PaginaController {
     private final CardapioService cardapio;
+    private final br.com.cafeaurora.service.AvaliacaoService avaliacoes;
     private final java.math.BigDecimal taxaEntrega;
-    public PaginaController(CardapioService cardapio,
+    public PaginaController(CardapioService cardapio, br.com.cafeaurora.service.AvaliacaoService avaliacoes,
         @org.springframework.beans.factory.annotation.Value("${cafe.pedido.taxa-entrega:7.00}") java.math.BigDecimal taxaEntrega) {
-        this.cardapio = cardapio; this.taxaEntrega=taxaEntrega;
+        this.cardapio = cardapio; this.avaliacoes=avaliacoes; this.taxaEntrega=taxaEntrega;
     }
 
 
     @GetMapping({"/", "/index", "/index.html"})
-    public String inicio() {
+    public String inicio(Model model) {
+        model.addAttribute("avaliacoes",avaliacoes.publicas());
         return "index";
     }
 

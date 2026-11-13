@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select p from Pedido p where p.referenciaPublica = :referencia")
+    java.util.Optional<Pedido> buscarParaAvaliacao(@org.springframework.data.repository.query.Param("referencia") String referencia);
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths={"itens", "itens.produto"})
     java.util.Optional<Pedido> findByReferenciaPublica(String referencia);
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths={"itens", "itens.produto"})

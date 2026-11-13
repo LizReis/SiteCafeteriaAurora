@@ -1,69 +1,50 @@
-$(document).ready(function () {
-    const $track = $('.carousel-track');
-    const $cartas = $track.children('.polaroid-card');
-    const quantidade = $cartas.length;
-
-    // A classe center-card controla automaticamente qual comentário fica visível.
+document.addEventListener('DOMContentLoaded', () => {
+    const track = document.querySelector('.carousel-track');
+    const quantidade = track?.children.length || 0;
+    const centro = Math.floor(quantidade / 2);
+    const cards = () => [...track.querySelectorAll('.polaroid-card')];
+    const dots = [...document.querySelectorAll('.carousel-dots .dot')];
     function atualizarCarrossel() {
         if (!quantidade) return;
-
-        const $cartasAtuais = $track.children('.polaroid-card');
-        $cartasAtuais.removeClass('side-card far near center-card');
-
-        $cartasAtuais.eq(0).addClass('side-card far');
-        $cartasAtuais.eq(1).addClass('side-card near');
-        $cartasAtuais.eq(2).addClass('center-card');
-        $cartasAtuais.eq(3).addClass('side-card near');
-        $cartasAtuais.eq(4).addClass('side-card far');
-
-        const indiceAtivo = Number($cartasAtuais.eq(2).attr('data-review-index'));
-        $('.carousel-dots .dot')
-            .removeClass('active')
-            .removeAttr('aria-current')
-            .filter('[data-review-index="' + indiceAtivo + '"]')
-            .addClass('active')
-            .attr('aria-current', 'true');
+        const atuais = cards();
+        atuais.forEach((card, i) => {
+            card.classList.remove('side-card', 'far', 'near', 'center-card');
+            if (i === centro) card.classList.add('center-card');
+            else card.classList.add('side-card', Math.abs(i-centro) > 1 ? 'far' : 'near');
+        });
+        const indiceAtivo = atuais[centro].dataset.reviewIndex;
+        dots.forEach(dot => {
+            const ativo = dot.dataset.reviewIndex === indiceAtivo;
+            dot.classList.toggle('active', ativo);
+            if (ativo) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
+        });
     }
-
-    if (quantidade === 5) {
-        $('.next-btn').on('click', function () {
-            $track.append($track.children('.polaroid-card').first());
-            atualizarCarrossel();
+    if (quantidade > 1) {
+        document.querySelector('.next-btn')?.addEventListener('click', () => {
+            track.append(track.firstElementChild); atualizarCarrossel();
         });
-
-        $('.prev-btn').on('click', function () {
-            $track.prepend($track.children('.polaroid-card').last());
-            atualizarCarrossel();
+        document.querySelector('.prev-btn')?.addEventListener('click', () => {
+            track.prepend(track.lastElementChild); atualizarCarrossel();
         });
-
-        $('.carousel-dots .dot').on('click', function () {
-            const destino = Number($(this).attr('data-review-index'));
-            for (let tentativa = 0; tentativa < quantidade; tentativa++) {
-                const centro = Number($track.children('.polaroid-card').eq(2).attr('data-review-index'));
-                if (centro === destino) break;
-                $track.append($track.children('.polaroid-card').first());
+        dots.forEach(dot => dot.addEventListener('click', () => {
+            for (let i=0; i<quantidade && cards()[centro].dataset.reviewIndex !== dot.dataset.reviewIndex; i++) {
+                track.append(track.firstElementChild);
             }
             atualizarCarrossel();
-        });
-
-        atualizarCarrossel();
+        }));
     }
-
-    // Animações de entrada das seções e do rodapé.
+    atualizarCarrossel();
+    // Mesmas classes e animações de entrada das seções e do rodapé.
+    const elementos = document.querySelectorAll('.about-title, .about-card, .reviews-title, .carousel-wrapper, .carousel-dots, .footer-col, .footer-bottom');
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries, observador) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    $(entry.target).addClass('revelado');
-                    observador.unobserve(entry.target);
+                    entry.target.classList.add('revelado'); observador.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15 });
-
-        $('.about-title, .about-card, .reviews-title, .carousel-wrapper, .carousel-dots, .footer-col, .footer-bottom')
-            .each(function () { observer.observe(this); });
-    } else {
-        $('.about-title, .about-card, .reviews-title, .carousel-wrapper, .carousel-dots, .footer-col, .footer-bottom')
-            .addClass('revelado');
-    }
+        }, {threshold: 0.15});
+        elementos.forEach(el => observer.observe(el));
+    } else elementos.forEach(el => el.classList.add('revelado'));
 });
