@@ -14,6 +14,7 @@
     <script src="/js/cart-store.js" th:src="@{/js/cart-store.js(v=20261031)}" defer></script>
     <link th:if="${pageStylesheet != null}" rel="stylesheet"
           th:href="@{/css/{file}(file=${pageStylesheet},v='20261019-animacoes-3')}">
+    <script src="/js/mobile-menu.js" th:src="@{/js/mobile-menu.js(v=20261113)}" defer></script>
     <!-- Regras responsivas após o CSS local, sem sobrescrever o layout desktop. -->
     <link rel="stylesheet" href="/css/responsive.css" th:href="@{/css/responsive.css(v=20261113)}">
 </head>
@@ -22,7 +23,7 @@
         <div class="logo">
             <a class="header-brand-link" href="/" th:href="@{/}">Café Aurora</a>
         </div>
-        <nav>
+        <nav id="site-primary-nav" aria-label="Navegação principal">
             <ul>
                 <li><a href="/" th:href="@{/}">Home</a></li>
                 <li><a href="/cardapio.html" th:href="@{/cardapio.html}">Cardápios</a></li>
@@ -54,6 +55,14 @@
                 <span class="bag-count">0</span>
             </a>
         </div>
+        <!-- Botão visível apenas no celular: mantém Store e sacola acessíveis. -->
+        <button class="mobile-menu-toggle" type="button"
+                aria-controls="site-primary-nav" aria-expanded="false"
+                aria-label="Abrir menu de navegação">
+            <span class="mobile-menu-icon" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </span>
+        </button>
     </header>
 <footer id="contato" th:fragment="siteFooter" class="site-footer">
         <div class="footer-content">
