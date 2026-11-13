@@ -10,6 +10,7 @@
     if (!button || !navigation) return;
 
     const mobileScreen = window.matchMedia("(max-width: 560px)");
+    header.classList.add("has-mobile-menu");
 
     function setMenuOpen(open) {
         const expanded = Boolean(open && mobileScreen.matches);
