@@ -51,6 +51,8 @@
     position: absolute;
     top: 50%;
     left: 25%;
+    width: min(48vw, 680px);
+    max-width: calc(100vw - 24px);
     transform: translate(-50%, -50%);
     text-align: center;
     pointer-events: none;
@@ -64,17 +66,20 @@
 
 .logo-principal {
     display: flex;
-    position: absolute;
+    position: relative;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
 }
 
 .logo-principal #logo-aurora {
-    width: 35vw;
+    display: block;
+    width: min(100%, 640px);
+    max-width: 100%;
     height: auto;
 }
 
 #logo-aurora {
-    width: 150%;
-    height: 120%;
     opacity: 0;
     /* Começa invisível */
     /* A mágica da elegância está no cubic-bezier, que dá uma desacelerada suave no final */
