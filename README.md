@@ -77,9 +77,9 @@ Não é correto afirmar que todos os princípios SOLID estão integralmente aten
 ### Segurança e limites
 - API `/api/admin/**` requer HTTP Basic. Usuário padrão é `admin` (configurável por `CAFE_ADMIN_USERNAME`) e senha deve ser fornecida por `CAFE_ADMIN_PASSWORD`. **O servidor não inicializa sem a senha definida.**
 - Senhas não são salvas em arquivos versionados. HTTP Basic exige HTTPS fora do ambiente local.
-- Proteção CSRF é ignorada **somente** para `/api/admin/**`, que usa autenticação Basic sem cookies de sessão. Para um painel web com login/sessões, rever CSRF e a estratégia de autenticação.
+- Proteção CSRF é ignorada **somente** para `/api/admin/**`, que usa autenticação Basic sem cookies de sessão. O painel HTML usa login por formulário, sessão e CSRF ativo.
 - Console H2 está bloqueado pela configuração de segurança, inclusive no perfil dev, até definirmos uma política local segura para liberá-lo.
-- Os cardápios consultam H2 e a sacola permanece local; o backend de pedidos está implementado (Etapa 2); painel administrativo HTML e processamento de pagamentos ainda não estão implementados.
+- Os cardápios consultam H2 e a sacola permanece local; o backend de pedidos está implementado (Etapa 2); painel administrativo HTML implementado (Etapa 3); processamento de pagamentos ainda não implementado.
 - Para implantar em produção, migrar H2 para um banco adequado, gerenciar segredos, criar migrações em vez de `ddl-auto=update` e implementar autenticação apropriada para usuários administradores.
 
 
@@ -111,3 +111,7 @@ O painel usa autenticação por formulário e sessão com proteção CSRF. A API
 **Limites:** O painel usa caminhos para imagens já existentes em static/img (não há upload). O pagamento online não foi implementado. A configuração atual permanece orientada a ambiente local H2, não a produção.
 
 Execute `.\\mvnw.cmd test` e `.\\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"` (PowerShell) para validação local. Teste também os formulários HTML, login/logout, CSRF e a consulta pública dos pedidos após mudança de status.
+
+## Auditoria e testes — Etapa 4
+
+Execute `./mvnw verify` com JDK 21. Os testes usam H2 em memória por classe; o teste de compatibilidade cria um arquivo exclusivamente temporário. Não execute testes apontando para `data/cafeaurora`. Consulte [o relatório da Etapa 4](docs/etapa-4-revisao-testes-backend.md) para cenários, resultados e comandos do ambiente na nuvem.

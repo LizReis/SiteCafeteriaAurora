@@ -17,7 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Verifica a renderização real dos fragmentos compartilhados (head, header e footer).
  * Evita regressões em que os templates passam a referenciar um fragmento não declarado.
  */
-@SpringBootTest
+@org.springframework.test.context.ActiveProfiles("test")
+@SpringBootTest(properties="spring.datasource.url=jdbc:h2:mem:paginas_test;DB_CLOSE_DELAY=-1")
 class PaginasCompartilhadasTests {
 
     @Autowired

@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
 
+@org.springframework.test.context.ActiveProfiles("test")
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:pedidos_tests;DB_CLOSE_DELAY=-1", "spring.jpa.open-in-view=false"})
 class PedidoIntegracaoTests {
     @Autowired PedidoService service;
@@ -205,6 +206,41 @@ class PedidoIntegracaoTests {
             .andExpect(content().string(containsString("\"quantidade\":1")))
             .andExpect(content().string(not(containsString("\"quantidade\":2"))));
         mvc.perform(get("/api/pedidos/consulta/"+b.id())).andExpect(status().isNotFound());
+    }
+
+    @Test void cotacaoHttpUsaValoresOficiaisERejeitaPrecoNoItem() throws Exception {
+        var req=new CotacaoRequest(TipoAtendimento.ENTREGA,linhas(2));
+        mvc.perform(postJson("/api/pedidos/cotacao",serializar(req)))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.subtotal").value(20))
+            .andExpect(jsonPath("$.taxaEntrega").value(7)).andExpect(jsonPath("$.total").value(27))
+            .andExpect(header().string("Cache-Control",containsString("no-store")));
+        String manipulado="{\"tipoAtendimento\":\"RETIRADA\",\"itens\":[{\"produtoId\":"+cafe.getId()+",\"quantidade\":1,\"preco\":0.01}]}";
+        mvc.perform(postJson("/api/pedidos/cotacao",manipulado)).andExpect(status().isBadRequest());
+    }
+    @ParameterizedTest @ValueSource(strings={"nomeCliente","telefoneCliente","emailCliente"})
+    void validaCadaContatoIndividualmente(String campo) throws Exception {
+        var body=json.readTree(serializar(request(TipoAtendimento.RETIRADA,linhas(1))));
+        ((tools.jackson.databind.node.ObjectNode)body).put(campo,campo.equals("nomeCliente")?" ":"invalido");
+        mvc.perform(postJson("/api/pedidos",body.toString()).header("Idempotency-Key",chave())).andExpect(status().isBadRequest());
+        assertEquals(0,pedidos.count());
+    }
+    @Test void cotacaoInexistenteEChaveAusenteNaoGravam() throws Exception {
+        var req=request(TipoAtendimento.RETIRADA,linhas(1));
+        mvc.perform(postJson("/api/pedidos",serializar(req))).andExpect(status().isBadRequest());
+        var invalido=new PedidoRequest(req.nomeCliente(),req.telefoneCliente(),req.emailCliente(),req.tipoAtendimento(),req.formaPagamento(),null,null,req.itens(),"x".repeat(43));
+        mvc.perform(postJson("/api/pedidos",serializar(invalido)).header("Idempotency-Key",chave())).andExpect(status().isConflict());
+        assertEquals(0,pedidos.count());assertEquals(0,itensSalvos.count());
+    }
+    @Test void limiteMonetarioNaoGravaCotacao() {
+        cafe.atualizar(cafe.getNome(),null,new BigDecimal("99999999.99"),null,categoria,true,true);produtos.save(cafe);
+        assertThrows(EntradaInvalidaException.class,()->service.cotar(new CotacaoRequest(TipoAtendimento.RETIRADA,linhas(2))));
+        assertEquals(0,cotacoes.count());
+    }
+    @Test void perfilNormalNaoCarregaDadosDevEBancoEhMemoria() throws Exception {
+        assertFalse(context.containsBean("cargaCardapioDev"));
+        try(var c=Objects.requireNonNull(jdbc.getDataSource()).getConnection()) {
+            assertTrue(c.getMetaData().getURL().startsWith("jdbc:h2:mem:"));
+        }
     }
 
 }

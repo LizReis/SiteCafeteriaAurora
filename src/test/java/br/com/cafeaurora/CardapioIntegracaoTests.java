@@ -21,7 +21,9 @@ import static org.hamcrest.Matchers.*;
 
 // Testes usam credenciais determinísticas, sem serem sobrescritas por
 // CAFE_ADMIN_USERNAME/CAFE_ADMIN_PASSWORD do Codespaces ou do computador.
+@org.springframework.test.context.ActiveProfiles("test")
 @SpringBootTest(properties = {
+    "spring.datasource.url=jdbc:h2:mem:cardapio_test;DB_CLOSE_DELAY=-1",
     "cafe.admin.username=admin",
     "cafe.admin.password=senha-exclusiva-para-testes"
 })
