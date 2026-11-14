@@ -51,7 +51,7 @@ class AvaliacaoIntegracaoTests {
     MockMvc mvc; MockHttpSession session; CsrfToken csrf;
     Produto produto; PedidoResponse pedido;
     @BeforeEach void preparar() throws Exception {
-        fotos.deleteAll();avaliacoes.deleteAll();pedidos.deleteAll();cotacoes.deleteAll();produtos.deleteAll();categorias.deleteAll();
+        fotos.deleteAll();avaliacoes.deleteAll();jdbc.update("delete from historico_status_pedido");pedidos.deleteAll();cotacoes.deleteAll();produtos.deleteAll();categorias.deleteAll();
         var c=categorias.save(new Categoria("Café",null,true,TipoCardapio.CAFE,0));
         produto=produtos.save(new Produto("Produto histórico",null,new BigDecimal("10.00"),"/img/1320.jpg",c,true,true));
         pedido=novoPedido(TipoAtendimento.RETIRADA);
@@ -64,7 +64,11 @@ class AvaliacaoIntegracaoTests {
             tipo==TipoAtendimento.ENTREGA?new EnderecoRequest("01310000","Rua fictícia","1",null,"Bairro"):null,
             "Privado",itens,cotacao.cotacao()),UUID.randomUUID().toString());
     }
-    void concluir(PedidoResponse p) {for(var s:List.of(StatusPedido.EM_PREPARO,StatusPedido.PRONTO,StatusPedido.CONCLUIDO))admin.atualizarStatus(p.id(),s);}
+    void concluir(PedidoResponse p) {
+        admin.atualizarStatus(p.id(),StatusPedido.EM_PREPARO);admin.atualizarStatus(p.id(),StatusPedido.PRONTO);
+        if(p.tipoAtendimento()==TipoAtendimento.ENTREGA)admin.atualizarStatus(p.id(),StatusPedido.EM_ENTREGA);
+        admin.atualizarStatus(p.id(),StatusPedido.CONCLUIDO);
+    }
     void token() throws Exception {
         var r=mvc.perform(get("/pedido-confirmado").session(session==null?new MockHttpSession():session)).andExpect(status().isOk()).andReturn();
         csrf=(CsrfToken)r.getRequest().getAttribute(CsrfToken.class.getName());csrf.getToken();session=(MockHttpSession)r.getRequest().getSession(false);
@@ -146,7 +150,7 @@ class AvaliacaoIntegracaoTests {
     }
     @Test void revalidaExistenciaAposImagem() throws Exception {
         concluir(pedido);
-        var foto=fotoComAlteracaoConcorrente(()->pedidos.deleteById(pedido.id()));
+        var foto=fotoComAlteracaoConcorrente(()->{jdbc.update("delete from historico_status_pedido where pedido_id=?",pedido.id());pedidos.deleteById(pedido.id());});
         assertThrows(RecursoNaoEncontradoException.class,()->service.registrar(req(),foto));
         assertEquals(0,avaliacoes.count());assertEquals(0,fotos.count());
     }

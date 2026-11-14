@@ -101,7 +101,7 @@
                         <option value="">Selecione uma ação</option>
                         <option th:each="s : ${pedido.proximosStatus}"
                                 th:value="${s}"
-                                th:text="${s.name() == 'RECEBIDO' ? 'Recebido' : (s.name() == 'EM_PREPARO' ? 'Em preparo' : (s.name() == 'PRONTO' ? 'Pronto' : (s.name() == 'CONCLUIDO' ? 'Concluído' : 'Cancelado')))}">Em preparo</option>
+                                th:text="${s.name() == 'EM_PREPARO' ? 'Iniciar preparo' : (s.name() == 'PRONTO' ? 'Marcar como pronto' : (s.name() == 'EM_ENTREGA' ? 'Enviar para entrega' : (s.name() == 'CONCLUIDO' ? (pedido.atendimento.name() == 'ENTREGA' ? 'Confirmar entrega' : 'Confirmar retirada') : 'Cancelar pedido')))}">Em preparo</option>
                     </select>
                     <button class="order-detail-update-button" type="submit">Atualizar status</button>
                 </form>
@@ -139,6 +139,17 @@
                 </section>
             </section>
         </div>
+        <section class="order-detail-card" aria-labelledby="history-title">
+            <h2 id="history-title">Histórico do pedido</h2>
+            <p th:if="${#lists.isEmpty(historico)}">Histórico anterior à implantação indisponível.</p>
+            <ol class="order-status-history">
+                <li th:each="evento : ${historico}">
+                    <time th:text="${evento.horario}"></time>
+                    <strong th:text="${evento.anterior == null ? evento.novo : evento.anterior + ' → ' + evento.novo}"></strong>
+                    <span th:text="${evento.responsavel + ' · ' + evento.origem}"></span>
+                </li>
+            </ol>
+        </section>
     </main>
 
     <!-- Mesmo rodapé da área administrativa. -->

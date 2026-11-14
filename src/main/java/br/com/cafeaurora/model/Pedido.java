@@ -127,7 +127,8 @@ public class Pedido {
         return switch (status) {
             case RECEBIDO -> List.of(StatusPedido.EM_PREPARO, StatusPedido.CANCELADO);
             case EM_PREPARO -> List.of(StatusPedido.PRONTO, StatusPedido.CANCELADO);
-            case PRONTO -> List.of(StatusPedido.CONCLUIDO, StatusPedido.CANCELADO);
+            case PRONTO -> List.of(tipoAtendimento == TipoAtendimento.ENTREGA ? StatusPedido.EM_ENTREGA : StatusPedido.CONCLUIDO, StatusPedido.CANCELADO);
+            case EM_ENTREGA -> tipoAtendimento == TipoAtendimento.ENTREGA ? List.of(StatusPedido.CONCLUIDO) : List.of();
             case CONCLUIDO, CANCELADO -> List.of();
         };
     }

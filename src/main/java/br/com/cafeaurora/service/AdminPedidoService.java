@@ -23,7 +23,9 @@ public class AdminPedidoService {
         .withZone(ZoneId.of("America/Bahia"));
     private final PedidoRepository repositorio;
 
-    public AdminPedidoService(PedidoRepository repositorio) {
+    private final HistoricoStatusPedidoService historico;
+    public AdminPedidoService(PedidoRepository repositorio, HistoricoStatusPedidoService historico) {
+        this.historico=historico;
         this.repositorio = repositorio;
     }
 
@@ -66,9 +68,15 @@ public class AdminPedidoService {
 
     @Transactional
     public void atualizarStatus(Long id, StatusPedido novoStatus) {
-        Pedido pedido = repositorio.findById(id).orElseThrow(() ->
+        Pedido pedido = repositorio.buscarParaAtualizarStatus(id).orElseThrow(() ->
             new RecursoNaoEncontradoException("Pedido não encontrado: " + id));
+        StatusPedido anterior=pedido.getStatus();
         pedido.alterarStatus(novoStatus);
+        var autenticacao=org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        String responsavel=autenticacao!=null && autenticacao.isAuthenticated() &&
+            !(autenticacao instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)
+            ? autenticacao.getName() : "Administração";
+        historico.registrar(pedido,anterior,responsavel,OrigemStatusPedido.ADMINISTRADOR);
     }
 
     public long contar() { return repositorio.count(); }
@@ -79,6 +87,7 @@ public class AdminPedidoService {
             case RECEBIDO -> "Recebido";
             case EM_PREPARO -> "Em preparo";
             case PRONTO -> "Pronto";
+            case EM_ENTREGA -> "Em entrega";
             case CONCLUIDO -> "Concluído";
             case CANCELADO -> "Cancelado";
         };

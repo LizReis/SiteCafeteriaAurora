@@ -7,6 +7,7 @@ const password=require('node:crypto').randomBytes(32).toString('hex');
 const base='http://127.0.0.1:18083',root=path.resolve(__dirname,'..');
 const auth='Basic '+Buffer.from('admin:'+password).toString('base64');
 let server,browser;
+let scenario="inicialização";
 // O build pode substituir o JAR original; cada execução usa uma cópia imutável.
 const appJar=path.join(dir,'app.jar');
 fs.copyFileSync(path.join(root,'target/cafe-aurora-0.0.1-SNAPSHOT.jar'),appJar);
@@ -52,27 +53,47 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
   await row.locator('form[action$="/'+acao+'"] button').click();await admin.waitForLoadState('domcontentloaded');
  }
  async function carousel(n){
+  scenario='carrossel com '+n+' avaliações';
+  let etapa='carregar e contar';
+  try {
   await page.goto(base+'/');await page.locator('#avaliacoes').scrollIntoViewIfNeeded();
   assert.equal(await page.locator('.polaroid-card').count(),n);assert.equal(await page.locator('.carousel-dots .dot').count(),n>1?n:0);
   if(n){assert.equal(await page.locator('.center-card').count(),1);assert.equal(new Set(await page.locator('.polaroid-card h4').allTextContents()).size,n);}
   if(n>1){
+   etapa='seta próxima';
    const before=await page.locator('.center-card').getAttribute('data-review-index');await page.locator('.next-btn').click();
    assert.notEqual(await page.locator('.center-card').getAttribute('data-review-index'),before);
+   etapa='seta anterior';
    await page.locator('.prev-btn').click();assert.equal(await page.locator('.center-card').getAttribute('data-review-index'),before);
-   for(const dot of await page.locator('.carousel-dots .dot').all()){
+   for(const [indice,dot] of (await page.locator('.carousel-dots .dot').all()).entries()){
+    etapa='indicador '+indice;
     await dot.click();assert.equal(await dot.getAttribute('data-review-index'),await page.locator('.center-card').getAttribute('data-review-index'));
    }
   } else assert.equal(await page.locator('.carousel-btn').count(),0);
+  etapa='viewport mobile';
   await page.setViewportSize({width:390,height:844});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   if(n)assert(await page.locator('.center-card').isVisible());
   await page.screenshot({path:path.join(dir,'carousel-'+n+'-mobile.png'),fullPage:true});
   await page.setViewportSize({width:1366,height:900});
   console.log('Carrossel OK:',n,'avaliações reais, navegação e mobile');
+  } catch(error) {
+   try {
+   console.error('Diagnóstico carrossel:',JSON.stringify({n,etapa,...await page.evaluate(()=>({
+    centro:[...document.querySelectorAll('.center-card')].map(e=>e.dataset.reviewIndex),
+    ordem:[...document.querySelectorAll('.polaroid-card')].map(e=>e.dataset.reviewIndex),
+    indicadores:[...document.querySelectorAll('.carousel-dots .dot')].map(e=>({indice:e.dataset.reviewIndex,ativo:e.classList.contains('active')})),
+    largura:innerWidth,scroll:document.documentElement.scrollWidth
+   }))}));
+   await page.screenshot({path:path.join(dir,'falha-carrossel-'+n+'.png'),fullPage:true});
+   } catch(diagnosticError) { console.error('Captura de diagnóstico indisponível:',diagnosticError.name); }
+   throw error;
+  }
  }
  await carousel(0);
  const orders=[];
  for(let i=0;i<7;i++){
+  scenario='criação e avaliação '+i;
   const order=await create();orders.push(order);
   await page.goto(base+'/pedido-confirmado#pedido='+order.referencia);await page.reload();
   await page.waitForFunction(()=>window.CafeAuroraPedido?.getStatus()==='RECEBIDO');assert(await page.locator('#review-order-button').isDisabled());
@@ -98,6 +119,7 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
   await page.setViewportSize({width:1366,height:900});await page.goto(base+'/');assert(!(await page.content()).includes('Autor fictício '+i));
   await moderar('Autor fictício '+i,'aprovar');await carousel(Math.min(i+1,5));
  }
+ scenario='moderação mobile, limite HTTP e reinício';
  await admin.setViewportSize({width:390,height:844});await admin.goto(base+'/admin/avaliacoes');assert(await admin.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await admin.screenshot({path:path.join(dir,'moderacao-mobile.png'),fullPage:true});await admin.setViewportSize({width:1366,height:900});
  await moderar('Autor fictício 6','rejeitar');await page.goto(base+'/');assert(!(await page.content()).includes('Autor fictício 6'));
  // Teste real do limite HTTP multipart (o MockMvc não executa o parser do Tomcat).
@@ -113,5 +135,6 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
  const stored=await page.request.get(base+photoUrl);assert.equal(stored.status(),200);assert(stored.headers()['content-type'].includes('image/jpeg'));assert((await stored.body()).length>0);
  await adminLogin();await moderar('Autor fictício 1','rejeitar');assert.equal((await page.request.get(base+photoUrl)).status(),404);
  assert.equal(errors.length,0,errors.join('\n'));
+ scenario='verificação final';
  console.log('E2E OK: antes/depois da conclusão, foto e sem foto, falha preserva formulário, resposta perdida, moderação, limite HTTP e reinício. Evidências:',dir);
-})().catch(e=>{console.error(String(e).split('\n')[0].replace(/[A-Za-z0-9_-]{43}/g,'[redigido]'));process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();await stop();});
+})().catch(e=>{console.error(('Cenário: '+scenario+'\nEvidências: '+dir+'\n'+String(e.stack||e)).replaceAll(password,'[redigido]').replace(/[A-Za-z0-9_-]{43,}/g,'[redigido]'));process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();await stop();});

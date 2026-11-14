@@ -295,3 +295,7 @@ body.aurora-admin.admin-order-detail-page {
 @media (prefers-reduced-motion: reduce) {
     .admin-order-detail-page .order-detail-update-button { transition: none; }
 }
+
+.order-status-history { padding-left: 1.5rem; }
+.order-status-history li { margin: 1rem 0; overflow-wrap: anywhere; }
+.order-status-history time, .order-status-history strong, .order-status-history span { display: block; }

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class PedidoService {
     private final PedidoRepository pedidos;
+    private final HistoricoStatusPedidoService historico;
     private final ProdutoRepository produtos;
     private final CotacaoPedidoRepository cotacoes;
     private final Validator validator;
@@ -30,9 +31,9 @@ public class PedidoService {
     private final BigDecimal taxaEntrega;
     private final SecureRandom random = new SecureRandom();
     public PedidoService(PedidoRepository pedidos, ProdutoRepository produtos, CotacaoPedidoRepository cotacoes,
-        Validator validator, PlatformTransactionManager manager,
+        HistoricoStatusPedidoService historico, Validator validator, PlatformTransactionManager manager,
         @Value("${cafe.pedido.taxa-entrega:7.00}") BigDecimal taxaEntrega) {
-        this.pedidos=pedidos; this.produtos=produtos; this.cotacoes=cotacoes; this.validator=validator;
+        this.historico=historico; this.pedidos=pedidos; this.produtos=produtos; this.cotacoes=cotacoes; this.validator=validator;
         this.transacao=new TransactionTemplate(manager);
         if(taxaEntrega.signum()<0 || taxaEntrega.scale()>2 || taxaEntrega.compareTo(new BigDecimal("999999.99"))>0)
             throw new IllegalArgumentException("Taxa de entrega inválida");
@@ -72,7 +73,9 @@ public class PedidoService {
                     request.endereco()==null ? null : request.endereco().formatado(), request.observacoes(),
                     request.tipoAtendimento(),request.formaPagamento(),taxa,token(),idem,requisicao,hash(request.cotacao()));
                 for(var item:itens) pedido.adicionarItem(validados.produtos().get(item.produtoId()),item.quantidade());
-                return PedidoResponse.de(pedidos.saveAndFlush(pedido));
+                pedidos.saveAndFlush(pedido);
+                historico.registrar(pedido,null,"Sistema",br.com.cafeaurora.enums.OrigemStatusPedido.SISTEMA);
+                return PedidoResponse.de(pedido);
             });
         } catch(DataIntegrityViolationException ex) {
             // A restrição única é a proteção final contra concorrência. A transação
