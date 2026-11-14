@@ -17,10 +17,7 @@
     position: relative;
     isolation: isolate;
     padding: clamp(75px, 6vw, 88px) 0 100px;
-    background: radial-gradient(circle at 50% 50%,
-            rgb(27, 16, 14) 0%,
-            rgb(0, 0, 0) 50%,
-            rgb(0, 0, 0) 100%);
+    background: linear-gradient(135deg, #1e120f 0%, #000000 33.33%, #000000 66.67%, #1e120f 100%);
     overflow: hidden;
 }
 
