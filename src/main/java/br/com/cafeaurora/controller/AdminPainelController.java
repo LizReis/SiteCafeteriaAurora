@@ -16,12 +16,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin")
 public class AdminPainelController {
+    private final br.com.cafeaurora.service.HistoricoStatusPedidoService historico;
     private final CategoriaService categorias;
     private final ProdutoService produtos;
     private final AdminPedidoService pedidos;
 
     public AdminPainelController(CategoriaService categorias, ProdutoService produtos,
-                                AdminPedidoService pedidos) {
+                                AdminPedidoService pedidos, br.com.cafeaurora.service.HistoricoStatusPedidoService historico) {
+        this.historico=historico;
         this.categorias = categorias;
         this.produtos = produtos;
         this.pedidos = pedidos;
@@ -158,6 +160,7 @@ public class AdminPainelController {
     @GetMapping("/pedidos/{id}")
     public String pedido(@PathVariable Long id, Model model) {
         model.addAttribute("pedido", pedidos.detalhar(id));
+        model.addAttribute("historico", historico.listar(id));
         return "admin/pedido";
     }
 
@@ -169,6 +172,8 @@ public class AdminPainelController {
             flash.addFlashAttribute("sucesso", "Status do pedido atualizado.");
         } catch (RegraNegocioException ex) {
             flash.addFlashAttribute("erro", ex.getMessage());
+        } catch (org.springframework.dao.PessimisticLockingFailureException ex) {
+            flash.addFlashAttribute("erro", "Pedido em atualização por outro administrador. Consulte o estado atual e tente novamente.");
         }
         return "redirect:/admin/pedidos/" + id;
     }

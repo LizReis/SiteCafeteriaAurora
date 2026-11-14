@@ -50,7 +50,7 @@ class AdminIntegracaoTests {
     final String basic = "Basic " + Base64.getEncoder().encodeToString("admin:senha-exclusiva-para-testes".getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
     @BeforeEach void preparar() throws Exception {
-        pedidos.deleteAll(); cotacoes.deleteAll(); produtos.deleteAll(); categorias.deleteAll();
+        jdbc.update("delete from historico_status_pedido");pedidos.deleteAll(); cotacoes.deleteAll(); produtos.deleteAll(); categorias.deleteAll();
         categoria=categorias.save(new Categoria("Categoria teste", "Descrição", true, TipoCardapio.CAFE, 0));
         produto=produtos.save(new Produto("Produto teste", "Descrição", new BigDecimal("10.00"), null, categoria, true, true));
         mvc=MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
@@ -74,11 +74,12 @@ class AdminIntegracaoTests {
         return request(org.springframework.http.HttpMethod.valueOf(method),path).header("Authorization",basic)
             .contentType("application/json").content(json.writeValueAsString(body));
     }
-    PedidoResponse pedido() {
+    PedidoResponse pedido() {return pedido(TipoAtendimento.RETIRADA);}
+    PedidoResponse pedido(TipoAtendimento tipo) {
         var itens=List.of(new ItemPedidoRequest(produto.getId(),2));
-        var cotacao=checkout.cotar(new CotacaoRequest(TipoAtendimento.RETIRADA,itens));
+        var cotacao=checkout.cotar(new CotacaoRequest(tipo,itens));
         return checkout.criar(new PedidoRequest("Cliente fictício","11999999999","cliente@example.com",
-            TipoAtendimento.RETIRADA,FormaPagamento.DINHEIRO,null,"Observação fictícia",itens,cotacao.cotacao()),UUID.randomUUID().toString());
+            tipo,FormaPagamento.DINHEIRO,tipo==TipoAtendimento.ENTREGA?new EnderecoRequest("01310000","Rua","1",null,"Bairro"):null,"Observação fictícia",itens,cotacao.cotacao()),UUID.randomUUID().toString());
     }
     CategoriaRequest categoria(String nome) {return new CategoriaRequest(nome,"Descrição",true,TipoCardapio.COMIDAS,2);}
     ProdutoRequest produto(String preco,boolean ativo,boolean disponivel) {
@@ -233,7 +234,7 @@ class AdminIntegracaoTests {
         mvc.perform(get("/admin/pedidos").session(session).param("pagina","-1")).andExpect(model().attribute("pedidos",hasSize(15)));
         for(var s:StatusPedido.values()) mvc.perform(get("/admin/pedidos").session(session).param("status",s.name()))
             .andExpect(status().isOk()).andExpect(model().attribute("pedidos",hasSize(s==StatusPedido.RECEBIDO?15:0)));
-        mvc.perform(get("/admin/pedidos").session(session).param("status","EM_ENTREGA")).andExpect(status().isBadRequest());
+        mvc.perform(get("/admin/pedidos").session(session).param("status","DESCONHECIDO")).andExpect(status().isBadRequest());
     }
     @Test void filtrosComRegistrosDeCadaStatusEIndicadoresReais() throws Exception {
         login();
@@ -246,7 +247,7 @@ class AdminIntegracaoTests {
             var lista=(List<?>)r.getModelAndView().getModel().get("pedidos");
             assertEquals(s,((AdminPedidoService.Resumo)lista.getFirst()).status());
         }
-        mvc.perform(get("/admin").session(session)).andExpect(model().attribute("totalPedidos",5L))
+        mvc.perform(get("/admin").session(session)).andExpect(model().attribute("totalPedidos",6L))
             .andExpect(model().attribute("pendentes",1L)).andExpect(model().attribute("emPreparo",1L))
             .andExpect(model().attribute("prontos",1L)).andExpect(model().attribute("categoriasAtivas",1L))
             .andExpect(model().attribute("produtosAtivos",1L));
@@ -262,24 +263,27 @@ class AdminIntegracaoTests {
             .andExpect(content().string(containsString("Indisponível")));
     }
     static Stream<Arguments> transicoes() {
-        return Arrays.stream(StatusPedido.values()).flatMap(a->Arrays.stream(StatusPedido.values()).map(b->Arguments.of(a,b)));
+        return Arrays.stream(TipoAtendimento.values()).flatMap(t->Arrays.stream(StatusPedido.values()).flatMap(a->Arrays.stream(StatusPedido.values()).map(b->Arguments.of(t,a,b))));
     }
     @ParameterizedTest @MethodSource("transicoes")
-    void matrizStatusPersistidaEPublica(StatusPedido atual,StatusPedido proximo) throws Exception {
-        var p=pedido();
+    void matrizStatusPersistidaEPublica(TipoAtendimento tipo,StatusPedido atual,StatusPedido proximo) throws Exception {
+        var p=pedido(tipo);
         jdbc.update("update pedidos set status=? where id=?",atual.name(),p.id());
         login();
         boolean permitido=switch(atual) {
             case RECEBIDO -> proximo==StatusPedido.EM_PREPARO||proximo==StatusPedido.CANCELADO;
             case EM_PREPARO -> proximo==StatusPedido.PRONTO||proximo==StatusPedido.CANCELADO;
-            case PRONTO -> proximo==StatusPedido.CONCLUIDO||proximo==StatusPedido.CANCELADO;
+            case PRONTO -> proximo==(tipo==TipoAtendimento.ENTREGA?StatusPedido.EM_ENTREGA:StatusPedido.CONCLUIDO)||proximo==StatusPedido.CANCELADO;
+            case EM_ENTREGA -> tipo==TipoAtendimento.ENTREGA&&proximo==StatusPedido.CONCLUIDO;
             default -> false;
         };
         mvc.perform(form("/admin/pedidos/"+p.id()+"/status").param("status",proximo.name()))
             .andExpect(redirectedUrl("/admin/pedidos/"+p.id())).andExpect(flash().attributeExists(permitido?"sucesso":"erro"));
         assertEquals(permitido?proximo:atual,pedidos.findById(p.id()).orElseThrow().getStatus());
+        assertEquals(permitido?2:1,jdbc.queryForObject("select count(*) from historico_status_pedido where pedido_id=?",Integer.class,p.id()));
         mvc.perform(get("/api/pedidos/consulta/"+p.referencia())).andExpect(jsonPath("$.status").value((permitido?proximo:atual).name()))
-            .andExpect(jsonPath("$.statusPagamento").value("PENDENTE"));
+            .andExpect(jsonPath("$.statusPagamento").value("PENDENTE"))
+            .andExpect(jsonPath("$.historico").doesNotExist()).andExpect(jsonPath("$.responsavel").doesNotExist());
     }
     @Test void detalhesLegadosHistoricoEProtecaoStatus() throws Exception {
         var p=pedido();login();

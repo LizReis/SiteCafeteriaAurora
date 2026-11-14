@@ -43,7 +43,7 @@ class PedidoIntegracaoTests {
     Produto cafe, comida; Categoria categoria;
     final tools.jackson.databind.json.JsonMapper json=new tools.jackson.databind.json.JsonMapper();
     @BeforeEach void preparar() throws Exception {
-        pedidos.deleteAll();cotacoes.deleteAll();produtos.deleteAll();categorias.deleteAll();
+        jdbc.update("delete from historico_status_pedido");pedidos.deleteAll();cotacoes.deleteAll();produtos.deleteAll();categorias.deleteAll();
         categoria=categorias.save(new Categoria("Cafés",null,true,TipoCardapio.CAFE,0));
         cafe=produtos.save(new Produto("Espresso", "Descrição",new BigDecimal("10.00"),"/img/cupEsquerdaCima.jpg",categoria,true,true));
         comida=produtos.save(new Produto("Croissant",null,new BigDecimal("15.50"),"/img/1320.jpg",categoria,true,true));
