@@ -30,6 +30,14 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
   const r=await page.request.post(base+'/api/pedidos',{headers:{...headers,'Idempotency-Key':require('node:crypto').randomUUID()},data:body});check(r.status()===201,'Create '+r.status());return r.json();
  }
  async function status(p,s){await admin.goto(base+'/admin/pedidos/'+p.id);await admin.locator('select[name=status]').selectOption(s);await admin.locator('form[action$="/status"] button').click();await admin.waitForLoadState('domcontentloaded');check(await admin.locator('.admin-alert.success').count()===1,'Admin transition '+s);}
+ async function readyIcon(tipo){
+  const icon=page.locator('#current-status-icon svg');
+  check(await icon.isVisible(),tipo+' ready icon visible');
+  check(await icon.locator('path').count()===1 && await icon.locator('path').getAttribute('d')==='m5 12 5 5L20 7',tipo+' ready icon is the existing confirmation check');
+  check(await icon.locator('circle').count()===0,tipo+' main ready icon is not a motorcycle');
+  check(await page.locator('.tracking-step').count()===4,tipo+' preserves four tracking positions');
+  await page.screenshot({path:path.join(dir,'pronto-'+tipo.toLowerCase()+'.png'),fullPage:true});
+ }
  async function tick(s){await page.clock.runFor(15000);await page.waitForFunction(s=>window.CafeAuroraPedido.getStatus()===s,s);}
  const delivery=await create('ENTREGA');await page.clock.install();let count=0;
  page.on('request',r=>{if(r.url().includes('/api/pedidos/consulta/'))count++;});
@@ -40,7 +48,7 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
  check(await page.evaluate(()=>window.mutations)===0,'Unchanged response does not render');
  await page.locator('#toggle-confirmed-details').click();await page.clock.runFor(1000);const layout=await page.locator('.confirmed-layout').getAttribute('class');
  await status(delivery,'EM_PREPARO');await tick('EM_PREPARO');check(await page.locator('.confirmed-layout').getAttribute('class')===layout,'Summary stays open');
- await status(delivery,'PRONTO');await tick('PRONTO');check(!(await page.locator('[data-step="2"]').getAttribute('class')).includes('is-current'),'Motorcycle inactive PRONTO');check((await page.locator('#current-status-label').textContent()).includes('aguardando'),'Ready copy');
+ await status(delivery,'PRONTO');await tick('PRONTO');check(!(await page.locator('[data-step="2"]').getAttribute('class')).includes('is-current'),'Motorcycle inactive PRONTO');check((await page.locator('#current-status-label').textContent()).includes('aguardando'),'Ready copy');await readyIcon('ENTREGA');check(!(await page.locator('[data-step="2"]').getAttribute('class')).includes('is-done'),'Motorcycle not completed before dispatch');check(await page.locator('.tracking-steps').evaluate(e=>e.style.getPropertyValue('--tracking-progress'))===String(1/3),'Delivery PRONTO progress stays at preparation');
  await status(delivery,'EM_ENTREGA');await tick('EM_ENTREGA');check((await page.locator('[data-step="2"]').getAttribute('class')).includes('is-current'),'Motorcycle active');check(await page.locator('#review-order-button').isDisabled(),'Review blocked');
  // Close details with existing animation before reviewing later.
  await page.locator('#toggle-confirmed-details').click();await page.clock.runFor(1000);
@@ -61,7 +69,7 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
  await admin.goto(base+'/admin/login');await admin.locator('[name=username]').fill('admin');await admin.locator('[name=password]').fill(password);await admin.locator('button[type=submit]').click();await admin.waitForURL('**/admin');await admin.goto(base+'/admin/pedidos/'+delivery.id);
  check(await admin.locator('.order-status-history li').count()===5,'History survives restart');await page.reload();await page.waitForFunction(()=>window.CafeAuroraPedido.jaAvaliado());check(await page.evaluate(()=>window.CafeAuroraPedido.getStatus())==='CONCLUIDO','Status survives restart');
  const pickup=await create('RETIRADA');await page.goto(base+'/pedido-confirmado?view='+Math.random()+'#pedido='+pickup.referencia);await page.waitForFunction(()=>window.CafeAuroraPedido.getStatus()==='RECEBIDO');
- await status(pickup,'EM_PREPARO');await tick('EM_PREPARO');await status(pickup,'PRONTO');await tick('PRONTO');check((await page.locator('#current-status-label').textContent()).includes('retirada'),'Pickup ready');check((await page.locator('[data-step="2"] .sr-only').textContent()).includes('retirada'),'Pickup icon label');
+ await status(pickup,'EM_PREPARO');await tick('EM_PREPARO');await status(pickup,'PRONTO');await tick('PRONTO');check(await page.locator('#current-status-label').textContent()==='Pronto para retirada','Pickup ready');await readyIcon('RETIRADA');check(await page.locator('.tracking-steps').evaluate(e=>e.style.getPropertyValue('--tracking-progress'))===String(2/3),'Pickup PRONTO progress');check((await page.locator('[data-step="2"] .sr-only').textContent()).includes('retirada'),'Pickup icon label');
  await admin.goto(base+'/admin/pedidos/'+pickup.id);check(await admin.locator('option[value=EM_ENTREGA]').count()===0,'No delivery action for pickup');
  const csrf=await admin.locator('input[name=_csrf]').first().getAttribute('value');
  const bad=await admin.request.post(base+'/admin/pedidos/'+pickup.id+'/status',{form:{_csrf:csrf,status:'EM_ENTREGA'}});check(bad.ok(),'Controlled rejection');check((await (await page.request.get(base+'/api/pedidos/consulta/'+pickup.referencia)).json()).status==='PRONTO','Manipulated pickup rejected');

@@ -62,7 +62,7 @@
     byId('current-status-description').textContent=pickup&&next==='CONCLUIDO'
       ?'Retirada concluída. Obrigado por escolher o Café Aurora!'
       :pickup&&next==='PRONTO'?'Seu pedido está pronto para retirada.':status.description;
-    byId('current-status-icon').innerHTML=ICONS[next==='PRONTO'?'EM_PREPARO':next];
+    byId('current-status-icon').innerHTML=ICONS[next==='PRONTO'?'RECEBIDO':next];
     const steps=root.querySelectorAll('.tracking-step');
     if(steps[2]) {
       steps[2].querySelector('svg').outerHTML=pickup?ICONS.RECEBIDO:ICONS.EM_ENTREGA;

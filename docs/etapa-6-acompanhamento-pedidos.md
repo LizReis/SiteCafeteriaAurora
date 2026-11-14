@@ -114,3 +114,41 @@ Expectativas antigas legitimamente alteradas: EM_ENTREGA agora é filtro válido
 ## Limites e próximas etapas
 
 Não há tratamento operacional de falha após saída para entrega, GPS, entregadores, notificações ou pagamentos. Não foram adicionados. Histórico legado permanece desconhecido. O usuário administrativo continua configurado por ambiente, sem cadastro de funcionários. H2/ddl-auto=update seguem voltados ao desenvolvimento; migrações e banco de produção ficam para uma etapa própria. Polling é aproximadamente 15 segundos mais a duração da requisição e depende das políticas de timers do navegador. Sem alterações de identidade visual; capturas responsivas são evidência complementar, não aprovação humana do design.
+
+## Revisão final — ícone principal de PRONTO e verify completo
+
+Correção pontual na mesma branch `etapa-6-acompanhamento-pedidos`, a partir de `05e746a44ec3db2a812eea62fa74a72a85452851` (HEAD local e remoto conferidos antes da alteração). Esta seção registra a validação da revisão e substitui, para essa revisão, os resultados históricos de build acima.
+
+`applyStatus()` agora usa o SVG de confirmação já existente (`ICONS.RECEBIDO`) para o ícone principal de PRONTO, em vez do chapéu de preparo. O check representa preparação concluída. Em retirada, permanece o texto exato “Pronto para retirada”; em entrega, permanece a indicação de preparo encerrado aguardando saída. O mapeamento das quatro posições e a barra não mudaram: ENTREGA + PRONTO mantém progresso 1/3 e motocicleta inativa, e RETIRADA + PRONTO utiliza progresso 2/3. A motocicleta só se torna a etapa atual em EM_ENTREGA.
+
+O E2E `scripts/test-acompanhamento.cjs` passou a verificar, nos dois atendimentos, a visibilidade e a geometria do check principal, distinguindo-o do ícone de preparo e da motocicleta, além das quatro posições. Também verifica o texto exato da retirada, o progresso 1/3 e 2/3 e que a motocicleta em entrega PRONTO não está atual nem concluída. São geradas capturas `pronto-entrega.png` e `pronto-retirada.png`.
+
+Escopo da revisão: somente `pedido-confirmado.js`, `test-acompanhamento.cjs` e este relatório. Não houve alteração de CSS, fontes, cores, animações, regras de status, pagamentos ou avaliações. Nenhum banco de desenvolvimento foi apagado; todos os E2E utilizam H2 e credenciais temporários próprios.
+
+Comandos de validação desta revisão:
+
+```sh
+bash /workspace/.aurora/maven.sh verify > /tmp/etapa6-revisao-verify.log 2>&1
+# Para cada nome: acompanhamento, avaliacoes, pedidos, cardapios
+JAVA_TOOL_OPTIONS=-XX:TieredStopAtLevel=1 \
+JAVA_HOME=/workspace/.aurora/jdk-root/usr/lib/jvm/java-21-openjdk-amd64 \
+MAVEN_USER_HOME=/workspace/.m2 \
+node scripts/test-<nome>.cjs > /tmp/etapa6-revisao-<nome>.log 2>&1
+```
+
+O `verify` desta revisão executou **290 testes**, com **0 falhas, 0 erros e 0 ignorados**, gerou o JAR atualizado e terminou com `BUILD SUCCESS` em 59,684 segundos. Assim, o build completo foi executado com a matriz final e os testes de concorrência atualizados, e não apenas presumido a partir da execução anterior de `test`.
+
+Resultados de navegador desta revisão (todos com o JAR produzido pelo verify acima):
+
+| Script | Resultado real | Log e evidências |
+|---|---|---|
+| `test-acompanhamento.cjs` | Aprovado, 76 verificações, saída 0 | `/tmp/etapa6-revisao-acompanhamento.log`; `/tmp/aurora-acompanhamento-eznJVg` |
+| `test-pedidos.cjs` | Aprovado, saída 0 | `/tmp/etapa6-revisao-pedidos.log`; `/tmp/aurora-pedidos-cPdi8A` |
+| `test-cardapios.cjs` | Aprovado, saída 0 | `/tmp/etapa6-revisao-cardapios.log`; `/tmp/aurora-functional-xGxpqQ` |
+| `test-avaliacoes.cjs` | Primeira tentativa: falha de asserção no carrossel, saída 1; repetição completa: aprovada, saída 0 | `/tmp/etapa6-revisao-avaliacoes.log`; `/tmp/etapa6-revisao-avaliacoes-repeticao.log`; `/tmp/aurora-avaliacoes-1KohtR` |
+
+A repetição de avaliações usou o script original, com as mesmas assertions, em nova instância/banco temporários e com menor concorrência de processos de validação. A intermitência do carrossel já havia sido observada na entrega inicial; sua causa não foi confirmada. Não foi tratada como aprovação da primeira tentativa, nem foram alterados pagamentos, avaliações ou o runner anterior para contorná-la. Recomenda-se investigar a estabilidade desse E2E separadamente.
+
+As capturas `pronto-entrega.png` e `pronto-retirada.png` foram inspecionadas visualmente: ambas exibem check principal; entrega mantém a motocicleta inativa e retirada mantém a terceira posição de confirmação. O cenário ampliado continua verificando polling, reinício, avaliação e larguras de desktop/tablet/mobile. `node --check` passou nos dois JavaScripts alterados, e `git diff --check` passou.
+
+A correção é publicada exclusivamente na branch da Etapa 6, sem merge ou PR. O SHA do commit desta revisão é informado na entrega e pode ser conferido por `git rev-parse HEAD` e `git ls-remote origin refs/heads/etapa-6-acompanhamento-pedidos`; não se inclui o hash do próprio commit no seu conteúdo.
