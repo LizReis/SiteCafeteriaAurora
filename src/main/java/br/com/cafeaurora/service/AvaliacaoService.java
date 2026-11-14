@@ -32,12 +32,14 @@ public class AvaliacaoService {
         if(req==null)throw new EntradaInvalidaException("Dados da avaliação inválidos");
         if(req.referencia()==null||!req.referencia().matches("[A-Za-z0-9_-]{43}"))throw inexistente();
         if(!validator.validate(req).isEmpty())throw new EntradaInvalidaException("Informe nome (2–100), nota (1–5), comentário (5–1000) e autorize a publicação");
+        var elegibilidade=pedidos.consultarElegibilidadeAvaliacao(req.referencia()).orElseThrow(this::inexistente);
+        validarElegibilidade(elegibilidade.getStatus(),elegibilidade.isJaAvaliado());
+        // A consulta leve já terminou; a decodificação não segura lock no pedido.
         var foto=imagens.validar(arquivo);
         try {
             transacao.executeWithoutResult(tx->{
                 var pedido=pedidos.buscarParaAvaliacao(req.referencia()).orElseThrow(this::inexistente);
-                if(pedido.getStatus()!=StatusPedido.CONCLUIDO)throw new RegraNegocioException("Somente pedidos concluídos podem ser avaliados");
-                if(avaliacoes.existsByPedidoId(pedido.getId()))throw new RegraNegocioException("A avaliação deste pedido já foi registrada");
+                validarElegibilidade(pedido.getStatus(),avaliacoes.existsByPedidoId(pedido.getId()));
                 var avaliacao=avaliacoes.saveAndFlush(new Avaliacao(pedido,req.nomeAutor(),req.nota(),req.comentario()));
                 if(foto!=null)fotos.saveAndFlush(new AvaliacaoFoto(avaliacao,foto.tipoMime(),foto.conteudo()));
             });
@@ -48,6 +50,10 @@ public class AvaliacaoService {
             if(existe)throw new RegraNegocioException("A avaliação deste pedido já foi registrada");
             throw new AvaliacaoPersistenciaException();
         }
+    }
+    private void validarElegibilidade(StatusPedido status,boolean jaAvaliado) {
+        if(status!=StatusPedido.CONCLUIDO)throw new RegraNegocioException("Somente pedidos concluídos podem ser avaliados");
+        if(jaAvaliado)throw new RegraNegocioException("A avaliação deste pedido já foi registrada");
     }
     @Transactional(readOnly=true)
     public List<AvaliacaoPublica> publicas() {

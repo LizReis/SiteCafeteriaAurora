@@ -88,6 +88,69 @@ class AvaliacaoIntegracaoTests {
     }
     Long registrar() {concluir(pedido);service.registrar(req(),null);return avaliacoes.findAll().stream().filter(a->a.getPedido().getId().equals(pedido.id())).findFirst().orElseThrow().getId();}
 
+    MockMultipartFile fotoQueNaoPodeSerProcessada() {
+        return new MockMultipartFile("foto","invalida.png","image/png",new byte[]{1,2,3}) {
+            @Override public long getSize(){throw new AssertionError("Imagem examinada antes da autorização");}
+            @Override public java.io.InputStream getInputStream(){throw new AssertionError("Imagem lida antes da autorização");}
+        };
+    }
+    @Test void referenciaInexistenteRejeitadaAntesDaImagem() throws Exception {
+        var referencia="x".repeat(43);
+        mvc.perform(envio().file(new MockMultipartFile("foto","invalida.png","image/png",new byte[]{1,2,3}))
+            .with(r->{r.setParameter("referencia",referencia);return r;})).andExpect(status().isNotFound());
+        assertThrows(RecursoNaoEncontradoException.class,()->service.registrar(
+            new AvaliacaoRequest(referencia,"Autor",5,"Muito bom",true),fotoQueNaoPodeSerProcessada()));
+        assertEquals(0,avaliacoes.count());assertEquals(0,fotos.count());
+    }
+    @ParameterizedTest @EnumSource(value=StatusPedido.class,names={"CONCLUIDO"},mode=EnumSource.Mode.EXCLUDE)
+    void pedidoInelegivelRejeitadoAntesDaImagem(StatusPedido status) throws Exception {
+        jdbc.update("update pedidos set status=? where id=?",status.name(),pedido.id());
+        mvc.perform(envio().file(new MockMultipartFile("foto","invalida.png","image/png",new byte[]{1,2,3})))
+            .andExpect(status().isConflict());
+        assertThrows(RegraNegocioException.class,()->service.registrar(req(),fotoQueNaoPodeSerProcessada()));
+        assertEquals(0,avaliacoes.count());assertEquals(0,fotos.count());
+    }
+    @ParameterizedTest @EnumSource(StatusModeracao.class)
+    void pedidoJaAvaliadoRejeitadoAntesDaImagem(StatusModeracao status) throws Exception {
+        var id=registrar();if(status!=StatusModeracao.PENDENTE)service.moderar(id,status);
+        mvc.perform(envio().file(new MockMultipartFile("foto","invalida.png","image/png",new byte[]{1,2,3})))
+            .andExpect(status().isConflict());
+        assertThrows(RegraNegocioException.class,()->service.registrar(req(),fotoQueNaoPodeSerProcessada()));
+        assertEquals(1,avaliacoes.count());assertEquals(0,fotos.count());
+    }
+    MockMultipartFile fotoComAlteracaoConcorrente(Runnable alteracao) throws Exception {
+        return new MockMultipartFile("foto","valida.png","image/png",imagem("png").getBytes()) {
+            @Override public java.io.InputStream getInputStream() throws java.io.IOException {
+                assertFalse(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive(),
+                    "Processamento da imagem deve ficar fora da transação de autorização/gravação");
+                var executor=Executors.newSingleThreadExecutor();
+                try {
+                    executor.submit(alteracao).get(10,TimeUnit.SECONDS);
+                } catch(Exception ex) {throw new AssertionError("Alteração concorrente bloqueada durante leitura da foto",ex);}
+                finally {executor.shutdownNow();}
+                return super.getInputStream();
+            }
+        };
+    }
+    @Test void revalidaStatusAlteradoDuranteImagemSemManterLock() throws Exception {
+        concluir(pedido);
+        var foto=fotoComAlteracaoConcorrente(()->jdbc.update("update pedidos set status='CANCELADO' where id=?",pedido.id()));
+        assertThrows(RegraNegocioException.class,()->service.registrar(req(),foto));
+        assertEquals(0,avaliacoes.count());assertEquals(0,fotos.count());
+    }
+    @Test void revalidaDuplicidadeCriadaDuranteImagemSemManterLock() throws Exception {
+        concluir(pedido);
+        var foto=fotoComAlteracaoConcorrente(()->service.registrar(req(),null));
+        assertThrows(RegraNegocioException.class,()->service.registrar(req(),foto));
+        assertEquals(1,avaliacoes.count());assertEquals(0,fotos.count());
+    }
+    @Test void revalidaExistenciaAposImagem() throws Exception {
+        concluir(pedido);
+        var foto=fotoComAlteracaoConcorrente(()->pedidos.deleteById(pedido.id()));
+        assertThrows(RecursoNaoEncontradoException.class,()->service.registrar(req(),foto));
+        assertEquals(0,avaliacoes.count());assertEquals(0,fotos.count());
+    }
+
     @ParameterizedTest @EnumSource(TipoAtendimento.class)
     void avaliacaoValidaPendenteEPedidoIntacto(TipoAtendimento tipo) throws Exception {
         pedido=novoPedido(tipo);concluir(pedido);

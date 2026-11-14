@@ -78,7 +78,11 @@ async function stop(){if(server&&server.exitCode===null)await new Promise(r=>{se
   await page.waitForFunction(()=>window.CafeAuroraPedido?.getStatus()==='RECEBIDO');assert(await page.locator('#review-order-button').isDisabled());
   await concluir(order);await page.reload();await page.waitForFunction(()=>window.CafeAuroraPedido?.getStatus()==='CONCLUIDO');
   await page.locator('#review-order-button').click();
+  // Aguarde o foco programado pelo painel antes de preencher: ele não deve interromper o fill do comentário.
+  await page.waitForFunction(()=>document.activeElement===document.getElementById('review-customer-name'));
   await page.locator('#review-customer-name').fill('Autor fictício '+i);await page.locator('#review-comment').fill('Uma experiência excelente, comentário '+i);
+  assert.equal(await page.locator('#review-customer-name').inputValue(),'Autor fictício '+i);
+  assert.equal(await page.locator('#review-comment').inputValue(),'Uma experiência excelente, comentário '+i);
   await page.locator('.review-stars-choice label').last().click();await page.locator('#review-consent').check();
   if(i===1)await page.locator('#review-photo').setInputFiles({name:'../../cliente.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGMMqHBjYGBgYmBgYGBgAAAM3AEScAD53QAAAABJRU5ErkJggg==','base64')});
   if(i<2){await page.setViewportSize({width:i===1?390:1366,height:i===1?844:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:path.join(dir,'formulario-'+i+'.png'),fullPage:true});}

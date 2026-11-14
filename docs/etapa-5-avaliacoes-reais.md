@@ -7,7 +7,7 @@
 - Branch: `etapa-5-avaliacoes-reais`.
 - Commit inicial: `80fbddff2fe43a7f49262134a578d39b20871b2d`.
 - Antes das alterações: árvore limpa; branch local da Etapa 4. `git ls-remote origin refs/heads/main` e `git fetch origin main` confirmaram a main no SHA acima. A branch nova foi criada a partir de `FETCH_HEAD`.
-- Commit da implementação validada: `477cb0dff5b0441550bccf138d6b6bd582f8e86c`.
+- Commit da implementação inicial validada: `477cb0dff5b0441550bccf138d6b6bd582f8e86c`.
 - Este relatório integra um commit documental posterior. O SHA final, que inclui o próprio documento, é informado na entrega e pode ser obtido por `git rev-parse HEAD`, evitando um hash autorreferente impossível.
 - Publicação: somente a branch de trabalho; o resultado e a igualdade do SHA remoto/local são conferidos ao fim da entrega. Nenhum merge ou PR foi solicitado ou criado.
 - Total de arquivos da etapa: 37, incluindo este documento.
@@ -49,6 +49,8 @@ Campos obrigatórios: autor de 2–100 caracteres após strip/normalização de 
 O esquema é aditivo: tabelas `avaliacoes` e `avaliacoes_fotos`, sem remover ou modificar colunas históricas do pedido. O teste de compatibilidade da Etapa 4 foi reexecutado com as entidades novas: cria esquema anterior em `@TempDir`, inicia e atualiza duas vezes, preservando catálogo e pedido/item históricos. A migração não foi aplicada ao arquivo real durante os testes.
 
 ## Autorização, duplicidade e transação
+
+Antes de processar a fotografia, `registrar()` valida formato/DTO e faz uma consulta escalar somente de leitura da existência, status e presença de avaliação. Essa consulta não carrega itens, dados pessoais ou fotos e não utiliza lock. Referência inexistente recebe 404; pedido não concluído ou já avaliado recebe 409, mesmo com imagem inválida. A transação curta dessa consulta termina antes da decodificação. Após normalizar a foto, a sequência abaixo revalida as condições atuais com lock para persistir com segurança.
 
 1. A referência deve seguir o padrão existente `[A-Za-z0-9_-]{43}`.
 2. O pedido correspondente é consultado com lock pessimista dentro da transação de avaliação.
@@ -150,7 +152,7 @@ Todos os testes novos usam `jdbc:h2:mem:avaliacoes_test;DB_CLOSE_DELAY=-1`, perf
 
 | Grupo final | Executados | Aprovados | Falhas/erros | Ignorados |
 |---|---:|---:|---:|---:|
-| AvaliacaoIntegracaoTests | 42 | 42 | 0 | 0 |
+| AvaliacaoIntegracaoTests | 53 | 53 | 0 | 0 |
 | AdminIntegracaoTests | 48 | 48 | 0 | 0 |
 | PedidoIntegracaoTests | 34 | 34 | 0 | 0 |
 | CardapioIntegracaoTests | 4 | 4 | 0 | 0 |
@@ -158,9 +160,9 @@ Todos os testes novos usam `jdbc:h2:mem:avaliacoes_test;DB_CLOSE_DELAY=-1`, perf
 | CompatibilidadeLegadoTests | 1 | 1 | 0 | 0 |
 | CargaDevTests + CafeAuroraApplicationTests | 2 | 2 | 0 | 0 |
 | Unitários de DTO/modelos/serviços | 14 | 14 | 0 | 0 |
-| **Total** | **153** | **153** | **0** | **0** |
+| **Total** | **164** | **164** | **0** | **0** |
 
-`verify` passou e a suíte foi repetida em ordem inversa com os mesmos 153 aprovados. Os XMLs de Surefire foram somados e conferidos, não apenas o status do Maven. Não foi instalado plugin para produzir um percentual de cobertura.
+Na implementação inicial, `verify` e a repetição em ordem inversa passaram com 153 testes. Após o ajuste de autorização antes da imagem, `verify` passou com 164 testes, incluindo os 153 anteriores e 11 novos casos; veja a seção do ajuste pontual. Os XMLs de Surefire foram somados e conferidos, não apenas o status do Maven. Não foi instalado plugin para produzir um percentual de cobertura.
 
 ### Matriz de cobertura
 
@@ -280,7 +282,7 @@ Demais arquivos:
 | `src/main/resources/templates/admin/produtos.html` | Link Avaliações |
 | `src/main/resources/templates/admin/pedidos.html` | Link Avaliações |
 | `src/main/resources/templates/admin/pedido.html` | Link Avaliações |
-| `src/test/java/br/com/cafeaurora/AvaliacaoIntegracaoTests.java` | 42 cenários com filtros, serviços e banco reais |
+| `src/test/java/br/com/cafeaurora/AvaliacaoIntegracaoTests.java` | 53 cenários com filtros, serviços e banco reais |
 | `scripts/test-avaliacoes.cjs` | E2E isolado, mobile, erro, fotos, moderação e reinício |
 | `README.md` | Uso, limites, moderação e comandos de testes |
 | `docs/etapa-5-avaliacoes-reais.md` | Este relatório |
@@ -292,3 +294,60 @@ Não há falha crítica aberta nos cenários executados. A fixture de esquema an
 Para um ambiente de produção ainda seriam necessários política de retenção/remoção de avaliações e fotos, atendimento a solicitações dos titulares, backup/restauração, gestão de armazenamento e limites de requisição/concorrência. Consentimento está registrado, mas não substitui uma política de privacidade formal. Comentários e fotos precisam continuar sendo revisados pela equipe antes de aprovar. As bibliotecas de imagem devem ser mantidas atualizadas.
 
 Essas são recomendações de implantação e operação, não bloqueios do fluxo de portfólio implementado. Pagamentos, acompanhamento automático, mudanças de entrega/retirada e eventual EM_ENTREGA continuam fora desta etapa. Não houve alteração no fluxo financeiro ou no menu público. Encerrar na Etapa 5 e aguardar revisão antes de merge ou Etapa 6.
+
+## Ajuste pontual — autorização antes do processamento da imagem
+
+Revisão em 13/11/2026, iniciada no commit `7b79db609afbfd9fffcd73f10b8884065d3cb9dd`, com árvore limpa na branch `etapa-5-avaliacoes-reais`. O SHA final atualizado é informado na entrega e conferido com o remoto após publicar somente essa branch.
+
+**Defeito reproduzido:** `imagens.validar(arquivo)` era executado antes da busca do pedido. Oito novos casos HTTP com bytes inválidos retornaram 400 em vez do 404/409 de autorização esperado. Isso permitia processamento desnecessário de imagens para pedidos inexistentes, não concluídos ou já avaliados. A execução anterior à correção registrou oito falhas em oito casos, em `reproducao.log`.
+
+**Correção:** `PedidoRepository.consultarElegibilidadeAvaliacao()` usa projeção escalar (`status`, `jaAvaliado`) e left join pela associação única, com consulta read-only sem lock. `AvaliacaoService.registrar()` executa essa pré-verificação depois de validar formato e DTO, antes de invocar o processador de imagem. `validarElegibilidade()` mantém os mesmos códigos e mensagens nas duas verificações. A foto continua sendo decodificada fora da transação de gravação; a busca com lock pessimista e a revalidação permanecem dentro da transação, antes do save. UNIQUE, rollback, tratamento de duplicidade e respostas de persistência foram mantidos.
+
+Não foram alterados HTML, CSS, JavaScript da aplicação, animações, pagamentos, status ou funcionalidades da Etapa 6. O único ajuste no runner de navegador sincroniza o preenchimento com o foco já programado pela interface, sem mudar a aplicação. A alteração cobre a decisão de chamar o codec; a recepção e o parser multipart continuam sujeitos aos limites HTTP existentes de 5/6 MiB.
+
+### Regressões adicionadas
+
+- Uma referência inexistente: 404 antes de examinar a imagem.
+- Quatro status inelegíveis: 409 antes de examinar a imagem.
+- Pedido já avaliado nos três estados de moderação: 409 antes de examinar a imagem.
+- Nos oito casos acima, o HTTP envia arquivo inválido e uma segunda chamada direta usa arquivo-sentinela que falha se o serviço sequer consultar seu tamanho ou abrir seu stream. Não há mock de autorização, banco ou processador.
+- Três testes modificam o H2 isolado em outra thread durante a abertura de uma imagem válida: removem o pedido, alteram a elegibilidade ou registram uma avaliação concorrente. A transação final precisa detectar a mudança e não criar foto órfã. Também se verifica que a leitura da imagem ocorre sem transação ativa e que a operação concorrente termina sem esperar um lock mantido pelo envio. As alterações diretas de status são exclusivamente fixtures de teste, sem modificar as transições reais do sistema.
+
+### Validação do ajuste
+
+Comandos na raiz do checkout, usando o mesmo helper Maven do ambiente:
+
+```bash
+bash /workspace/.aurora/maven.sh -Dtest='AvaliacaoIntegracaoTests#referenciaInexistenteRejeitadaAntesDaImagem+pedidoInelegivelRejeitadoAntesDaImagem+pedidoJaAvaliadoRejeitadoAntesDaImagem' test
+bash /workspace/.aurora/maven.sh -Dtest=AvaliacaoIntegracaoTests test
+bash /workspace/.aurora/maven.sh verify
+JAVA_HOME=/workspace/.aurora/java-21 MAVEN_USER_HOME=/workspace/.m2 node scripts/test-avaliacoes.cjs
+JAVA_HOME=/workspace/.aurora/java-21 MAVEN_USER_HOME=/workspace/.m2 node scripts/test-pedidos.cjs
+JAVA_HOME=/workspace/.aurora/java-21 MAVEN_USER_HOME=/workspace/.m2 node scripts/test-cardapios.cjs
+sha256sum -c /workspace/.aurora/etapa5-ajuste/h2-before.sha256
+```
+
+Resultados de integração: **53/53** no grupo de avaliações; **164/164** na suíte completa, zero falhas, erros ou ignorados. Os 153 testes anteriores foram preservados e executados. Asserções dos testes existentes de concorrência, rollback e unicidade continuam aprovadas.
+
+Logs desta rodada: `/workspace/.aurora/etapa5-ajuste/`. `reproducao.log` registra a falha inicial; `avaliacoes.log` registra os 53 aprovados; `verify.log` registra os 164 aprovados e o pacote atualizado. Os três runners de navegador usam esse pacote, sem recompilá-lo durante a execução, e bancos temporários separados. Os logs de pedidos e cardápios são `browser-pedidos.log` e `browser-cardapios.log`; ambos concluíram com código 0. A rodada inicial de avaliações (`browser-avaliacoes.log`) teve timeout de preenchimento; a investigação e a execução final estão descritas abaixo. Os XMLs atuais ficam em `target/surefire-reports/`.
+
+O fingerprint do H2 de desenvolvimento foi registrado antes das mudanças e corresponde ao SHA-256 já documentado acima; a conferência após a suíte e os três runners retornou `OK`. Nenhum banco, foto, log ou arquivo temporário foi adicionado ao Git.
+
+Arquivos deste ajuste (cinco): `service/AvaliacaoService.java` (ordem e revalidação), `repository/PedidoRepository.java` (projeção leve), `src/test/java/br/com/cafeaurora/AvaliacaoIntegracaoTests.java` (11 regressões), `scripts/test-avaliacoes.cjs` (sincronização do preenchimento) e este relatório.
+
+### Diagnóstico do timeout do runner
+
+Na primeira rodada de avaliações, o teste esperou a tela de agradecimento sem que o segundo formulário tivesse sido enviado: a captura `/tmp/aurora-avaliacoes-iLJ811/formulario-1.png` mostra o comentário concatenado ao nome e o campo de comentário vazio. O foco agendado pela interface interrompeu o preenchimento automatizado. A inspeção somente do banco temporário confirmou dois pedidos concluídos, apenas uma avaliação e nenhuma foto, sem erro do servidor. Uma cópia externa instrumentada do runner concluiu o fluxo completo (`browser-diagnostico.log`, `/tmp/aurora-avaliacoes-7fPcjR/`), reforçando o diagnóstico de sincronização.
+
+O runner versionado agora aguarda `document.activeElement` ser o campo de nome antes de preencher e verifica os valores dos dois campos. O temporizador, os eventos e as animações da aplicação foram preservados. A rodada final usa o runner corrigido e mantém todas as asserções do fluxo; seu log é `browser-avaliacoes-final.log`.
+
+
+Resultado final dos runners deste ajuste:
+
+| Script | Código de saída | Evidências temporárias |
+|---|---:|---|
+| `test-avaliacoes.cjs` | 0 | `/tmp/aurora-avaliacoes-1x3ZOC/` |
+| `test-pedidos.cjs` | 0 | `/tmp/aurora-pedidos-eUBbcd/` |
+| `test-cardapios.cjs` | 0 | `/tmp/aurora-functional-E1A8JI/` |
+
+A rodada final de avaliações validou novamente envio com/sem foto, erro de envio, recuperação de resposta perdida, moderação, reload, reinício, limite HTTP e carrossel mobile. O timeout inicial foi preservado como evidência e corrigido no runner, sem remover asserções ou alterar a interface. Não há falha aberta neste ajuste.
