@@ -152,3 +152,87 @@ A repetição de avaliações usou o script original, com as mesmas assertions, 
 As capturas `pronto-entrega.png` e `pronto-retirada.png` foram inspecionadas visualmente: ambas exibem check principal; entrega mantém a motocicleta inativa e retirada mantém a terceira posição de confirmação. O cenário ampliado continua verificando polling, reinício, avaliação e larguras de desktop/tablet/mobile. `node --check` passou nos dois JavaScripts alterados, e `git diff --check` passou.
 
 A correção é publicada exclusivamente na branch da Etapa 6, sem merge ou PR. O SHA do commit desta revisão é informado na entrega e pode ser conferido por `git rev-parse HEAD` e `git ls-remote origin refs/heads/etapa-6-acompanhamento-pedidos`; não se inclui o hash do próprio commit no seu conteúdo.
+
+
+## Investigação de estabilidade do carrossel — após a revisão do ícone
+
+Base: `42025bf21f9878320aaf7d861f98065c6a0c8c8b`, branch `etapa-6-acompanhamento-pedidos`, árvore inicialmente limpa. A correção aprovada de PRONTO não foi refeita. O escopo desta investigação é o runner de avaliações e a evidência de estabilidade; nenhuma regra de pagamento, status ou histórico foi alterada.
+
+### Evidência original e limites do diagnóstico
+
+`/tmp/etapa6-revisao-avaliacoes.log` ainda existe. Ele contém sucessos de carrossel para 0, 1, 2, 3 e 4 avaliações, seguidos de `AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:`. O catch antigo imprimia somente a primeira linha da exceção; portanto a linha exata, o valor esperado e o observado não foram preservados. Não é possível recuperar esses detalhes desse log, e não se atribui a falha a uma asserção específica sem evidência.
+
+A fixture temporária correspondente, `/tmp/aurora-avaliacoes-3C1bQt`, contém as capturas até `carousel-4-mobile.png` e cinco avaliações APROVADA. A contagem foi consultada com H2 `ACCESS_MODE_DATA=r;IFEXISTS=TRUE`, exclusivamente no banco de teste já encerrado. Resultado em `/tmp/aurora-estabilidade/banco-falha-original.log`. Com isso, a falha é localizada no cenário de carrossel com cinco avaliações, após a quinta aprovação; o subpasso exato do erro histórico permanece desconhecido.
+
+A inspeção de scripts.js encontrou atualização síncrona das classes dos cards e dos indicadores, sem temporizador que avance automaticamente o carrossel. CSS possui transição de largura dos indicadores (0,3 s) e entrada do conjunto (1,2 s com atraso de 0,4 s). O runner faz verificações imediatas após os cliques. Isso torna sincronização/animação uma hipótese plausível, mas a inspeção por si só não prova a causa nem exclui um defeito real ou efeito de concorrência. Não foram removidas animações ou adicionados sleeps/repetições para fazer o teste passar.
+
+### Cinco execuções completas, sequenciais e independentes
+
+Comando de cada execução:
+
+```sh
+JAVA_TOOL_OPTIONS=-XX:TieredStopAtLevel=1 \
+JAVA_HOME=/workspace/.aurora/jdk-root/usr/lib/jvm/java-21-openjdk-amd64 \
+MAVEN_USER_HOME=/workspace/.m2 \
+node scripts/test-avaliacoes.cjs
+```
+
+Cada execução criou um novo diretório por mkdtemp, copiou o JAR, utilizou H2 de arquivo temporário próprio, senha aleatória e porta 18083. O processo anterior foi encerrado antes de iniciar o próximo. Nenhum outro E2E foi lançado durante essa série. O runner continuou exercitando 0 a 7 avaliações cadastradas (até cinco públicas), setas, todos os indicadores, mobile, fotos, moderação, falha de envio, resposta perdida, limites HTTP, duplicidade e persistência após reinício. A opção reducedMotion já existente foi preservada; nenhum CSS foi modificado.
+
+Os cinco testes foram planejados como série finita, e não como retentativas até obter sucesso. Todos os códigos de saída foram armazenados, inclusive se fossem não zero. Tempos abaixo em America/Sao_Paulo, em 14/11/2026; o TSV bruto utiliza UTC.
+
+| Execução | Início | Fim | Saída | Resultado | Evidências |
+|---|---|---|---:|---|---|
+| 1 | 19:05:49 | 19:06:59 | 0 | Aprovada | `/tmp/aurora-estabilidade/antes-1.log`; `/tmp/aurora-avaliacoes-togWwD` |
+| 2 | 19:06:59 | 19:08:02 | 0 | Aprovada | `/tmp/aurora-estabilidade/antes-2.log`; `/tmp/aurora-avaliacoes-nvIDjS` |
+| 3 | 19:08:02 | 19:09:06 | 0 | Aprovada | `/tmp/aurora-estabilidade/antes-3.log`; `/tmp/aurora-avaliacoes-Wprc8H` |
+| 4 | 19:09:06 | 19:10:09 | 0 | Aprovada | `/tmp/aurora-estabilidade/antes-4.log`; `/tmp/aurora-avaliacoes-LjDQfu` |
+| 5 | 19:10:09 | 19:11:15 | 0 | Aprovada | `/tmp/aurora-estabilidade/antes-5.log`; `/tmp/aurora-avaliacoes-zaQNse` |
+
+Ressalva metodológica: essa primeira série já continha logging de cenário e uma leitura de atributo para identificar o indicador antes do clique. Nenhuma assertion foi removida ou relaxada. A leitura adicional foi posteriormente substituída pelo índice local da iteração, para que a instrumentação final não acrescente uma chamada assíncrona antes de cada clique e não interfira desnecessariamente no timing observado.
+
+### Recorte focado: cinco avaliações, cliques e animações originais
+
+Foram feitas mais 20 navegações controladas com a fixture de cinco avaliações da falha histórica, copiada para outro diretório temporário e servida na porta 18085. O helper de investigação `/workspace/.aurora/focus-carousel.cjs` preservou as verificações originais de contagem, centro, seta próxima/anterior e cada indicador, com viewport 1366 × 900 e animações originais. Não adicionou leitura de atributo antes dos cliques; estava preparado para registrar pointerdown, pointerup e click, estado do DOM e animações se uma asserção falhasse.
+
+Resultado: **20 aprovadas, 0 falhas**; cada tentativa está registrada individualmente em `/tmp/aurora-estabilidade/foco-original.log`. Diretório: `/tmp/aurora-carousel-focus-SdrSHt`. Como não houve recorrência, não existe dump de clique falho que permita comparar o alvo do mouse com o indicador esperado. O recorte não substitui o E2E completo: utiliza dados previamente preparados e não testa novamente criação/upload/moderação em cada navegação.
+
+### Alteração necessária no runner: preservar diagnósticos
+
+O único código versionado alterado nesta investigação é `scripts/test-avaliacoes.cjs`:
+
+- Identifica cenário, quantidade de avaliações e subpasso (contagens, próxima/anterior, indicador, mobile).
+- Em falha no carrossel, captura índices e ordem dos cards, centro, indicadores ativos, largura/scroll e screenshot.
+- Preserva a exceção original mesmo se a captura auxiliar falhar.
+- Imprime stack trace completo com caminho das evidências, em vez de truncar a mensagem na primeira linha. Senha e referências longas são redigidas.
+- Não acrescenta esperas, sleeps, novos cliques ou retentativas. O índice local identifica o indicador sem chamada assíncrona extra. Todas as 33 chamadas estáticas de assert anteriores permanecem; a contagem estática não é apresentada como quantidade de assertions executadas em tempo de execução.
+
+A captura detalhada do DOM e a screenshot adicional só acontecem após uma falha. Layout, cards Polaroid, animações, indicadores, setas e lógica da aplicação permanecem intactos. Não se apresenta essa melhoria de diagnóstico como correção da causa da intermitência.
+
+### Build e validação da versão final do runner
+
+`bash /workspace/.aurora/maven.sh verify` foi executado novamente: **290 testes, 0 falhas, 0 erros, 0 ignorados**, JAR gerado, `BUILD SUCCESS`, duração de 57,820 segundos. Log: `/tmp/aurora-estabilidade/verify.log`. `node --check scripts/test-avaliacoes.cjs` e `git diff --check` também passaram.
+
+Após esse build, iniciou-se outra série fixa de cinco E2E completos, sequenciais, com a instrumentação final sem leitura extra antes do clique. Essa série valida o runner que será publicado; não é uma repetição condicional para mascarar falhas. Cada execução mantém seu próprio H2 temporário, credenciais e log, e o resultado de cada uma é registrado em `/tmp/aurora-estabilidade/final.tsv`.
+
+Resultados individuais da série final (America/Sao_Paulo, 14/11/2026):
+
+| Execução | Início | Fim | Saída | Resultado | Evidências |
+|---|---|---|---:|---|---|
+| 1 | 19:14:18 | 19:15:18 | 0 | Aprovada | `/tmp/aurora-estabilidade/final-1.log`; `/tmp/aurora-avaliacoes-9MjbKW` |
+| 2 | 19:15:18 | 19:16:19 | 0 | Aprovada | `/tmp/aurora-estabilidade/final-2.log`; `/tmp/aurora-avaliacoes-hC64uR` |
+| 3 | 19:16:19 | 19:17:19 | 0 | Aprovada | `/tmp/aurora-estabilidade/final-3.log`; `/tmp/aurora-avaliacoes-ZkcbyL` |
+| 4 | 19:17:19 | 19:18:22 | 0 | Aprovada | `/tmp/aurora-estabilidade/final-4.log`; `/tmp/aurora-avaliacoes-y1R8Kc` |
+| 5 | 19:18:22 | 19:19:24 | 0 | Aprovada | `/tmp/aurora-estabilidade/final-5.log`; `/tmp/aurora-avaliacoes-UoO20O` |
+
+### Conclusão e publicação
+
+**Falha não reproduzida; causa indeterminada.** Resultado desta investigação: 10 execuções completas aprovadas (duas séries sequenciais de cinco, cada execução com banco independente), 20 navegações focadas aprovadas e verify com 290 testes aprovados, sem falhas, erros ou ignorados. Cada série foi concluída e registrada integralmente; não houve execução repetida até esconder uma falha.
+
+A falha histórica foi localizada no cenário com cinco avaliações, mas sua asserção exata não pode ser recuperada do log truncado. Não houve recorrência com stack trace e contexto disponíveis. Assim, não é possível concluir causalmente se foi sincronização do teste, concorrência, animação ou defeito do carrossel. O sucesso em execução sequencial não prova que concorrência tenha sido a causa; a inspeção das transições também não prova uma corrida. Esta amostra finita não comprova ausência de intermitência.
+
+**Não foi aplicada nem alegada uma correção funcional de causa.** A melhoria efetiva é a preservação de diagnóstico para que uma próxima ocorrência identifique a asserção, quantidade, subpasso e estado visual. Recomenda-se preservar esse log completo e a captura se houver recorrência; só então corrigir a causa demonstrada, sem adicionar retentativas ou relaxar assertions.
+
+Apenas `scripts/test-avaliacoes.cjs` e este relatório foram alterados. Os arquivos de aplicação, inclusive o ícone PRONTO aprovado, scripts.js, CSS, cards, animações, indicadores e setas, permanecem iguais ao commit base. Pagamentos, status, histórico e H2 de desenvolvimento não foram alterados ou apagados. Os artefatos em /tmp e o helper forense são evidências locais temporárias; os resultados por execução estão preservados neste relatório versionado.
+
+A publicação desta investigação utiliza somente `etapa-6-acompanhamento-pedidos`, sem merge ou PR. O SHA do commit é informado na entrega e verificável por `git rev-parse HEAD` e `git ls-remote origin refs/heads/etapa-6-acompanhamento-pedidos` (o documento não inclui o hash do próprio commit).
