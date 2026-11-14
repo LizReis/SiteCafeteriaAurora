@@ -10,6 +10,9 @@ import java.util.List;
 @Entity
 @Table(name = "pedidos")
 public class Pedido {
+    @OneToOne(mappedBy="pedido",fetch=FetchType.LAZY)
+    private Avaliacao avaliacao;
+    public boolean isJaAvaliado(){return avaliacao!=null;}
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

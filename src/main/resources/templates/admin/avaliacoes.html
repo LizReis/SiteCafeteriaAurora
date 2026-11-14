@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <meta name="theme-color" content="#000000">
+    <title>Avaliações | Café Aurora</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css">
+    <link rel="stylesheet" th:href="@{/css/admin-orders.css}" href="/css/admin-orders.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css(v=20261113)}" href="/css/responsive.css">
+</head>
+<body class="aurora-admin admin-orders-page">
+    <header class="admin-topbar orders-topbar">
+        <a class="orders-brand" th:href="@{/admin}" href="/admin">
+            <span class="orders-brand-name">Café Aurora</span>
+            <span class="orders-brand-caption">– Administração</span>
+        </a>
+        <nav class="orders-nav" aria-label="Área administrativa">
+            <a th:href="@{/admin}" href="/admin">Visão geral</a>
+            <a th:href="@{/admin/categorias}" href="/admin/categorias">Categorias</a>
+            <a th:href="@{/admin/produtos}" href="/admin/produtos">Produtos</a>
+            <a th:href="@{/admin/pedidos}" href="/admin/pedidos">Pedidos</a>
+            <a class="active" aria-current="page" th:href="@{/admin/avaliacoes}" href="/admin/avaliacoes">Avaliações</a>
+            <a th:href="@{/}" href="/">Ver site</a>
+        </nav>
+        <form th:action="@{/admin/logout}" action="/admin/logout" method="post">
+            <button class="admin-logout orders-logout" type="submit">Sair da conta</button>
+        </form>
+    </header>
+    <main class="orders-main">
+        <section class="orders-intro"><h1>Avaliações</h1><p>Revise o conteúdo antes de publicar.</p></section>
+        <p role="status" class="admin-alert success" th:if="${sucesso}" th:text="${sucesso}"></p>
+        <section class="orders-filter-section">
+            <form method="get" th:action="@{/admin/avaliacoes}" class="orders-filter-form">
+                <div class="orders-filter-field"><label for="status">Moderação</label>
+                    <select name="status" id="status"><option value="">Todas</option>
+                        <option th:each="s : ${situacoes}" th:value="${s}" th:selected="${filtro == s}" th:text="${s}"></option>
+                    </select></div><button class="orders-filter-button" type="submit">Filtrar</button>
+            </form>
+        </section>
+        <section class="orders-table-card"><div class="orders-table-scroll">
+            <table class="orders-table" th:unless="${pagina.empty}"><thead><tr><th>Pedido</th><th>Autor / nota</th><th>Comentário / foto</th><th>Moderação</th><th>Ações</th></tr></thead>
+                <tbody><tr th:each="a : ${pagina.content}">
+                    <td><a th:href="@{/admin/pedidos/{id}(id=${a.pedidoId})}" th:text="${'#' + a.pedidoId}"></a></td>
+                    <td><strong th:text="${a.nomeAutor}"></strong><p th:text="${a.nota + ' / 5'}"></p><small th:text="${a.criadaEm}"></small></td>
+                    <td><p class="review-comment" th:text="${a.comentario}"></p>
+                        <img th:if="${a.temFoto}" th:src="@{/admin/avaliacoes/{id}/foto(id=${a.id})}" width="180" alt="Fotografia enviada para moderação"></td>
+                    <td><span th:text="${a.statusModeracao}"></span><small th:text="${a.moderadaEm}"></small></td>
+                    <td><form th:if="${a.statusModeracao.name() != 'APROVADA'}" method="post" th:action="@{/admin/avaliacoes/{id}/aprovar(id=${a.id})}"><button class="orders-filter-button" type="submit">Aprovar</button></form>
+                        <form th:if="${a.statusModeracao.name() != 'REJEITADA'}" method="post" th:action="@{/admin/avaliacoes/{id}/rejeitar(id=${a.id})}"><button class="orders-filter-button" type="submit">Rejeitar</button></form></td>
+                </tr></tbody></table>
+            <p class="orders-empty" th:if="${pagina.empty}">Nenhuma avaliação encontrada.</p>
+        </div><nav class="orders-pagination" th:if="${pagina.totalPages > 1}" aria-label="Paginação">
+            <a th:if="${pagina.hasPrevious()}" th:href="@{/admin/avaliacoes(pagina=${pagina.number - 1},status=${filtro})}">← Anterior</a>
+            <span th:text="${'Página ' + (pagina.number + 1) + ' de ' + pagina.totalPages}"></span>
+            <a th:if="${pagina.hasNext()}" th:href="@{/admin/avaliacoes(pagina=${pagina.number + 1},status=${filtro})}">Próxima →</a>
+        </nav></section>
+    </main>
+</body>
+</html>

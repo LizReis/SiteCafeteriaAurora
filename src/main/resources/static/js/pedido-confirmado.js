@@ -73,8 +73,10 @@
       if(n===status.step)el.setAttribute('aria-current','step');
       else el.removeAttribute('aria-current');
     });
-    review.disabled=next!=='CONCLUIDO';
-    document.dispatchEvent(new CustomEvent('cafeaurora:review-status',{detail:{status:next}}));
+    review.disabled=next!=='CONCLUIDO'||order.jaAvaliado;
+    byId('review-feedback').hidden=!order.jaAvaliado;
+    byId('review-feedback').textContent=order.jaAvaliado?'A avaliação deste pedido já foi registrada.':'';
+    document.dispatchEvent(new CustomEvent('cafeaurora:review-status',{detail:{status:next,jaAvaliado:order.jaAvaliado}}));
 
   }
   button.addEventListener('click',()=>{
@@ -94,9 +96,9 @@
     try {
       const response=await fetch('/api/pedidos/consulta/'+encodeURIComponent(token),{cache:'no-store'});
       if(!response.ok) throw new Error(response.status===404?'Pedido não encontrado.':'Não foi possível consultar o pedido. Atualize para tentar novamente.');
-      order=await response.json();byId('order-heading-title').textContent='Pedido registrado';renderSummary();applyStatus(order.status);button.disabled=false;
-    } catch(error) {byId('order-reference').textContent=error.message;byId('current-status-label').textContent='Consulta indisponível';}
+      order=await response.json();byId('order-heading-title').textContent='Pedido registrado';renderSummary();applyStatus(order.status);button.disabled=false;return order;
+    } catch(error) {review.disabled=true;byId('order-reference').textContent=error.message;byId('current-status-label').textContent='Consulta indisponível';}
   }
-  window.CafeAuroraPedido=Object.freeze({getStatus:()=>order?.status || null});
+  window.CafeAuroraPedido=Object.freeze({getStatus:()=>order?.status || null,jaAvaliado:()=>Boolean(order?.jaAvaliado),refresh:load});
   load();
 })();

@@ -1048,3 +1048,6 @@
 @media (prefers-reduced-motion: reduce) {
     .tracking-steps::after { transition: none !important; }
 }
+
+/* O consentimento usa controle nativo, sem o tamanho dos campos de texto. */
+#review-consent { width: auto; padding: 0; margin-right: 8px; }

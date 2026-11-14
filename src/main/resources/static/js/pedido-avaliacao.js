@@ -1,4 +1,4 @@
-/* Avaliação do pedido — protótipo visual, sem envio nem persistência de foto. */
+/* Avaliação real: autorização por referência, CSRF e confirmação pelo servidor. */
 (() => {
   'use strict';
   const layout=document.querySelector('.confirmed-layout');
@@ -18,6 +18,7 @@
   let selectedPhoto=null;
   let objectURL=null;
   let submitted=false;
+  let sending=false;
   let status=window.CafeAuroraPedido?.getStatus?.()||'RECEBIDO';
 
   function accessible(panel,enabled) {
@@ -83,7 +84,8 @@
     photoFeedback.textContent='';
   }
   document.getElementById('review-photo-remove').addEventListener('click',clearPhoto);
-  document.getElementById('review-cancel').addEventListener('click',()=>view('cup'));
+  document.getElementById('review-cancel').addEventListener('click',()=>{if(!sending)view('cup');});
+  window.addEventListener('pagehide',()=>{if(objectURL)URL.revokeObjectURL(objectURL);});
 
   document.addEventListener('cafeaurora:toggle-details',()=>{
     const state=layout.classList.contains('is-details')?'cup':'details';
@@ -91,21 +93,22 @@
   });
   document.addEventListener('cafeaurora:open-review',()=>{
     status=window.CafeAuroraPedido?.getStatus?.()||status;
-    if(status!=='CONCLUIDO'||submitted)return;
+    if(status!=='CONCLUIDO'||submitted||sending||window.CafeAuroraPedido?.jaAvaliado?.())return;
     error.hidden=true;
     view('review');
     setTimeout(()=>document.getElementById('review-customer-name').focus({preventScroll:true}),100);
   });
   document.addEventListener('cafeaurora:review-status',event=>{
     status=event.detail?.status||status;
+    submitted=Boolean(event.detail?.jaAvaliado);
     if(status!=='CONCLUIDO'&&layout.classList.contains('is-review'))view('cup');
   });
 
-  form.addEventListener('submit',event=>{
+  form.addEventListener('submit',async event=>{
     event.preventDefault();
     error.hidden=true;
-    if(status!=='CONCLUIDO'){error.textContent='A avaliação só é permitida após a entrega.';error.hidden=false;return;}
-    if(submitted)return;
+    if(status!=='CONCLUIDO'){error.textContent='A avaliação só é permitida após a conclusão.';error.hidden=false;return;}
+    if(submitted||sending)return;
     const name=document.getElementById('review-customer-name');
     const comment=document.getElementById('review-comment');
     const stars=form.querySelector('input[name="nota"]:checked');
@@ -116,12 +119,40 @@
     if(photo.files.length>1||(photo.files.length>0&&selectedPhoto!==photo.files[0])){
       error.textContent='Selecione apenas uma foto válida de até 5 MB.';error.hidden=false;return;
     }
-    // Não enviar nem armazenar dados pessoais ou arquivo até existir API autenticada.
-    submitted=true;
-    document.getElementById('review-order-button').disabled=true;
-    clearPhoto();
-    form.reset();
-    starPaint();
-    view('thanks');
+    if(!document.getElementById('review-consent').checked){error.textContent='Autorize a publicação após aprovação para enviar.';error.hidden=false;return;}
+    const referencia=new URLSearchParams(location.hash.slice(1)).get('pedido');
+    if(!referencia||!/^[A-Za-z0-9_-]{43}$/.test(referencia)){error.textContent='Referência do pedido inválida.';error.hidden=false;return;}
+    const body=new FormData();
+    body.set('referencia',referencia);body.set('nomeAutor',nameValue);body.set('nota',stars.value);
+    body.set('comentario',commentValue);body.set('consentimentoPublicacao','true');
+    if(selectedPhoto)body.set('foto',selectedPhoto);
+    const token=document.querySelector('meta[name="_csrf"]')?.content;
+    const header=document.querySelector('meta[name="_csrf_header"]')?.content;
+    if(!token||!header){error.textContent='Atualize a página para renovar a proteção do formulário.';error.hidden=false;return;}
+    sending=true;
+    document.getElementById('review-submit').disabled=true;
+    document.getElementById('review-cancel').disabled=true;
+    const success=()=>{
+      submitted=true;document.getElementById('review-order-button').disabled=true;
+      clearPhoto();form.reset();starPaint();view('thanks');
+    };
+    try {
+      const response=await fetch('/api/avaliacoes',{method:'POST',headers:{[header]:token},body});
+      if(!response.ok){
+        if(response.status===409){const current=await window.CafeAuroraPedido.refresh();if(current?.jaAvaliado){success();return;}}
+        const data=await response.json().catch(()=>null);
+        throw new Error(data?.mensagem||(response.status===413?'A foto deve ter até 5 MB.':response.status===403?'Sua sessão expirou. Atualize a página.':'Não foi possível registrar a avaliação.'));
+      }
+      success();
+    } catch(failure) {
+      // A resposta pode se perder depois do commit. O estado persistido confirma o resultado.
+      const current=await window.CafeAuroraPedido.refresh();
+      if(current?.jaAvaliado){success();return;}
+      error.textContent=failure.message+' Seus dados foram mantidos. Se houve falha de rede, consulte novamente o pedido antes de reenviar.';
+      error.hidden=false;
+    } finally {
+      sending=false;document.getElementById('review-submit').disabled=submitted;
+      document.getElementById('review-cancel').disabled=false;
+    }
   });
 })();

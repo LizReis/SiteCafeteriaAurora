@@ -115,3 +115,11 @@ Execute `.\\mvnw.cmd test` e `.\\mvnw.cmd spring-boot:run "-Dspring-boot.run.pro
 ## Auditoria e testes — Etapa 4
 
 Execute `./mvnw verify` com JDK 21. Os testes usam H2 em memória por classe; o teste de compatibilidade cria um arquivo exclusivamente temporário. Não execute testes apontando para `data/cafeaurora`. Consulte [o relatório da Etapa 4](docs/etapa-4-revisao-testes-backend.md) para cenários, resultados e comandos do ambiente na nuvem.
+
+## Avaliações reais — Etapa 5
+
+Pedidos `CONCLUIDO` podem receber uma avaliação, mesmo com pagamento `PENDENTE`. Na tela de acompanhamento, informe nome de exibição, nota, comentário e consentimento; a foto JPEG/PNG/WebP é opcional (até 5 MB). O backend impede reenvio por pedido.
+
+As avaliações aguardam revisão em `/admin/avaliacoes`. Somente as aprovadas aparecem na Home (cinco mais recentes). Aprovação e rejeição exigem login administrativo e CSRF; fotos pendentes/rejeitadas não são públicas. Imagens são validadas e normalizadas para JPEG, armazenadas no H2 em tabela separada.
+
+Execute `./mvnw verify` com JDK 21. O teste de navegador `scripts/test-avaliacoes.cjs` exige pacote Playwright e Chromium, JAR gerado por `./mvnw package`, `JAVA_HOME` apontando para JDK 21 e porta local 18083 livre. Use `JAVA_HOME=/caminho/do/jdk node scripts/test-avaliacoes.cjs` (ajuste `CHROMIUM_PATH` se necessário). Ele usa somente banco e aplicativo temporários. Consulte [contratos, segurança e evidências](docs/etapa-5-avaliacoes-reais.md).

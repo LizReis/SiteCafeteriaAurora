@@ -11,6 +11,14 @@ import java.util.List;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErroApi> uploadExcessivo(Exception ex) {
+        return erro(HttpStatus.PAYLOAD_TOO_LARGE,"A foto deve ter no máximo 5 MB e a requisição até 6 MB",List.of());
+    }
+    @ExceptionHandler(AvaliacaoPersistenciaException.class)
+    public ResponseEntity<ErroApi> falhaAvaliacao(AvaliacaoPersistenciaException ex) {
+        return erro(HttpStatus.INTERNAL_SERVER_ERROR,ex.getMessage(),List.of());
+    }
     public record ErroApi(Instant momento, int status, String mensagem, List<String> detalhes) {}
 
     @ExceptionHandler(RecursoNaoEncontradoException.class)

@@ -73,7 +73,7 @@
               <path d="m12 2 3.1 6.4 7.1 1-5.1 5 .9 7-6-3.3-6 3.3.9-7-5.1-5 7.1-1Z" />
             </svg><span>Avaliar pedido</span>
           </button>
-          <p id="review-blocked-note" class="sr-only">Disponível somente quando o pedido estiver entregue.</p>
+          <p id="review-blocked-note" class="sr-only">Disponível somente quando o pedido estiver concluído.</p>
           <button id="toggle-confirmed-details" class="confirmed-details-button" type="button" aria-expanded="false"
             aria-controls="confirmed-summary">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"
@@ -174,6 +174,7 @@
               </div>
               <p id="review-photo-feedback" class="review-validation-message" role="status" aria-live="polite"></p>
             </div>
+            <label class="review-field"><span><input id="review-consent" type="checkbox" required> Autorizo a publicação do nome escolhido, comentário e foto após aprovação.</span></label>
             <p id="review-form-error" class="review-validation-message" role="alert" hidden></p>
             <div class="review-form-actions">
               <button type="button" id="review-cancel" class="review-cancel-btn">Cancelar</button>
@@ -186,7 +187,7 @@
                 </svg>
               </button>
             </div>
-            <p class="review-demo-note">Demonstração: nenhuma avaliação ou foto é enviada ao servidor nesta etapa.</p>
+            <p class="review-demo-note">Seu nome de exibição, comentário e foto poderão ser publicados somente após aprovação.</p>
           </form>
         </section>
         <section id="confirmed-review-thanks" class="confirmed-review-thanks" aria-labelledby="review-thanks-title"
@@ -195,14 +196,14 @@
           <h2 id="review-thanks-title" class="sr-only">Obrigado por avaliar o Café Aurora!</h2>
           <p>Agradecemos a sua avaliação e<br>desejamos que você retorne em breve</p>
           <a href="/" th:href="@{/}" class="review-home-link">Voltar para a Home</a>
-          <small>Prévia de interface — avaliação ainda não publicada.</small>
+          <small>Avaliação registrada e aguardando aprovação.</small>
         </section>
       </div>
     </div>
   </main>
   <footer th:replace="~{fragments/layout :: siteFooter}"></footer>
-  <script src="/js/pedido-confirmado.js" th:src="@{/js/pedido-confirmado.js(v='20261102-progress-2')}" defer></script>
-  <script src="/js/pedido-avaliacao.js" th:src="@{/js/pedido-avaliacao.js(v='20261102-review-1')}" defer></script>
+  <script src="/js/pedido-confirmado.js" th:src="@{/js/pedido-confirmado.js(v='20261113-progress-5')}" defer></script>
+  <script src="/js/pedido-avaliacao.js" th:src="@{/js/pedido-avaliacao.js(v='20261113-review-5')}" defer></script>
   <script src="/js/footer.js" th:src="@{/js/footer.js(v=20261031)}" defer></script>
 </body>
 

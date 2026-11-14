@@ -421,3 +421,5 @@
   }
   .site-header.has-mobile-menu { column-gap: 5px; }
 }
+/* Conteúdo real de avaliações pode conter palavras longas. */
+.review-comment, .user-info h4, .reviews-empty { overflow-wrap: anywhere; }

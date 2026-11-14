@@ -8,11 +8,11 @@ import java.util.List;
 public record PedidoResponse(Long id, String referencia, StatusPedido status, Instant criadoEm,
     TipoAtendimento tipoAtendimento, FormaPagamento formaPagamento, StatusPagamento statusPagamento,
     List<ItemPedidoResponse> itens, BigDecimal subtotal, BigDecimal taxaEntrega, BigDecimal total,
-    String enderecoEntrega) {
+    String enderecoEntrega, boolean jaAvaliado) {
     public static PedidoResponse de(Pedido p) {
         return new PedidoResponse(p.getId(), p.getReferenciaPublica(), p.getStatus(), p.getCriadoEm(),
             p.getTipoAtendimento(), p.getFormaPagamento(), p.getStatusPagamento(),
             p.getItens().stream().map(ItemPedidoResponse::de).toList(), p.getSubtotal(), p.getTaxaEntrega(),
-            p.getTotal(), p.getEnderecoEntrega());
+            p.getTotal(), p.getEnderecoEntrega(), p.isJaAvaliado());
     }
 }
